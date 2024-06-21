@@ -1,0 +1,11 @@
+/* Hide scrollbar for Chrome, Safari and Opera */
+#reportViewer::-webkit-scrollbar {
+    display: none !important;
+  }
+  
+  /* Hide scrollbar for IE, Edge and Firefox */
+  #reportViewer {
+    -ms-overflow-style: none !important;  /* IE and Edge */
+    scrollbar-width: none !important;  /* Firefox */
+  }
+  

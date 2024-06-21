@@ -1,0 +1,69 @@
+<div class="grid">
+    <div class="col-12">
+        <div class="card card-height-85hv-80px border-radius-12">
+            <div class="grid">
+                <div class="col-12 md:col-9">
+                    <h5 class="mt-2 pl-2">Select Application</h5>
+                </div>
+                <div class="col-12 md:col-3 search-bar">
+                    <span class="p-input-icon-left p-input-icon-right flex align-items-center"><i class="pi pi-user"></i><input type="text"
+                            pinputtext="" placeholder="Search Application" class="p-inputtext p-component p-element"
+                            [(ngModel)]="search" (input)="searchApplication()"><i class="pi pi-search"></i></span>
+                </div>
+            </div>
+            <hr>
+            <ng-scrollbar  [excludeBeforeClick]="true" [usePSClass]="'next'"
+            [disabled]="null" [exclude]="'#mobile-collapse'" id="nav-ps-next" class="ng-scroll-h-100vh-18rem">
+            <div class="grid mr-0">
+                <div class="col-12 flex justify-content-center align-items-center ng-scroll-h-100vh-18rem " *ngIf="showError">
+                    <ng-container [ngTemplateOutlet]="errorTemplate"
+                        [ngTemplateOutletContext]="{errorTitle:errorTitle,errorContent:errorContent}">
+                    </ng-container>
+                </div>
+                <div class="col-12 flex align-items-center justify-content-center" *ngIf="!applicationFetched">
+                    <ngx-spinner name="application-manager-spinner" bdColor="rgba(0, 0, 0, 0)" size="default"
+                        color="black" type="line-spin-fade" [fullScreen]="false">
+                        <p class="mt-0 mb-0 text-black">Loading </p>
+                    </ngx-spinner>
+                </div>
+                <ng-container *ngIf="!showError">
+                    <div class="col-12 lg:col-6 xl:col-3 md:col-6"
+                        *ngFor="let application of applications; index as index">
+                        <div (click)="submitApplication(application, index)" class="card card-inner mb-0"
+                            title="{{application.displayName}}">
+                            <div class="flex justify-content-between mb-3">
+                                <div>
+                                    <!-- <span
+                                        class="card-title block text-500 font-medium mb-3">{{convertDisplayName(application.displayName)}}</span> -->
+                                    <span
+                                        class="card-title block text-500 font-medium mb-3">{{application.displayName}}</span>
+
+                                </div>
+                                <div class="flex align-items-center justify-content-center bg-blue-100 border-round"
+                                    [ngStyle]="{width: '2.5rem', height: '2.5rem'}">
+                                    <i class="text-blue-500 text-xl"[ngClass]="[application.iconClass]"></i>
+                                </div>
+                            </div>
+                            <hr class="card-hr">
+                            <div class="h-3rem">
+                                <div class="dispaly-webkit-box overflow-hidden text-overflow-ellipsis">
+                                    {{application.desc !=null ? application.desc:'-NA-'}}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </ng-container>
+            </div>
+            <div class="col-12 flex justify-content-end" *ngIf="isAppSbumitError">
+                <ng-container [ngTemplateOutlet]="errorTemplate"
+                    [ngTemplateOutletContext]="{errorTitle:errorTitle,errorContent:errorContent,errorPosition:errorPosition}">
+                </ng-container>
+            </div>
+            </ng-scrollbar>
+        </div>
+    </div>
+</div>
+<ng-template let-title="errorTitle" let-content="errorContent" let-position="errorPosition" #errorTemplate>
+    <app-error-dialog [title]="title" [content]="errorContent" [position]="errorPosition" [messageHead]="title">
+    </app-error-dialog>
+</ng-template>

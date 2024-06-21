@@ -1,0 +1,544 @@
+<div class="grid">
+    <div class="col-12">
+        <div class="card p-0">
+            <div class="flex justify-content-end">
+                <button *ngIf="selectedSimulateType =='N'" pbutton="" type="button" icon="pi pi-ellipsis-v"
+                    (click)="addNewSimulation()"
+                    class="mt-2 p-element p-button-rounded p-button-text p-button-plain p-button p-component p-button-icon-only"><span
+                        class="p-button-icon fa fa-refresh" pTooltip="Refresh" tooltipPosition="top"
+                        aria-hidden="true"></span></button>
+                <button pbutton="" type="button" icon="pi pi-ellipsis-v" [routerLink]="[ '/simulation/simulation-list']"
+                    class="mr-2 mt-2 p-element p-button-rounded p-button-text p-button-plain p-button p-component p-button-icon-only"><span
+                        class="p-button-icon pi pi-times" pTooltip="Close" tooltipPosition="top"
+                        aria-hidden="true"></span></button>
+            </div>
+            <hr class="mt-2">
+            <div class="col-12">
+                <p-panel [showHeader]="true" header="Simulation" [toggleable]="false">
+                    <ng-template pTemplate="icons">
+                    </ng-template>
+                    <div class="col-12 mt-2" *ngIf="!isFormVisible">
+                        <div class="field grid align-items-center mb-0">
+                            <label class="col-12 mb-2 md:col-1 md:mb-0 text-right star required"
+                                htmlFor="name3">Select:</label>
+                            <div class="col-12 md:col-1 text-nowrap" *ngFor="let simulateType of simulateTypes">
+                                <div class="field-radiobutton mb-0">
+                                    <p-radioButton [inputId]="simulateType.key" name="simulateType"
+                                        [value]="simulateType.key" [(ngModel)]="selectedSimulateType"
+                                        (onClick)="OnClickSimulationType()">
+                                    </p-radioButton>
+                                    <label class="ml-1 mb-0">{{simulateType.name}}</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <form [formGroup]="simulateForm">
+                        <div class="col-12" *ngIf="selectedSimulateType =='N' && isFormVisible">
+                            <div class="field grid field-margin">
+                                <label htmlFor="name3"
+                                    class="col-12 mb-2 md:col-1 md:mb-0 text-right star required">Name:</label>
+                                <div class="col-12 md:col-9">
+                                    <input pInputText type="text" name="simulateName" formControlName="simulateName"
+                                        [style]="{'width': '250px'}" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12" *ngIf="selectedSimulateType =='N'">
+                            <div class="field grid field-margin">
+                                <label htmlFor="name3"
+                                    class="col-12 mb-2 md:col-1 md:mb-0 text-right star required">Type:</label>
+                                <div class="col-12 md:col-9">
+                                    <div class="w-100">
+                                        <p-dropdown [options]="allGraphSimulates" name="simulate" optionLabel="name"
+                                            [filter]="true" filterBy="name" [showClear]="false" dataKey="uuid"
+                                            placeholder="-Select-" [style]="{'width': '250px'}"
+                                            formControlName="selectedGraphSimulate" (onChange)="onChangeSimulate()">
+                                        </p-dropdown>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12" *ngIf="selectedSimulateType =='E'">
+                            <div class="field grid field-margin">
+                                <label htmlFor="name3"
+                                    class="col-12 mb-2 md:col-1 md:mb-0 text-right star required">Name:</label>
+                                <div class="col-12 md:col-9">
+                                    <input disabled type="text" pInputText placeholder={{name}}
+                                        [style]="{'width': '250px'}" />
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </p-panel>
+            </div>
+            <div class="col-12">
+                <p-panel [showHeader]="true" header="Setup Clone" [toggleable]="false">
+                    <ng-template pTemplate="icons">
+                        <button pButton class="p-panel-header-icon p-link" (click)="openFilterDialog()"
+                            *ngIf="selectedSimulateType =='N' && isFormVisible" icon="fa fa-filter">
+                        </button>
+
+                        <button pButton class="p-panel-header-icon p-link" (click)="onClickRollBack()"
+                            *ngIf="selectedSimulateType =='N' && isFormVisible" icon="fa-solid fa-rotate-left">
+                        </button>
+
+                        <button pButton class="p-panel-header-icon p-link" (click)="onClickRedo()"
+                            *ngIf="selectedSimulateType =='N' && isFormVisible" icon="fa-solid fa-rotate-right">
+                        </button>
+                        <button pButton class="p-panel-header-icon p-link" (click)="openLogsDialog()"
+                            *ngIf="selectedSimulateType =='N' || selectedSimulateType =='E'" icon="fa fa-file">
+                        </button>
+                        <button pButton class="p-panel-header-icon p-link" (click)="refreshKGInput()"
+                            icon="fa fa-refresh">
+                        </button>
+                    </ng-template>
+                    <ng-template pTemplate="body">
+                        <div class="analysis-box position-relative vis-background-image">
+                            <div class="col-12 pl-0 pr-0">
+                                <ng-container *ngIf="isCloneDBRunBtnShow">
+                                    <div class="flex h-100">
+                                        <div class="md:col-12 flex justify-content-center align-items-center">
+                                            <span 
+                                                class="mr-1">Click </span>
+                                            <button class="btn btn-icon run-button"
+                                                [disabled]="isCloneDBRunBtnDisabled" type="button"
+                                                (click)="onClickCloneDBRun()"><i
+                                                    class="fa fa-play"></i></button>
+                                            <span class="ml-1">to Run</span>
+                                        </div>
+                                    </div>
+                                </ng-container>
+                                <ng-container *ngIf="isCloneDBError" [ngTemplateOutlet]="errorTemplate"
+                                    [ngTemplateOutletContext]="{errorTitle:errorTitle,errorContent:cloneDBErrorContent}">
+                                </ng-container>
+                                <div *ngIf="isCloneDBInprogress" class="h-20hv">
+                                    <ngx-spinner name="clone-db-execute" class="embeded-spinner"
+                                        bdColor="rgba(0, 0, 0, 0.2)" size="default" color="black" type="line-spin-fade"
+                                        [fullScreen]="false">
+                                        <p class="mt-0 mb-0 text-black">Loading </p>
+                                        Clone Setup In-Progess...
+                                    </ngx-spinner>
+                                </div>
+                                <div #cloneLogRef *ngIf="isCloneDBLogInprogess" [scrollTop]="cloneLogRef.scrollHeight"
+                                    class="h-50hv log-div">
+                                    {{cloneDBResult}}
+                                </div>
+                                <ng-container *ngIf="isCloneDBRunBtnShow">
+                                    <div class="flex h-100">
+                                        <div class="md:col-12 flex justify-content-center align-items-center"
+                                            *ngIf="isCloneDBSuccess && cloneDBResult ==null && !isCloneDBInprogress && !isCloneDBError">
+                                            No Record Found
+                                        </div>
+                                    </div>
+                                </ng-container>
+                                <ng-container
+                                    *ngIf="cloneDBResult && !isCloneDBInprogress && !isCloneDBError && isCloneDBSuccess && !isCloneDBLogInprogess">
+                                    <app-vis-network [graphResult]=" cloneDBResult.data" [graphpodMeta]="KGData"
+                                        [dsId]="cloneDBId" [option]="sampleVizOption"
+                                        (nodeDblClick)="onNodeDblClick($event)" [theam]="themeConfig">
+                                    </app-vis-network>
+                                </ng-container>
+                            </div>
+                        </div>
+                        <hr
+                            *ngIf="cloneDBResult && !isCloneDBInprogress && !isCloneDBError && isCloneDBSuccess && !isCloneDBLogInprogess">
+                        <div class="row"
+                            *ngIf="cloneDBResult && !isCloneDBInprogress && !isCloneDBError && isCloneDBSuccess && !isCloneDBLogInprogess">
+                            <div class="col-12 pr-0">
+                                <div class="flex justify-content-end">
+                                    <div class="node-edge-inf">
+                                        <span> Displaying {{cloneDBResult.meta.nodeCount}} nodes(s) and
+                                            {{cloneDBResult.meta.edgeCount}} edge(s)
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </ng-template>
+                </p-panel>
+            </div>
+            <div class="col-12">
+                <p-panel [showHeader]="true" header="Run Simulation" [toggleable]="false">
+                    <ng-template pTemplate="icons">
+                        <button pButton class="p-panel-header-icon p-link" *ngIf="selectedSimulateType =='N'"
+                            (click)="openParamDialog(scenarioTabIndex)" icon="fa-solid fa-align-justify">
+                        </button>
+                        <!-- <button pButton class="p-panel-header-icon p-link" *ngIf="selectedSimulateType =='N'"
+                            (click)="refreshOutput()" icon="fa fa-refresh">
+                        </button> -->
+                    </ng-template>
+                    <ng-template pTemplate="body">
+                        <div class="grid w-100">
+                            <ng-container *ngIf="scenarioTab[0].isSimulateRunBtnShow">
+                                <div class="md:col-12 flex justify-content-center align-items-center h-50hv">
+                                    <span class="mr-1">Click </span>
+                                    <button class="btn btn-icon run-button ml-0"
+                                        [disabled]="scenarioTab[0].isSimulateRunBtnDisabled" type="button"
+                                        (click)="onClickSimulateExecute(0)"><i class="fa fa-play"></i></button>
+                                    <span class="ml-1">to Run </span>
+                                </div>
+                            </ng-container>
+                            <div class="col-12 h-50hv position-relative" *ngIf="scenarioTab[0].isGSExecutionInprogess">
+                                <ngx-spinner name="simulate-execute" class="embeded-spinner"
+                                    bdColor="rgba(0, 0, 0, 0.2)" size="default" color="black" type="line-spin-fade"
+                                    [fullScreen]="false">
+                                    <p class="mt-0 mb-0 text-black">Loading </p>
+                                    Simulation In-Progess...
+                                </ngx-spinner>
+                            </div>
+                            <ng-container *ngIf="simulationStatusInprogess">
+                                <div class="w-100 p-3">
+                                    <div class="h-50hv log-div" #scrollMe [scrollTop]="scrollMe.scrollHeight">
+                                        <!-- Simulation In-Progress ... -->
+                                        {{runSimulateLog}}
+                                    </div>
+                                </div>
+                            </ng-container>
+                            <ng-container *ngIf="scenarioTab[0].isGSExecutionError" [ngTemplateOutlet]="errorTemplate"
+                                [ngTemplateOutletContext]="{errorTitle:errorTitle,errorContent:scenarioTab[0].errorContent}">
+                            </ng-container>
+                            <ng-container
+                                *ngIf="!scenarioTab[0].isSimulateRunBtnShow && scenarioTab[0].isGSExecutionSuccess && scenarioTab[0].outputInfo !=null">
+                                <ng-container
+                                    *ngFor="let simulateOutput of scenarioTab[0].outputInfo ;let outputIndex=index">
+                                    <div class="col-12 md:col-6">
+                                        <p-panel [showHeader]="true" [header]="simulateOutput.title"
+                                            [toggleable]="false" class="p-panel-custom mb-0">
+                                            <ng-template pTemplate="body">
+                                                <ng-container *ngIf="simulateOutput.isOutputError">
+                                                    <div class="error-dialog">
+                                                        <app-error-dialog [title]="errorTitle"
+                                                            [content]="simulateOutput.errorContent"
+                                                            [messageHead]="errorTitle">
+                                                        </app-error-dialog>
+                                                    </div>
+                                                </ng-container>
+                                                <div *ngIf="simulateOutput.isOutputInprogess"
+                                                    class="col-12 position-relative h-50hv">
+                                                    <ngx-spinner name="{{simulateOutput.ngxSpinnerName}}"
+                                                        class="embeded-spinner" bdColor="rgba(0, 0, 0, 0)" size="default"
+                                                        color="black" type="line-spin-fade" [fullScreen]="false">
+                                                        <p class="mt-0 mb-0 text-black">Loading </p>
+                                                    </ngx-spinner>
+                                                </div>
+                                                <div class="center-element h-50hv" *ngIf="simulateOutput.isOutputSuccess
+                                        && simulateOutput.isOutoutNoRecord">
+                                                    No Record Found
+                                                </div>
+                                                <ng-container
+                                                    *ngIf="!simulateOutput.isOutputInprogess && !simulateOutput.isOutputError && !simulateOutput.isOutoutNoRecord && simulateOutput.result !=null && simulateOutput.type == outputTypeEnum.NETWORKGRAPH">
+                                                    <div class="position-relative vis-background-image">
+                                                        <app-vis-network [graphResult]="simulateOutput.result.data"
+                                                            [graphpodMeta]="KGData"
+                                                            (nodeDblClick)="onNodeDblClick($event)"
+                                                            [theam]="themeConfig"></app-vis-network>
+                                                    </div>
+                                                </ng-container>
+                                                <ng-container *ngIf="!simulateOutput.isOutputInprogess && !simulateOutput.isOutputError 
+                                                   && !simulateOutput.isOutoutNoRecord && simulateOutput.result !=null &&
+                                                    simulateOutput.type == outputTypeEnum.DATAGRID">
+                                                    <p-table [value]="simulateOutput.result.data" dataKey="id"
+                                                        [rowHover]="true" styleClass="p-datatable-gridlines"
+                                                        [scrollable]="true" responsiveLayout="scroll"
+                                                        [columns]="simulateOutput.cols" scrollDirection="vertical"
+                                                        [scrollHeight]="'604px'" [customSort]="false" scrollWidth="100%"
+                                                        [resizableColumns]="true">
+                                                        <ng-template pTemplate="header" let-columns>
+                                                            <tr>
+                                                                <ng-container *ngFor="let col of columns">
+                                                                    <th class="text-center text-nowrap"
+                                                                        pResizableColumn
+                                                                        pSortableColumn="{{col.header}}"> {{col.header}}
+                                                                        <p-sortIcon field="{{col.header}}"></p-sortIcon>
+                                                                    </th>
+                                                                </ng-container>
+                                                            </tr>
+                                                        </ng-template>
+                                                        <ng-template pTemplate="body" let-rowData let-columns="columns">
+                                                            <tr>
+                                                                <ng-container *ngFor="let col of columns">
+                                                                    <td class="text-center text-nowrap"
+                                                                        pTooltip="{{rowData[col.field]}}"
+                                                                        [style.text-align]="col.contentAlign"
+                                                                        tooltipPosition="bottom" positionStyle="fixed">
+                                                                        {{rowData[col.field]==null?'-NA-':
+                                                                        rowData[col.field]}}
+                                                                    </td>
+                                                                </ng-container>
+                                                            </tr>
+                                                        </ng-template>
+                                                        <ng-template pTemplate="emptymessage" let-columns>
+                                                            <tr>
+                                                                <td class="d-flex td-colspan justify-content-center"
+                                                                    [attr.colspan]="simulateOutput.cols.length"
+                                                                    *ngIf="alerts != undefined">
+                                                                    No Records Found
+                                                                </td>
+                                                            </tr>
+                                                        </ng-template>
+                                                    </p-table>
+                                                </ng-container>
+                                            </ng-template>
+                                        </p-panel>
+                                    </div>
+                                </ng-container>
+                            </ng-container>
+                        </div>
+                    </ng-template>
+                </p-panel>
+            </div>
+            <p-dialog header="Logs" [contentStyle]="{'overflow':'visible'}" [(visible)]="islogs"
+                [style]="{width: '85vw',height:'550px'}" [modal]="true" [maximizable]="false" responsive="true"
+                [resizable]="false">
+                <hr class="m-0">
+                <div class="ml-1 mb-2 mt-2">
+                    <div class="flex align-items-center justify-content-between">
+                        <div class="flex align-items-center justify-content-between">
+                            <span for="ny" class="mr-2">Auto Refresh :</span>
+                            <p-checkbox value="Auto Refresh" name="autorefersh" [(ngModel)]="isChecked" [binary]="true"
+                                inputId="binary" (onChange)="onCheckboxChange()"></p-checkbox>
+                        </div>
+                        <div>
+                            <button pTooltip="Refresh" tooltipPosition="bottom" (click)="refreshLogs()" pButton pRipple
+                                type="button" icon="fa fa-refresh"
+                                class="p-button-rounded p-button-secondary p-button-outlined height-8 width-8"></button>
+                            <button pTooltip="Download" tooltipPosition="bottom" (click)="downloadLogs()" pButton
+                                pRipple type="button" icon="pi pi-download"
+                                class="p-button-rounded p-button-secondary p-button-outlined ml-2 height-8 width-8"></button>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="simulate-logs">
+                    <div class="log-sec" #websocketLogRef [scrollTop]="websocketLogRef.scrollHeight">
+                        <p>{{similateLogs}}</p>
+                    </div>
+                    <div class="center-element" *ngIf="isErrorLogs">
+                        <app-error-dialog [title]="errorTitle" [content]="errorContent" [messageHead]="errorTitle">
+                        </app-error-dialog>
+                    </div>
+                </div>
+            </p-dialog>
+
+            <!-- dialog for filter -->
+
+            <p-dialog header="Filter" [contentStyle]="{'overflow':'auto'}" [(visible)]="filterDialog"
+                [style]="{width: '85vw',height:'500px'}" [modal]="true" [maximizable]="false" responsive="true"
+                [resizable]="false">
+                <hr>
+                <ng-template pTemplate="body">
+                    <div style="overflow-y: auto;">
+                        <div class="flex justify-content-between align-items-center">
+                            <div class="md:col-6">
+                                <h4>Node Filter</h4>
+                            </div>
+                            <div class="md:col-3">
+                                <div class="flex justify-content-end">
+                                    <button pTooltip="Add" tooltipPosition="bottom" (click)="addFilterRow()" pButton
+                                        pRipple type="button" icon="pi pi-plus" class="p-button-outlined p-button-rounded ml-2"></button>
+                                    <button pTooltip="Delete" tooltipPosition="bottom" (click)="deleteFilterRow()"
+                                        pButton pRipple type="button" icon="pi pi-minus"
+                                        class="p-button-outlined p-button-rounded p-button-danger ml-2"></button>
+                                </div>
+                            </div>
+                        </div>
+                        <br>
+                        <form [formGroup]="filterForm">
+                            <table id="customers">
+                                <thead>
+                                    <tr>
+                                        <th class="text-center"><p-checkbox (onChange)="onChangeSelectAllNodeFilter($event)"
+                                                       [binary]="true"
+                                                class="text-center"></p-checkbox></th>
+                                        <th class="text-center">Logical Operator</th>
+                                        <th class="text-center">Label</th>
+                                        <th class="text-center">Property Name</th>
+                                        <th class="text-center">Operator</th>
+                                        <th class="text-center">Value</th>
+                                    </tr>
+                                </thead>
+                                <ng-container formArrayName="rows">
+                                    <tr *ngFor="let item of filterForm.controls.rows.controls;let i=index"
+                                        [formGroupName]="i">
+                                        <td class="text-center" style="width: 5%">
+                                            <p-checkbox [(ngModel)]="item.get('select').value" formControlName="select"
+                                                class="text-center mt-1" [binary]="true"></p-checkbox>
+                                        </td>
+                                        <td>
+                                            <p-dropdown [options]="logicalOperators" name="logicalOperator"
+                                                formControlName="logicalOperator" optionLabel="caption" [filter]="true"
+                                                filterBy="caption" [showClear]="false" placeholder="-Select-"
+                                                [style]="{'width':'100%'}">
+                                            </p-dropdown>
+                                        </td>
+                                        <td>
+                                            <p-dropdown [options]="allNodeLabels" name="label" formControlName="source"
+                                                optionLabel="label" [filter]="true" filterBy="label" [showClear]="false"
+                                                placeholder="-Select-" [style]="{'width':'100%'}"
+                                                (onChange)="onChangeNodeLabel(item,i)"
+                                                [class.ng-dirty]="item.get('source').invalid && isFilterSubmited">
+                                            </p-dropdown>
+                                        </td>
+                                        <td>
+                                            <p-dropdown [options]="item.get('allAttributes').value" name="attribute"
+                                                formControlName="attribute" optionLabel="propertyName" [filter]="true"
+                                                filterBy="propertyName" [showClear]="false" placeholder="-Select-"
+                                                [style]="{'width':'100%'}"
+                                                [class.ng-dirty]="item.get('attribute').invalid && isFilterSubmited">
+                                            </p-dropdown>
+                                        </td>
+
+                                        <td>
+                                            <p-dropdown [options]="operators" name="operator" formControlName="operator"
+                                                optionLabel="caption" [filter]="true" filterBy="caption"
+                                                [showClear]="false" placeholder="-Select-" [style]="{'width':'100%'}"
+                                                [class.ng-dirty]="item.get('operator').invalid && isFilterSubmited">
+                                            </p-dropdown>
+                                        </td>
+                                        <td>
+                                            <input class="w-100" pInputText type="text" formControlName="value"
+                                                [class.ng-dirty]="item.get('value').invalid && isFilterSubmited">
+                                        </td>
+                                    </tr>
+                                </ng-container>
+                                <ng-container *ngIf="filterForm.get('rows').value.length == 0">
+                                    <tr class="h-10hv">
+                                        <td colspan="6" class="h-10hv text-center">No Record Found</td>
+                                    </tr>
+                                </ng-container>
+                            </table>
+                        </form>
+
+                        <div class="flex justify-content-between align-items-center">
+                            <div class="md:col-6">
+                                <h4>Edge Filter</h4>
+                            </div>
+                            <div class="md:col-6">
+                                <div class="flex justify-content-end">
+                                    <button pTooltip="Add" tooltipPosition="bottom"
+                                        (click)="addEdgeFilterRow(scenarioTabIndex)" pButton pRipple type="button"
+                                        icon="pi pi-plus" class="p-button-outlined p-button-rounded ml-2"></button>
+                                    <button pTooltip="Delete" tooltipPosition="bottom"
+                                        (click)="deleteEdgeFilterRow(scenarioTabIndex)" pButton pRipple type="button"
+                                        icon="pi pi-minus" class="p-button-outlined p-button-rounded p-button-danger ml-2"></button>
+                                </div>
+                            </div>
+                        </div>
+                        <br>
+                        <form [formGroup]="edgeFilterForm">
+                            <table id="customers">
+                                <tr>
+                                    <th class="text-center"><p-checkbox (onChange)="onChangeSelectAllEdgeFilter($event)"
+                                            [binary]="true" class="text-center"></p-checkbox></th>
+                                    <th class="text-center">Logical Operator</th>
+                                    <th class="text-center">Label</th>
+                                    <th class="text-center">Property Name</th>
+                                    <th class="text-center">Operator</th>
+                                    <th class="text-center">Value</th>
+                                </tr>
+                                <ng-container formArrayName="rows">
+                                    <tr *ngFor="let item of edgeFilterForm.controls.rows.controls;let i=index"
+                                        [formGroupName]="i">
+                                        <td class="text-center" style="width: 5%">
+                                            <p-checkbox [(ngModel)]="item.get('select').value" [binary]="true"
+                                                formControlName="select" class="text-center mt-1"></p-checkbox>
+                                        </td>
+                                        <td>
+                                            <p-dropdown [options]="logicalOperators" name="logicalOperator"
+                                                formControlName="logicalOperator" optionLabel="caption" [filter]="true"
+                                                filterBy="caption" [showClear]="false" placeholder="-Select-"
+                                                [style]="{'width':'100%'}">
+                                            </p-dropdown>
+                                        </td>
+                                        <td>
+                                            <p-dropdown [options]="allEdgeLabels" name="label" formControlName="source"
+                                                optionLabel="dlabel" [filter]="true" filterBy="label"
+                                                [showClear]="false" placeholder="-Select-" [style]="{'width':'100%'}"
+                                                (onChange)="onChangeEdgeLabel(item,i)"
+                                                [class.ng-dirty]="item.get('source').invalid && isFilterSubmited">
+                                            </p-dropdown>
+                                        </td>
+                                        <td>
+                                            <p-dropdown [options]="item.get('allAttributes').value" name="attribute"
+                                                formControlName="attribute" optionLabel="propertyName" [filter]="true"
+                                                filterBy="propertyName" [showClear]="false" placeholder="-Select-"
+                                                [style]="{'width':'100%'}"
+                                                [class.ng-dirty]="item.get('attribute').invalid && isFilterSubmited">
+                                            </p-dropdown>
+                                        </td>
+
+                                        <td>
+                                            <p-dropdown [options]="operators" name="operator" formControlName="operator"
+                                                optionLabel="caption" [filter]="true" filterBy="caption"
+                                                [showClear]="false" placeholder="-Select-" [style]="{'width':'100%'}"
+                                                [class.ng-dirty]="item.get('operator').invalid && isFilterSubmited">
+                                            </p-dropdown>
+                                        </td>
+                                        <td>
+                                            <input class="w-100" pInputText type="text" formControlName="value"
+                                                [class.ng-dirty]="item.get('value').invalid && isFilterSubmited">
+                                        </td>
+                                    </tr>
+                                </ng-container>
+                                <ng-container *ngIf="edgeFilterForm.get('rows').value.length == 0">
+                                    <tr>
+                                        <td colspan="6" class="h-10hv text-center">No Record Found</td>
+                                    </tr>
+                                </ng-container>
+                            </table>
+                        </form>
+                    </div>
+                </ng-template>
+
+                <ng-template pTemplate="footer">
+                    <p-button label="Submit" [outlined]="true" severity="primary" (click)="filterSubmit(scenarioTabIndex)"></p-button>
+                </ng-template>
+            </p-dialog>
+
+            <p-dialog header="Run Params" [(visible)]="isOpenParamsDialog"
+                [breakpoints]="{'960px': '75vw', '640px': '100vw'}" [style]="{width: '50vw'}" [modal]="true"
+                [maximizable]="false">
+                <ng-template pTemplate="body">
+                    <form [formGroup]="scenarioTab[scenarioTabIndex].ruleParamForm">
+                        <p-table [value]="scenarioTab[scenarioTabIndex].ruleParamForm.controls.rows.controls"
+                            responsiveLayout="scroll">
+                            <ng-template pTemplate="header">
+                                <tr>
+                                    <th class="text-center">ID</th>
+                                    <th class="text-center">Param Name</th>
+                                    <th class="text-center">Param Value</th>
+                                </tr>
+                            </ng-template>
+                            <ng-template pTemplate="body" let-row let-rowIndex="rowIndex">
+                                <ng-container formArrayName="rows">
+                                    <tr [formGroupName]="rowIndex">
+                                        <td>{{rowIndex+1}}</td>
+                                        <td>{{row.value.param.paramName}}</td>
+                                        <td> <input pInputText type="text" formControlName="paramValue"></td>
+
+                                    </tr>
+                                </ng-container>
+                            </ng-template>
+                            <ng-template pTemplate="emptymessage" let-row let-rowIndex="rowIndex">
+                                <tr>
+                                    <td colspan="3" class="text-center">No Record Found</td>
+                                </tr>
+                            </ng-template>
+                        </p-table>
+                    </form>
+                </ng-template>
+                <ng-template pTemplate="footer">
+                    <p-button label="Submit" [outlined]="true" severity="primary" (click)="paramSubmit(scenarioTabIndex)()"></p-button>
+                </ng-template>
+            </p-dialog>
+
+            <ng-template let-title="errorTitle" let-content="errorContent" #errorTemplate>
+                <div class="center-element h-40hv">
+                    <app-error-dialog [title]="title" [content]="content" [messageHead]="title">
+                    </app-error-dialog>
+                </div>
+            </ng-template>
+            <p-confirmDialog header="Confirmation" icon="pi pi-exclamation-triangle"></p-confirmDialog>
+        </div>
+    </div>
+</div>

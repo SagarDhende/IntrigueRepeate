@@ -1,0 +1,64 @@
+
+.note-buttons{
+    text-align: end;
+    margin-bottom: -80px; 
+    padding-top: 20px;
+  }
+
+.edit-field-data {
+    padding: 0 30px;
+    width: 36%;
+}
+.textArea-Height99 {
+    width: 99% !important;
+}
+::ng-deep .p-panel .p-panel-content{
+    height: calc(100vh - 20rem) ;
+  
+  }
+  ::ng-deep .p-tabview .p-tabview-panels{
+    height: calc(100vh - 28rem) ;
+}
+.height-100vh-28rem{
+  height: calc(100vh - 28rem) ;
+}
+.ng-scroll-h-80hv {
+  height: calc(100vh - 25rem) ;
+}
+
+.height-100vh-40rem{
+  height: calc(100vh - 40rem) ;
+}
+
+.alert-spinner-height{
+  height: 452px;
+}
+.audit-spinner-height{
+  height: 450px;
+}
+.notification-spinner-height{
+  height: 450px;
+}
+.document-spinner-height{
+  height: 400px;
+}
+.height-100vh-34rem{
+  height: calc(100vh - 34.3rem) ;
+}
+.custom-chips-documents {
+  border: 1px solid var(--surface-border);
+  height: 32px;
+  width: 73%;
+  border-radius: 6px;
+  padding-left: 0.75rem;
+  overflow: hidden;
+}
+.icon{
+  color: #ccc;
+  margin-top: 0.3rem;
+  cursor:pointer;
+  font-size: 11px;
+}
+.icon:hover{
+  color: #f75c03;
+}

@@ -1,0 +1,135 @@
+<div class="card card-height-85hv-80px border-radius-12 p-1">
+    <div class="flex align-items-center justify-content-between position-absolute end-0">
+        <h5></h5>
+        <div class="mr-2 mt-2">
+            <button pButton (click)="panelClose()"
+                class="p-element p-button-rounded p-button-text p-button-plain p-button p-component p-button-icon-only close-btn">
+                <span class="pi pi-times"></span>
+            </button>
+        </div>
+    </div>
+    <ul ngbNav #nav="ngbNav" [(activeId)]="activeTab" class="nav-tabs mt-3 surface-border-buttom">
+        <li [ngbNavItem]="1">
+            <button ngbNavLink class="pt-0">Search Criteria</button>
+            <ng-template ngbNavContent>
+                <br>
+                <ng-scrollbar *ngIf="this.nextConfig['layout'] === 'vertical'" (clickOutside)="navMob()"
+                    [excludeBeforeClick]="true" [exclude]="'#mobile-collapse'" id="nav-ps-next"
+                    ngClass="" [usePSClass]="'next'" [disabled]="null" class="ng-scroll-h-70hv">
+                    <div class="row mx-2">
+                        <div class="col-md-12">
+                            <form action="javascript:" [formGroup]="searchCriteriaForm">
+                                <div class="mb-3 p-2" *ngIf="options.filter.includes('Category')">
+                                    <label for="basic-url" class="form-label mb-2">Category</label>
+                                    <div class="input-group mt-2 w-100">
+                                        <div class="w-100">
+                                            <!-- <p-dropdown [options]="categoryList" optionLabel="name" [filter]="true"
+                                                filterBy="category" [showClear]="true" [tabindex]=0 placeholder="-Select-"
+                                                [style]="{'width':'262px'}" formControlName="category" >
+                                            </p-dropdown> -->
+                                            <p-multiSelect [options]="categoryList" optionLabel="name" [filter]="true" filterBy="category" [showClear]="true"
+                                                [tabindex]="0" placeholder="-Select-" [style]="{'width':'262px'}" formControlName="category">
+                                            </p-multiSelect>
+                                        </div>
+                                    </div>
+                                </div> 
+                                <div class="mb-3 p-2" *ngIf="options.filter.includes('Name')">
+                                    <label for="basic-url" class="form-label mb-2">Name</label>
+                                    <div class="input-group mt-2 w-100">
+                                        <div class="w-100 custom-dropdown">
+                                            <p-dropdown [options]="nameList" optionLabel="name" [filter]="true" filterBy="name" [showClear]="true" [tabindex]="0"
+                                                placeholder="-Select-" [panelStyle]="{'width':'262px'}" [style]="{'width':'262px'}" formControlName="name">
+                                                <ng-template let-option pTemplate="item">
+                                                    <div class="country-item">
+                                                        <div #nameDiv pTooltip="{{option.name.length > 20 ? option.name : null}}" tooltipPosition="top"
+                                                            (mouseover)="nameDiv.offsetWidth + 20 > nameDiv.clientWidth ? pTooltip = option.name : pTooltip = null">
+                                                            {{ option.name.length > 32 ? option.name.substring(0, 32) + '...' : option.name }}
+                                                        </div>
+                                                    </div>
+                                                </ng-template>
+                                            </p-dropdown>
+                                        </div>
+                                    </div>
+                                </div> 
+                                <div class="mb-3 p-2" *ngIf="options.filter.includes('User')">
+                                    <label for="Entity Type" class="form-label">User</label>
+                                    <div class="input-group mt-2">
+                                        <div class="w-100">
+                                            <p-dropdown [options]="userList" optionLabel="name" [filter]="true"
+                                                filterBy="userName" [showClear]="true" dataKey="uuid" placeholder="-Select-"
+                                                [style]="{'width':'100%'}" formControlName="userName" [(ngModel)]="searchCriteriaForm.get('userName').value">
+                                            </p-dropdown>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="mb-3 p-2" *ngIf="options.filter.includes('StartDate')">
+                                    <label for="Start Date" class="form-label">Start Date</label>
+                                    <div class="input-group mt-2">
+                                        <p-calendar formControlName="startDate" placeholder="yyyy-mm-dd" [showTime]="true" [showSeconds]="true"
+                                            #calendarInput [style]="{'width':'100%'}" showIcon="true" styleClass="custom-calender">
+                                        </p-calendar>
+                                    </div>
+                                </div>
+                                <div class="mb-3 p-2" *ngIf="options.filter.includes('EndDate')">
+                                    <label for="End Date">End Date</label>
+                                    <div class="input-group mt-2">
+                                        <p-calendar formControlName="endDate" placeholder="yyyy-mm-dd" [showTime]="false" styleClass="custom-calender" [showSeconds]="false"
+                                            [style]="{'width':'100%'}" showIcon="true"></p-calendar>
+                                    </div>
+                                </div>
+                                <div class="mb-3 p-2" *ngIf="options.filter.includes('Active')">
+                                    <label for="Entity Type">Active</label>
+                                    <div class="input-group mt-2">
+                                        <p-dropdown [options]="activeOptions" optionLabel="name" [filter]="true"
+                                            filterBy="name" [showClear]="true" [tabindex]=0 placeholder="-Select-"
+                                            [style]="{'width':'100%'}" formControlName="active">
+                                        </p-dropdown>
+                                    </div>
+                                </div>
+                                <div class="mb-3 p-2" *ngIf="options.filter.includes('MetaStatus')">
+                                    <label for="Entity Type">Status</label>
+                                    <div #body class="input-group mt-2">
+                                        <p-dropdown [options]="validStatusOptions" optionLabel="name" [filter]="true"
+                                            filterBy="name" [showClear]="true" [tabindex]=0 placeholder="-Select-"
+                                            [style]="{'width':'100%'}" formControlName="statusColumn" appendTo="body">
+                                        </p-dropdown>
+                                    </div>
+                                </div>
+                                <div class="mb-3 p-2" *ngIf="options.filter.includes('Tags')">
+                                    <label for="Tags">
+                                        Tags
+                                    </label>
+                                    <div class="input-group mt-2">
+                                        <ng-scrollbar class="tag-height">
+                                            <div>
+                                                <p-chips formControlName="tags" [style]="{'width':'100%','height':'auto'}"></p-chips>
+                                            </div>
+                                        </ng-scrollbar>
+                                    </div>
+                                </div>
+                                <div class="mb-3 p-2" *ngIf="options.filter.includes('Status')">
+                                    <label for="status">Status</label>
+                                    <div class="input-group mt-2 multiselect">
+                                        <p-multiSelect class="multiselect-item w-100" [options]="statusOptions"
+                                            formControlName="statusList" optionLabel="name" [style]="{'width':'100%'}"
+                                            selectedItemsLabel="{0} columns selected" placeholder="-Select-"
+                                            appendTo="body">
+                                        </p-multiSelect>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </ng-scrollbar>
+                <div class="row mx-2 bg mt-5 mb-3">
+                    <div class="col-md-12 mt-8 ">
+                        <hr>
+                        <p-button label="Clear" [outlined]="true"  severity="secondary" class="m-2" (click)="clearAll()"></p-button>
+                        <p-button label="Search" [outlined]="true"  severity="primary" (click)="search()"></p-button>
+                    </div>
+                </div>
+            </ng-template>
+        </li>
+    </ul>
+    <div [ngbNavOutlet]="nav" class="mt-2"></div>
+</div>

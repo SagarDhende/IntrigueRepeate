@@ -1,0 +1,17 @@
+// .p-dialog-custom .p-dialog-content {
+//     padding: 0;
+//     width:30rem;
+//     height: 31rem;
+//   }
+  .p-dialog-document .p-dialog-content{
+    overflow: hidden !important;
+    padding: 1rem 1.6rem 2rem 4.8rem !important;
+  }
+
+  .gen-ai-delete-dialog .p-dialog-content{
+    display: flex;
+  }
+
+  .show-sql-dialog .p-dialog-content{
+    display: flex;
+  }

@@ -1,0 +1,25 @@
+
+.leaflet-popup-content {
+    width: 320px !important;
+    max-width: 380px;
+    height: 380px;
+    overflow-y: auto !important;
+    overflow: hidden !important;
+  }
+  
+  .leaflet-popup-content::-webkit-scrollbar {
+    width: 8px;
+  }
+  
+  .leaflet-popup-content::-webkit-scrollbar-track {
+    background: #f1f1f1; /* Color of the scrollbar track */
+  }
+  
+  .leaflet-popup-content::-webkit-scrollbar-thumb {
+    background: #888; /* Color of the scrollbar thumb */
+    border-radius: 5px; /* Border radius of the thumb */
+  }
+  
+  .grayscale-layer img {
+    filter: grayscale(100%);
+  }

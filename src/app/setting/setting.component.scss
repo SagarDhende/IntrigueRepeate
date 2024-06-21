@@ -1,0 +1,19 @@
+.card {
+    border-radius: 12px;
+    padding: 1rem;
+}
+
+.required-before:before {
+    content: " *";
+    color: rgb(180, 0, 0);
+  }
+  .page-wrapper-container {
+    margin: 0px;
+    padding: 15px;
+    min-height: calc(85vh - 130px);
+  }
+  .field label.ex1{
+    direction: rtl;
+    unicode-bidi: normal;
+  }
+  

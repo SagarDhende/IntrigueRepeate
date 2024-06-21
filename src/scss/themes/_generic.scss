@@ -1,0 +1,52 @@
+ul{
+    list-style: none;
+}
+ol, ul {
+    padding-left: 0rem;
+}
+
+.icon-log-out:before {
+    content: "\e888";
+  }
+
+.p-overlaypanel .p-overlaypanel-content{
+    padding: 0rem !important;
+}
+
+.topbar-menu{
+    border: none !important;
+    padding: 0.35rem !important;
+}
+
+.profile-notification {
+    line-height: 1.4;
+
+    .pro-head {
+        
+        position: relative;
+        background: var(--primary-color);
+
+        img {
+            width: 40px;
+            margin-right: 10px;
+        }
+
+        .dud-logout {
+            color: #fff;
+            position: absolute;
+            right: 0;
+            top: 0;
+            height: 100%;
+            width: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+    }
+
+}
+.auto-refresh-input{
+    border:1px solid #d1d5db !important;
+    width: 3.5rem;
+    height: 2rem;
+  }

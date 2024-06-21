@@ -1,0 +1,14 @@
+::ng-deep {
+  .p-calendar .p-datepicker {
+    transform: scale(.7) !important;
+  }
+}
+
+.scrollbar-height-85 {
+  height: calc(100vh - 20rem);
+
+}
+
+.spinner-height {
+  height: 491px;
+}

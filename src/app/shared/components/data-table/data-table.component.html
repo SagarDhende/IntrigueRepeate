@@ -1,0 +1,68 @@
+<div class="row p-0">
+    <div class=" col-md-12 p-0">
+        <ng-container *ngIf="isError" [ngTemplateOutlet]="errorTemplate"
+            [ngTemplateOutletContext]="{errorTitle:errorTitle,errorContent:errorContent}">
+
+        </ng-container>
+        <div *ngIf="isInprogess && !isError" class="h-30hv d-flex align-items-center justify-content-center position-relative">
+            <ngx-spinner name="result" class="embeded-spinner" bdColor="rgba(0, 0, 0, 0)" size="default" color="#000"
+                type="line-spin-fade" [fullScreen]="false">
+                <p class="mt-0 mb-0 text-black">Loading </p>
+            </ngx-spinner>
+        </div>
+
+        <ng-container *ngIf=" result !=null && result.length == 0 && !isInprogess && !isError">
+            <div class="center-element h-30hv">
+                No Records Found
+            </div>
+        </ng-container>
+
+        <ng-container *ngIf="result.length >0 && isReadyTable">
+            <p-table styleClass="p-datatable-gridlines" [resizableColumns]="true"
+                [reorderableColumns]="false" [columns]="resultCols" [value]="result" [scrollable]="true"
+                [scrollHeight]="pTableHeight" [paginator]="true" [rows]="10" [showCurrentPageReport]="true"
+                currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries">
+                <ng-template pTemplate="header" let-columns>
+                    <tr>
+                        <th class="no-left-right" style="width:200px"
+                            [pSortableColumn]="col.header" *ngFor="let col of columns" pFrozenColumn
+                            [frozen]="col.frozen">
+                            {{col.header}}
+                            <p-sortIcon [field]="col.header"></p-sortIcon>
+                        </th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-rowData let-columns="columns">
+                    <tr class="hover-pointer" [pReorderableRow]="index" (click)="openDetailsTab(rowData)">
+                        <td *ngFor="let col of columns" class="no-left-right" style="width:200px" pFrozenColumn
+                            [frozen]="col.frozen">
+                            <span *ngIf="col.field !='severity';else severityCol">
+                                {{rowData[col.field]}}
+                            </span>
+                            <ng-template #severityCol>
+                                <span class="severity px-4 py-1 text-white"
+                                [tdColor]="'severity'"
+                                [tdValues]="rowData[col.field]"
+                                    *ngIf="col.field =='severity';else col_not_severity">
+                                    {{getSeveritryCaption(rowData[col.field])}}
+                                </span>
+                            </ng-template>
+
+                        </td>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="paginatorleft">
+                </ng-template>
+            </p-table>
+        </ng-container>
+    </div>
+
+
+    <ng-template let-title="errorTitle" let-content="errorContent" #errorTemplate>
+        <div class="center-element h-30hv">
+            <app-error-dialog [title]="title" [content]="content" [messageHead]="title"></app-error-dialog>
+        </div>
+
+    </ng-template>
+
+</div>

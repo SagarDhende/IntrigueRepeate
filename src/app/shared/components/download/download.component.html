@@ -1,0 +1,59 @@
+<p-dialog header="Download" [(visible)]="downloadModal" [modal]="true" [style]="{'min-width': '38vw', 'min-height': '21vw'}"
+    [draggable]="false" [resizable]="false" (onHide)="closeDialog()">
+    <form [formGroup]="downloadForm">
+        <div class="flex align-items-center">
+            <div class="md:col-3 flex justify-content-end position-relative"> <label class="">Rows</label></div>
+            <div class="md:col-9 download-rows position-relative">
+                <div>
+                    <p-inputNumber [ngClass]="{'ng-dirty ng-invalid': downloadForm.controls['rows'].invalid}"
+                        [style]="{'width':'100%'}" inputId="integeronly" [showButtons]="true" formControlName="rows" />
+                </div>
+                <small class="position-absolute text-danger mt-1" *ngIf="downloadForm.controls['rows'].errors?.['max']">Max rows
+                    exceeded the limit (10000)</small>
+                <small class="position-absolute text-danger mt-1" *ngIf="downloadForm.controls['rows'].errors?.['min']">Please enter
+                    the minimum number of 1</small>
+                <small class="position-absolute text-danger mt-1" *ngIf="downloadForm.controls['rows'].errors?.['required']">This
+                    field is required</small>
+            </div>
+        </div>
+        <div class="flex align-items-center">
+            <div class="md:col-3 flex justify-content-end"> <label class="">Format</label></div>
+            <div #body class="md:col-7">
+                <p-dropdown [options]="formats" optionLabel="name" [filter]="true" filterBy="name"
+                (onChange)="onChangeFormat()" [showClear]="false" placeholder="-Select-"
+                [style]="{'width':'100%'}" formControlName="format" appendTo="body">
+            </p-dropdown>
+            </div>
+        </div>
+        <div class="flex align-items-center" >
+            <div class="md:col-3 flex justify-content-end"> <label class="">Layout</label></div>
+            <div #body class="md:col-7">
+                <p-dropdown [options]="layout" optionLabel="name" [filter]="true" filterBy="name"
+                 [showClear]="false" placeholder="-Select-" [style]="{'width':'100%'}" 
+                 formControlName="layout" appendTo="body">
+            </p-dropdown>
+            </div>
+        </div>
+    </form>
+    <ng-template pTemplate="footer">
+        <div class="flex justify-content-end align-items-center mt-3">
+            @if (isDownloadError) {
+            <ng-container [ngTemplateOutlet]="errorTemplate"
+                [ngTemplateOutletContext]="{errorTitle:errorTitle,errorContent:errorContent}">
+            </ng-container>
+            }
+            <div class="ml-7">
+                <p-button label="Close" [outlined]="true" severity="secondary" class=""
+                    (click)="downloadModal = false; closeDialog()"></p-button>
+                <p-button label="Submit" [outlined]="true" severity="primary" class="" [disabled]="isSubmitDisabled()" (click)="downloadResult()"
+                    [loading]="actionButtonLoading" iconPos="right"></p-button>
+            </div>
+        </div>
+    </ng-template>
+</p-dialog>
+
+<ng-template let-title="errorTitle" let-content="errorContent" #errorTemplate>
+    <div class="height-inherit flex justify-content-center align-items-center">
+        <app-error-dialog [title]="title" [content]="content" [messageHead]="title"></app-error-dialog>
+    </div>
+</ng-template>

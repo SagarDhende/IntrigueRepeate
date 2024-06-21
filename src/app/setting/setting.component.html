@@ -1,0 +1,128 @@
+<div class="card card-height-85hv-80px">
+    <!-- <app-breadcrumb [arrayList]="breadcrumb"></app-breadcrumb> -->
+
+    <div class="d-flex justify-content-between">
+        <span class="fs-4 ml-2 mt-4">Profile</span>
+        <div class="mt-2">
+            <button pbutton="" type="button" icon="pi pi-ellipsis-v"
+                class="p-element p-button-rounded p-button-text p-button-plain p-button p-component p-button-icon-only">
+                <span class="p-button-icon fa fa-refresh" aria-hidden="true" (click)="refreshClick()"></span></button>
+            <button pButton pRipple type="button" icon="pi pi-times"
+                class="p-button-rounded p-button-text p-button-plain" (click)="navigateToDashboard()">
+            </button>
+
+        </div>
+
+    </div>
+    <hr>
+
+    <div class="p-fluid">
+        <form [formGroup]="profileForm">
+            <div class="flex flex-wrap align-items-center justify-content-center">
+                <div class="col-8 mx-auto">
+                    <ngx-spinner name="profileSpinner" bdColor="rgba(0, 0, 0, 0)" size="default" color="black"
+                    type="line-spin-fade" [fullScreen]="false">
+                    <p class="mt-0 mb-0 text-black">Loading </p>
+                    </ngx-spinner>
+                    <div class="max-w-full">
+                        <div class="max-w-full mt-4">
+                            <div class="field grid">
+                                <label class="col-12 mb-2 md:col-2 md:mb-0 ex1 required-before">Name</label>
+                                <div class="col-12 md:col-10">
+                                    @if(nameDisabled){
+                                    <input class="form-control" id="name" type="text" pInputText formControlName="name"
+                                        [disabled]="nameDisabled" disabled required>
+                                    }
+                                    @if(!nameDisabled){
+                                    <input class="form-control" id="name" type="text" pInputText formControlName="name"
+                                        (change)="inputChange()"
+                                        [ngClass]="{'ng-invalid': profileForm.controls['name'].valid}" required>
+                                    }
+                                </div>
+                            </div>
+                            <div class="field grid">
+                                <label class="col-12 mb-2 md:col-2 md:mb-0 ex1  required-before">Display Name</label>
+                                <div class="col-12 md:col-10">
+                                    <input class="form-control" id="dname" type="text" pInputText
+                                        formControlName="dname" (change)="inputChange()"
+                                        [ngClass]="{'ng-invalid': profileForm.controls['dname'].valid}" required>
+                                </div>
+                            </div>
+                            <div class="field grid">
+                                <label class="col-12 mb-2 md:col-2 md:mb-0 ex1  required-before">Password</label>
+                                <div class="col-12 md:col-10">
+                                    <p-password id="password" type="password" formControlName="password"
+                                        (change)="inputChange()" [feedback]="false" [toggleMask]="true"
+                                        [ngClass]="{'ng-invalid': profileForm.controls['password'].valid}"
+                                        required></p-password>
+                                </div>
+                            </div>
+                            <div class="field grid">
+                                <label class="col-12 mb-2 md:col-2 md:mb-0 ex1 required-before">
+                                    Confirm Password
+                                </label>
+                                <div class="col-12 md:col-10">
+                                    <input id="repassword" type="password" pInputText formControlName="repassword"
+                                        (change)="inputChange()" placeholder="Confirm Password" class="form-control">
+                                    <div *ngIf="profileForm.get('repassword').invalid && profileForm.get('repassword').dirty"
+                                        for="float-input">
+                                        <p>Password mismatch </p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="field grid">
+                                <label class="col-12 mb-2 md:col-2 md:mb-0 ex1  required-before">First Name </label>
+                                <div class="col-12 md:col-10">
+                                    <input class="form-control" id="fname" type="text" pInputText
+                                        formControlName="fname" (change)="inputChange()"
+                                        [ngClass]="{'ng-invalid': profileForm.controls['fname'].valid}" required>
+                                </div>
+                            </div>
+                            <div class="field grid">
+                                <label class="col-12 mb-2 md:col-2 ex1 md:mb-0">Middle Name</label>
+                                <div class="col-12 md:col-10">
+                                    <input class="form-control" id="mname" type="text" pInputText
+                                        formControlName="mname" (change)="inputChange()"
+                                        [ngClass]="{'ng-invalid': profileForm.controls['mname'].valid}" required>
+                                </div>
+                            </div>
+                            <div class="field grid">
+                                <label class="col-12 mb-2 md:col-2 md:mb-0 ex1  required-before">Last Name </label>
+                                <div class="col-12 md:col-10">
+                                    <input class="form-control" id="lname" type="text" pInputText
+                                        formControlName="lname" (change)="inputChange()"
+                                        [ngClass]="{'ng-invalid': profileForm.controls['lname'].valid}" required>
+                                </div>
+                            </div>
+                            <div class="field grid">
+                                <label class="col-12 mb-2 md:col-2 md:mb-0 ex1  required-before">Email</label>
+                                <div class="col-12 md:col-10">
+                                    @if(emailDisabled){
+                                    <input class="form-control" id="email" type="text" pInputText
+                                        formControlName="email" [disabled]="emailDisabled" disabled required>
+                                    }
+                                    @if(!emailDisabled){
+                                    <input class="form-control" id="email" type="text" pInputText
+                                        formControlName="email" (change)="inputChange()"
+                                        [ngClass]="{'ng-invalid': profileForm.controls['email'].valid}" required>
+                                    }
+                                </div>
+                            </div>
+
+                            <div class="flex mt-4">
+                                <div class="w-12"></div>
+                                <div class="w-0">
+                                    <button
+                                        class=" w-min text-center p-2.2 p-button-rounded border-round-sm bg-primary font-bold"
+                                        pButton pRipple type="button" (click)="profileSubmit()"
+                                        [disabled]="submitDisabled" label="Submit"></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<p-toast></p-toast>

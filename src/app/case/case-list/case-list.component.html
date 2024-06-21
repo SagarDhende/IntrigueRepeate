@@ -1,0 +1,598 @@
+<ng-sidebar-accordion #rightAccordion [sidebarResizable]="true" class="sidebar-accordion-height sidebar-accordion-main">
+    <ng-sidebar position="right" [opened]="false">
+        <ng-sidebar-content class="sidebar-content-design">
+            <div class="card card-height-85hv-80px border-radius-12 p-1">
+                <div class="flex align-items-center justify-content-between position-absolute end-0">
+                    <h5></h5>
+                    <div class="mr-2 mt-2">
+                        <button pButton (click)="panelClose()"
+                            class="close-btn p-element p-button-rounded p-button-text p-button-plain p-button p-component p-button-icon-only">
+                            <span class="pi pi-times"></span>
+                        </button>
+                    </div>
+                </div>
+                <ul ngbNav #nav="ngbNav" [(activeId)]="active" class="nav-tabs mt-3 surface-border-buttom">
+                    <li [ngbNavItem]="1" class="">
+                        <button ngbNavLink class="pt-0">Search Criteria</button>
+                        <ng-template ngbNavContent>
+                            <br>
+
+                            <ng-scrollbar (clickOutside)="navMob()" [excludeBeforeClick]="true"
+                                [exclude]="'#mobile-collapse'" class="scrollbar-height-85">
+                                <div class="grid mx-3">
+                                    <div class="col-12 lg:col-12 xl:col-12 md:col-12">
+                                        <form [formGroup]="searchCriteriaFormGroup">
+                                            <div class="grid mb-2">
+                                                <div class="col-12 lg:col-12 xl:col-12 md:col-12">
+                                                    <label class="form-label" for="Entity Type">Owner</label>
+                                                    <div class="input-group mt-2 custom-dropdown">
+                                                            <p-dropdown [options]="allUser" optionLabel="name"
+                                                                [filter]="true" filterBy="name" [showClear]="true"
+                                                                dataKey="uuid" placeholder="-Select-"
+                                                                [style]="{'width':'100%'}" [name]="entityType"
+                                                                [tabindex]=0 [panelStyle]="{'width':'250px'}"
+                                                                [emptyFilterMessage]="entityTypeFilterMessage"
+                                                                formControlName="owner">
+                                                                <ng-template pTemplate="selectedOwner">
+                                                                    @if(searchCriteriaFormGroup.value.owner) {
+                                                                    <div class="country-item owner-item-value">
+                                                                        <div>
+                                                                            {{searchCriteriaFormGroup.value.owner.name}}
+                                                                        </div>
+                                                                    </div>
+                                                                    }
+                                                                </ng-template>
+                                                                <ng-template let-owner pTemplate="item">
+                                                                    <div class="country-item">
+                                                                        <div>{{owner.name}}</div>
+                                                                    </div>
+                                                                </ng-template>
+                                                            </p-dropdown>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="grid mb-2">
+                                                <div class="col-12 lg:col-12 xl:col-12 md:col-12">
+                                                    <label class="form-label mb-2" for="Owner">Group</label>
+                                                    <div class="input-group mt-2">
+                                                            <p-dropdown [options]="allUserGroup" optionLabel="name"
+                                                                [filter]="true" filterBy="name" [showClear]="true"
+                                                                placeholder="-Select-" dataKey="name" [panelStyle]="{'width':'250px'}"
+                                                                [style]="{'width':'100%'}" [name]="userGroup"
+                                                                [tabindex]=0 formControlName="userGroup">
+                                                                <ng-template pTemplate="selectedUserGroup">
+                                                                    @if(searchCriteriaFormGroup.value.usergroup) {
+                                                                    <div class="country-item usergroup-item-value">
+                                                                        <div>
+                                                                            {{searchCriteriaFormGroup.value.usergroup.name}}
+                                                                        </div>
+                                                                    </div>
+                                                                    }
+                                                                </ng-template>
+                                                                <ng-template let-usergroup pTemplate="item">
+                                                                    <div class="country-item">
+                                                                        <div>{{usergroup.name}}</div>
+                                                                    </div>
+                                                                </ng-template>
+                                                            </p-dropdown>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="grid mb-2">
+                                                <div class="col-12 lg:col-12 xl:col-12 md:col-12">
+                                                    <label class="form-label mb-2" for="Entity Type">Entity Type</label>
+                                                    <div class="input-group mt-2">
+                                                            <p-dropdown [options]="allEntities" optionLabel="name"
+                                                                [filter]="true" filterBy="name" [showClear]="true"
+                                                                placeholder="-Select-" [style]="{'width':'100%'}" [panelStyle]="{'width':'250px'}"
+                                                                [name]="entityType" [tabindex]=0
+                                                                [emptyFilterMessage]="entityTypeFilterMessage"
+                                                                (onChange)="entityTypeChange()"
+                                                                formControlName="entityType">
+                                                                <ng-template pTemplate="selectedEntity">
+                                                                    @if(searchCriteriaFormGroup.value.entityType) {
+                                                                    <div class="country-item entity-item-value">
+                                                                        <div>
+                                                                            {{searchCriteriaFormGroup.value.entityType.name}}
+                                                                        </div>
+                                                                    </div>
+                                                                    }
+                                                                </ng-template>
+                                                                <ng-template let-entity pTemplate="item">
+                                                                    <div class="country-item">
+                                                                        <div>{{entity.name}}</div>
+                                                                    </div>
+                                                                </ng-template>
+                                                            </p-dropdown>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="grid mb-2">
+                                                <div class="col-12 lg:col-12 xl:col-12 md:col-12">
+                                                    <label class="form-label mb-2" for="Entity Id">Entity Id</label>
+                                                    <div class="input-group mt-2">
+                                                            <p-dropdown [options]="allEntityIds" optionLabel="value"
+                                                                [filter]="true" filterBy="value" [showClear]="true"
+                                                                placeholder="-Select-" [style]="{'width':'100%'}"
+                                                                (onFilter)="entityIdsChange($event)" [tabindex]=1
+                                                                [emptyFilterMessage]="entityIdFilterMessage"
+                                                                formControlName="entityId">
+                                                                <ng-template pTemplate="selectedEntityId">
+                                                                    @if(searchCriteriaFormGroup.value.entityId) {
+                                                                    <div class="entityId-item entity-item-value">
+                                                                        <div>
+                                                                            {{searchCriteriaFormGroup.value.entityId.value}}
+                                                                        </div>
+                                                                    </div>
+                                                                    }
+                                                                </ng-template>
+                                                                <ng-template let-entityIdSearch pTemplate="item">
+                                                                    <div class="entityId-item">
+                                                                        <div>{{entityIdSearch.value}}</div>
+                                                                    </div>
+                                                                </ng-template>
+                                                            </p-dropdown>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="grid mb-2">
+                                                <div class="col-12 lg:col-12 xl:col-12 md:col-12">
+                                                    <label class="form-label mb-2" for="Business Date">Business
+                                                        Date</label>
+                                                    <div class="input-group mt-2">
+                                                            <!-- <p-calendar inputid="icon" class="p-element p-inputwrapper form-control date-input" placeholder="yyyy-mm-dd" 
+                                                            dateFormat="yy-mm-dd" dataType="string"
+                                                            showIcon="true" styleClass="custom-calender" [style]="{'width':'100%'}" formControlName="businessDate">
+                                                            <span class=" p-calendar p-calendar-w-btn">
+                                                                <button type="button" aria-haspopup="dialog" pbutton="" pripple="" tabindex="0"
+                                                                    class="p-element p-ripple p-datepicker-trigger p-button-icon-only  p-button p-component"
+                                                                    aria-label="Choose Date" aria-controls="pn_id_20_panel" aria-expanded="false">
+                                                        
+                                                                    <span class="p-ink" aria-hidden="true" role="presentation"></span>
+                                                                </button>
+                                                            </span>
+                                                            </p-calendar> -->
+
+                                                        <p-calendar inputid="icon" placeholder="yyyy-mm-dd" dataType="string"
+                                                        showIcon="true"  [style]="{'width':'100%'}" dateFormat="yy-mm-dd" 
+                                                        (dateSelect)="dateChange()" formControlName="businessDate" styleClass="custom-calender">
+                                                        </p-calendar>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="grid mb-2">
+                                                <div class="col-12 lg:col-12 xl:col-12 md:col-12">
+                                                    <label class="form-label mb-2" for="Case Type">Case Type</label>
+                                                    <div class="input-group mt-2">
+                                                            <p-dropdown [options]="allCaseType" optionLabel="name"
+                                                                [filter]="true" filterBy="name" [showClear]="true"
+                                                                placeholder="-Select-" [style]="{'width':'100%'}"
+                                                                [name]="caseType" [tabindex]=2
+                                                                formControlName="caseType">
+                                                                <ng-template pTemplate="selectedCaseType">
+                                                                    @if(searchCriteriaFormGroup.value.caseType) {
+                                                                    <div class="country-item caseType-item-value">
+                                                                        <div>
+                                                                            {{searchCriteriaFormGroup.value.caseType.name}}
+                                                                        </div>
+                                                                    </div>
+                                                                    }
+                                                                </ng-template>
+                                                                <ng-template let-caseType pTemplate="item">
+                                                                    <div class="country-item">
+                                                                        <div>{{caseType.name}}</div>
+                                                                    </div>
+                                                                </ng-template>
+                                                            </p-dropdown>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="grid mb-2">
+                                                <div class="col-12 lg:col-12 xl:col-12 md:col-12">
+                                                    <label class="form-label mb-2" for="Case Id">Case Id</label>
+                                                    <div class="input-group mt-2">
+                                                            <p-dropdown [options]="allCaseId" optionLabel="case_id"
+                                                                [filter]="true" filterBy="case_id" [showClear]="true"
+                                                                placeholder="-Select-" [style]="{'width':'100%'}" [panelStyle]="{'width':'262px'}"
+                                                                [name]="case_id" [tabindex]=4 formControlName="caseId"
+                                                                (onFilter)="caseIdChange($event)"
+                                                                [emptyFilterMessage]="caseIdFilterMessage">
+                                                                <ng-template pTemplate="selectedCaseId">
+                                                                    @if(searchCriteriaFormGroup.value.caseId) {
+                                                                    <div class="country-item caseId-item-value">
+                                                                        <div>
+                                                                            {{searchCriteriaFormGroup.value.caseId.name}}
+                                                                        </div>
+                                                                    </div>
+                                                                    }
+                                                                </ng-template>
+                                                                <ng-template let-caseId pTemplate="item">
+                                                                    <div class="country-item">
+                                                                        <!-- <div pTooltip="{{caseId.case_id}}" tooltipPosition="top" >{{caseId.case_id}}</div> -->
+                                                                        <div #divElement
+                                                                        pTooltip="{{caseId.case_id.length > 20 ? caseId.case_id : null}}"
+                                                                        tooltipPosition="top"
+                                                                        (mouseover)="divElement.offsetWidth + 20 > divElement.clientWidth ? pTooltip = caseId.case_id : pTooltip = null">
+                                                                     {{ caseId.case_id.length > 32 ? caseId.case_id.substring(0, 32) + '...' : caseId.case_id }}
+                                                                   </div>
+                                                                    </div>
+                                                                </ng-template>
+                                                            </p-dropdown>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="grid mb-2">
+                                                <div class="col-12 lg:col-12 xl:col-12 md:col-12">
+                                                    <label class="form-label mb-2" for="Case Name">Case Name</label>
+                                                    <div class="input-group mt-2 custom-dropdown">
+                                                            <p-dropdown [options]="allCaseName" optionLabel="name"
+                                                                [filter]="true" filterBy="name" [showClear]="true"
+                                                                placeholder="-Select-" [style]="{'width':'100%'}" [panelStyle]="{'width':'5rem'}"
+                                                                [name]="caseName" [tabindex]=3
+                                                                formControlName="caseName"
+                                                                (onChange)="caseNameChange($event)">
+                                                                <ng-template pTemplate="selectedCaseName">
+                                                                    @if (searchCriteriaFormGroup.value.caseName) {
+                                                                    <div class="country-item caseName-item-value">
+                                                                        <div>
+                                                                            {{searchCriteriaFormGroup.value.caseName.name}}
+                                                                        </div>
+                                                                    </div>
+                                                                    }
+                                                                </ng-template>
+                                                                <ng-template let-caseName pTemplate="item">
+                                                                    <div class="country-item">
+                                                                        <div #caseNameDiv pTooltip="{{caseName.name.length > 20 ? caseName.name : null}}" tooltipPosition="top"
+                                                                            (mouseover)="caseNameDiv.offsetWidth + 20 > caseNameDiv.clientWidth ? pTooltip = caseName.name : pTooltip = null">
+                                                                            {{ caseName.name.length > 32 ? caseName.name.substring(0, 32) + '...' : caseName.name }}
+                                                                        </div>
+                                                                    </div>
+                                                                </ng-template>
+                                                            </p-dropdown>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="grid mb-2">
+                                                <div class="col-12 lg:col-12 xl:col-12 md:col-12">
+                                                    <label class="form-label mb-2" for="Start Date">Start Date</label>
+                                                    <div class="input-group mt-2">
+                                                            <!-- <p-calendar inputid="icon" class="p-element p-inputwrapper form-control date-input" 
+                                                            dateFormat="yy-mm-dd" dataType="string" placeholder="yyyy-mm-dd" 
+                                                            showIcon="true" styleClass="custom-calender" [style]="{'width':'100%'}" formControlName="startDate" (dateSelect)="dateChange()">
+                                                            <span class=" p-calendar p-calendar-w-btn">
+                                                                <button type="button" aria-haspopup="dialog" pbutton="" pripple="" tabindex="0"
+                                                                    class="p-element p-ripple p-datepicker-trigger p-button-icon-only  p-button p-component"
+                                                                    aria-label="Choose Date" aria-controls="pn_id_20_panel" aria-expanded="false">
+                                                        
+                                                                    <span class="p-ink" aria-hidden="true" role="presentation"></span>
+                                                                </button>
+                                                            </span>
+                                                            </p-calendar> -->
+
+                                                        <p-calendar placeholder="yyyy-mm-dd" dataType="string"
+                                                        showIcon="true"  [style]="{'width':'100%'}" dateFormat="yy-mm-dd" 
+                                                        (dateSelect)="dateChange()" formControlName="startDate" styleClass="custom-calender">
+                                                        </p-calendar>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="grid mb-2">
+                                                <div class="col-12 lg:col-12 xl:col-12 md:col-12">
+                                                    @if(!dateCheck) {
+                                                    <label class="form-label mb-2" for="End Date">End Date</label>
+                                                    }
+                                                    @if(dateCheck) {
+                                                    <label for="End Date" *ngIf="dateCheck">End Date should be After
+                                                        Start date</label>
+                                                    }
+                                                    <div class="input-group mt-2">
+                                                        <!-- <p-calendar inputid="icon" class="p-element p-inputwrapper form-control date-input" placeholder="yyyy-mm-dd"
+                                                            showIcon="true" styleClass="custom-calender"  [style]="{'width':'100%'}" formControlName="endDate" (dateSelect)="dateChange()"
+                                                            dateFormat="yy-mm-dd" dataType="string">
+                                                            <span class=" p-calendar p-calendar-w-btn">
+                                                                <button type="button" aria-haspopup="dialog" pbutton="" pripple="" tabindex="0"
+                                                                    class="p-element p-ripple p-datepicker-trigger p-button-icon-only  p-button p-component"
+                                                                    aria-label="Choose Date" aria-controls="pn_id_20_panel" aria-expanded="false">
+                                                        
+                                                                    <span class="p-ink" aria-hidden="true" role="presentation"></span>
+                                                                </button>
+                                                            </span>
+                                                        </p-calendar> -->
+                                                            <p-calendar placeholder="yyyy-mm-dd" dateFormat="yy-mm-dd" dataType="string"
+                                                                showIcon="true" [style]="{'width':'100%'}"
+                                                                (dateSelect)="dateChange()" formControlName="endDate"
+                                                                [ngClass]="!dateCheck ? '' : 'end-input'" styleClass="custom-calender">
+                                                            </p-calendar>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="grid mb-2">
+                                                <div class="col-12 lg:col-12 xl:col-12 md:col-12">
+                                                    <label class="form-label mb-2" for="Stage Type">Stage Type</label>
+                                                    <div class="input-group mt-2">
+                                                            <p-dropdown [options]="allStageType" optionLabel="name"
+                                                                [filter]="true" filterBy="name" [showClear]="true"
+                                                                placeholder="-Select-" [style]="{'width':'100%'}"
+                                                                [name]="caseType" [tabindex]=2
+                                                                formControlName="stageType">
+                                                                <ng-template pTemplate="selectedStageType">
+                                                                    @if (searchCriteriaFormGroup.value.stageType) {
+                                                                    <div class="country-item stageType-item-value">
+                                                                        <div>
+                                                                            {{searchCriteriaFormGroup.value.stageType.name}}
+                                                                        </div>
+                                                                    </div>
+                                                                    }
+                                                                </ng-template>
+                                                                <ng-template let-stageType pTemplate="item">
+                                                                    <div class="country-item">
+                                                                        <div>{{stageType.name}}</div>
+                                                                    </div>
+                                                                </ng-template>
+                                                            </p-dropdown>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="grid mb-2">
+                                                <div class="col-12 lg:col-12 xl:col-12 md:col-12">
+                                                    <label class="form-label mb-2" for="Severity">Severity</label>
+                                                    <div class="input-group mt-2">
+                                                            <p-checkbox [severity]="" name="severity"
+                                                                class="high-checkbox severity-checkbox mr-6"
+                                                                value="HIGH" label="HIGH"
+                                                                [formControl]="searchCriteriaFormGroup.controls['severity']">
+
+                                                            </p-checkbox>
+                                                            <p-checkbox name="severity"
+                                                                class="medium-checkbox severity-checkbox mr-3"
+                                                                value="MEDIUM" label="MEDIUM"
+                                                                [formControl]="searchCriteriaFormGroup.controls['severity']">
+                                                            </p-checkbox>
+                                                            <p-checkbox name="severity"
+                                                                class="low-checkbox severity-checkbox mr-6" value="LOW"
+                                                                label="LOW"
+                                                                [formControl]="searchCriteriaFormGroup.controls['severity']">
+                                                            </p-checkbox>
+                                                            <p-checkbox name="severity" [style]="{'margin-top':'8px'}"
+                                                                class="low-checkbox severity-checkbox mr-3" value="INFO"
+                                                                label="INFO"
+                                                                [formControl]="searchCriteriaFormGroup.controls['severity']">
+                                                            </p-checkbox>
+                                                            <!-- <p-multiSelect [panelStyle]="{'width':'200px'}" [style]="{'width':'100%'}" appendTo="body" [options]="severityOptions" formControlName="severity" placeholder="Select Severity"></p-multiSelect> -->
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </ng-scrollbar>
+                            <!-- <div class="grid mx-2 bg mb-3">
+                                <div class="col-12 lg:col-12 xl:col-12 md:col-12 mt-2 ">
+                                    <hr>
+                                    <p-button label="Clear" severity="secondary" class="m-2"
+                                        (click)="clearAll()"></p-button>
+                                    <p-button label="Search" severity="primary"
+                                        (click)="submitSearchCriteria()"></p-button>
+                                </div>
+                            </div> -->
+                            <hr>
+                            <div class=" mt-4">
+                                <p-button label="Clear" [outlined]="true" severity="secondary"class="m-2"
+                                        (click)="clearAll()"></p-button>
+                                <p-button label="Search" [outlined]="true" severity="primary"
+                                        (click)="submitSearchCriteria()"></p-button>
+                            </div>
+                        </ng-template>
+                    </li>
+                </ul>
+                <div [ngbNavOutlet]="nav" class="p-0 mb-6"></div>
+            </div>
+        </ng-sidebar-content>
+    </ng-sidebar>
+    <ng-sidebar-accordion-content class="page-wrapper-container">
+        <div class="card card-height-85hv-80px border-radius-12 p-1" #cardElementRef>
+            @if(tabIndex < 1) {
+                <div class="flex align-items-center justify-content-between mb-0 position-absolute end-6 mt-1 z-index-10">
+                    <h5></h5>
+                    <div>
+                        <p-menu #menu [model]="items" appendTo="body" [popup]="true"></p-menu>
+                        <button pButton pTooltip="Filter" tooltipPosition="top"
+                            class="p-element p-button-rounded p-button-text p-button-plain p-button p-component p-button-icon-only"
+                            (click)="isEditEnable ?  menu.toggle($event) : panelToggle()">
+                            <span class="pi pi-filter"></span>
+                        </button>
+                        <button (click)="refreshClick()" pbutton="" type="button" icon="pi pi-ellipsis-v" pTooltip="Refresh" tooltipPosition="top"
+                            class="p-element p-button-rounded p-button-text p-button-plain p-button p-component p-button-icon-only">
+                            <span class="p-button-icon fa fa-refresh" aria-hidden="true" ></span>
+                        </button>
+                    </div>
+                </div>
+            }            
+            <p-tabView [(activeIndex)]="tabIndex" (onClose)="tabClosed($event)">
+                <p-tabPanel header="List">
+                    <ng-container>
+                        <p-table [value]="filteredLogs" styleClass="p-datatable-gridlines" responsivelayout="scroll"
+                            [resizableColumns]="true" [autoLayout]="true" [columns]="cols" [rowHover]="true"
+                            [scrollable]="true" scrollDirection="vertical" 
+                            scrollWidth="100%" (onLazyLoad)="customSort($event)" [lazy]="true"
+                            responsiveLayout="scroll" >
+                            <ng-template pTemplate="caption">
+                                <div class="flex justify-content-between sm:flex-row">
+                                    <ng-container>
+                                        <span class="p-input-icon-left search-keyword">
+                                            <i class="pi pi-search"></i>
+                                            <input pInputText type="text" #filter placeholder="Search Keyword"
+                                                class="w-full" [(ngModel)]="value" (ngModelChange)="onSearch(value)" />
+                                        </span>
+                                        <p-multiSelect [options]="selectedCases" optionLabel="header"
+                                            [(ngModel)]="selectedColumn" selectedItemsLabel="{0} columns selected"
+                                             [filter]="true"
+                                            placeholder="Choose Columns" [panelStyle]="{'width':'100%'}" appendTo="body"
+                                            (ngModelChange)="onColumnSelectChange()" styleClass="multiselect">
+                                        </p-multiSelect>
+                                    </ng-container>
+                                </div>
+                            </ng-template>
+                            <ng-template pTemplate="header" let-columns>
+                                <tr>
+                                    @for(col of columns; track col) {
+                                    <ng-container>
+                                        @if(col.visible && col.field == 'severity') {
+                                        <th [pSortableColumn]="col.header" pResizableColumn alignFrozen="right" pFrozenColumn [frozen]="true"
+                                            [ngStyle]="{
+                                                        'min-width': col.minWidth !== undefined ? col.minWidth : 'auto',
+                                                        'max-width': col.maxWidth !== undefined ? col.maxWidth : 'auto'}">
+                                            <div class="flex justify-content-center align-items-center">
+                                                {{col.header}}
+                                                <p-sortIcon [field]="col.header"></p-sortIcon>
+                                            </div>
+                                        </th>
+                                        }
+                                        @if(col.visible && col.field == 'entity_type') {
+                                            <th [pSortableColumn]="col.header" pResizableColumn   
+                                                [ngStyle]="{
+                                                            'min-width': col.minWidth !== undefined ? col.minWidth : 'auto',
+                                                            'max-width': col.maxWidth !== undefined ? col.maxWidth : 'auto'}">
+                                                <div class="flex justify-content-center align-items-center">
+                                                    {{col.header}}
+                                                    <p-sortIcon [field]="col.header"></p-sortIcon>
+                                                </div>
+                                            </th>
+                                        }
+                                        @if(col.visible && col.field != 'entity_type' && col.field != 'severity') {
+                                            <th [pSortableColumn]="col.header" pResizableColumn   
+                                                [ngStyle]="{
+                                                            'min-width': col.minWidth !== undefined ? col.minWidth : 'auto',
+                                                            'max-width': col.maxWidth !== undefined ? col.maxWidth : 'auto'}">
+                                                <div class="flex justify-content-center align-items-center">
+                                                    {{col.header}}
+                                                    <p-sortIcon [field]="col.header"></p-sortIcon>
+                                                </div>
+                                            </th>
+                                        }
+                                    </ng-container>
+                                    }
+                                </tr>
+                            </ng-template>
+                            <ng-template pTemplate="body" let-rowData let-columns="columns">
+                                <tr class="cursor-pointer" (click)="openDetailsTab(rowData)">
+                                    @for(col of columns; track col.id) {
+                                    <ng-container>
+                                        @if(col.visible && col.field == 'entity_type') {
+                                        <td pTooltip="{{null}}" tooltipPosition="top"  
+                                            positionStyle="fixed" class="text-center"
+                                            [ngStyle]="{'min-width': col.minWidth !== undefined ? col.minWidth : 'auto',
+                                                        'max-width': col.maxWidth !== undefined ? col.maxWidth : 'auto'}">
+                                            <span>
+                                                {{rowData[col.field]}}
+                                            </span>
+                                            
+                                        </td>
+                                        }
+                                        @if(col.visible && col.field == 'severity') {
+                                            <td pTooltip="{{null}}" tooltipPosition="top" pResizableColumn alignFrozen="right" pFrozenColumn [frozen]="true"
+                                                positionStyle="fixed" class="text-center"
+                                                [ngStyle]="{'min-width': col.minWidth !== undefined ? col.minWidth : 'auto',
+                                                            'max-width': col.maxWidth !== undefined ? col.maxWidth : 'auto'}">
+                                                <span
+                                                    class="p-1 w-24 flex justify-content-center text-white"
+                                                    [tdColor]="'severity'" [tdValues]="rowData[col.field]">
+                                                    {{getSeveritryCaption(rowData[col.field])}}
+                                                </span>
+                                                
+                                            </td>
+                                            }
+                                            @if(col.visible && col.field != 'entity_type' && col.field != 'severity') {
+                                                <td pTooltip="{{null}}" tooltipPosition="top" 
+                                                    positionStyle="fixed" class="text-center"
+                                                    [ngStyle]="{'min-width': col.minWidth !== undefined ? col.minWidth : 'auto',
+                                                                'max-width': col.maxWidth !== undefined ? col.maxWidth : 'auto'}">
+                                                    <span>
+                                                        {{rowData[col.field]}}
+                                                    </span>
+                                                </td>
+                                            }
+                                    </ng-container>
+                                    }
+                                </tr>
+                            </ng-template>
+                            <ng-template pTemplate="emptymessage" let-columns>
+                                <tr>
+                                    @if (isCasesNoRecords) {
+                                        <td class="text-center" [attr.colspan]="cols.length">
+                                            <div>
+                                                No Records Found
+                                            </div>
+                                        </td>
+                                    }
+                                    @if (isCasesInProgress) {
+                                        <td class="text-center" [attr.colspan]="cols.length">
+                                            <div class="col-12 position-relative w-100 spinner-height">
+                                                <ngx-spinner name="case-analysis-list" class="embeded-spinner" bdColor="rgba(0, 0, 0, 0)" size="default" color="#000"
+                                                    type="line-spin-fade" [fullScreen]="false">
+                                                    <p class="mt-0 mb-0 text-black">Loading </p>
+                                                </ngx-spinner>
+                                            </div> 
+                                        </td>
+                                    }
+                                    @if(isCasesError) {
+                                    <td class="text-center" [attr.colspan]="cols.length">
+                                            <div class="spinner-height">
+                                                <ng-container [ngTemplateOutlet]="errorTemplate"
+                                                [ngTemplateOutletContext]="{errorTitle:errorTitle,errorContent:errorContent}">
+                                                </ng-container>
+                                            </div>
+                                    </td>
+                                  }
+                            </tr>
+                       
+                            </ng-template>
+                        </p-table>
+                    </ng-container>
+                    <ng-template pTemplate="footer">
+                        @if(!isCasesError){
+                        <ng-container>
+                            <div class="grid pr-0">
+                                <div class="col-4 lg:col-4 xl:col-4 md:col-4 mt-4">
+                                    @if (pagination.totalRecords >0) {
+                                    <div>
+                                        {{pagination.offset+1}}-{{pagination.offset+ pagination.rows}} of
+                                        {{pagination.totalRecords | number}} rows
+                                    </div>
+                                    }
+                                    @if (pagination.totalRecords ==0) {
+                                    <div>
+                                        0 - 0 of {{pagination.totalRecords | number}} rows
+                                    </div>
+                                    }
+                                </div>
+                                <div class="col-8 lg:col-8 xl:col-8 md:col-8 pr-0">
+                                    @if (pagination.totalRecords >0) {
+                                    <div class="mt-0">
+                                        <p-paginator class="p-paginator flex justify-content-end"
+                                            (onPageChange)="paginate($event)" [rows]="pagination.rows"
+                                            [totalRecords]="pagination.totalRecords">
+                                        </p-paginator>
+                                    </div>
+                                    }
+                                </div>
+                            </div>
+                        </ng-container>
+                        }
+                    </ng-template>
+                </p-tabPanel>
+                @for(case of tabs; track case) {
+                <p-tabPanel [header]="case.shortName" [closable]="true">
+                    <app-case-details [details]="case"></app-case-details>
+                </p-tabPanel>
+                }
+            </p-tabView>
+        </div>
+    </ng-sidebar-accordion-content>
+</ng-sidebar-accordion>
+<p-toast></p-toast>
+<ng-template let-title="errorTitle" let-content="errorContent" #errorTemplate>
+    <div class="height-inherit flex justify-content-center align-items-center">
+        <app-error-dialog [title]="title" [content]="content" [messageHead]="title"></app-error-dialog>
+    </div>
+</ng-template>

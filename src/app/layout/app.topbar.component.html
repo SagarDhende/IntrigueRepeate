@@ -1,0 +1,89 @@
+<div class="layout-topbar">
+    <a class="layout-topbar-logo" routerLink="">
+        <img [src]="logo" alt="logo">
+
+        <!-- <span>INFERYX</span> -->
+    </a>
+
+    <button #menubutton class="p-link layout-menu-button layout-topbar-button" (click)="layoutService.onMenuToggle()">
+        <i class="pi pi-bars"></i>
+    </button>
+    <h5 class="mt-3"> &nbsp;&nbsp;{{session?.appName}}</h5>
+
+    <button #topbarmenubutton class="p-link layout-topbar-menu-button layout-topbar-button"
+        (click)="layoutService.showProfileSidebar()">
+        <i class="pi pi-ellipsis-v"></i>
+    </button>
+
+    <div #topbarmenu class="layout-topbar-menu"
+        [ngClass]="{'layout-topbar-menu-mobile-active': layoutService.state.profileSidebarVisible}">
+        <button class="p-link layout-topbar-button d-none">
+            <i class="pi pi-calendar"></i>
+            <span>Calendar</span>
+        </button>
+        <button *ngIf="themeSettingVisible" class="p-link layout-topbar-button" (click)="onConfigButtonClick()">
+            <i class="pi pi-cog"></i>
+            <span>Settings</span>
+        </button>
+        <!-- <div class="ropdown-menu dropdown-menu-right profile-notification">
+            <div class="pro-head justify-content-between">
+                <img src="assets/images/default.png" class="img-radius" alt="User-Profile-Image">
+      
+                <span class="text-white" *ngIf="userName">{{this.userName}}</span>
+                <a href="javascript:" class="dud-logout" title="Logout" (click)="logout()">
+                  <i class="feather icon-log-out"></i>
+                </a>
+              </div>
+        </div> -->
+        <!-- <p-menu #menu [model]="menuItems" [popup]="true" ></p-menu>
+        <button #buttonElement class="p-link layout-topbar-button" (click)="menu.toggle($event)">
+            <i class="pi pi-user"></i>
+        </button>   -->
+        
+      
+      
+        <div>
+          <button pButton type="button" label="User" class="p-link layout-topbar-button" (click)="op2.toggle($event)" >
+            <i class="pi pi-user"></i>
+          </button>
+          <p-overlayPanel #op2 [style]="{width: '220px'}">
+            <p-table [value]="menuItems" responsiveLayout="scroll" class="table-bordered">
+              <ng-template pTemplate="header">
+                <div class="dropdown-menu dropdown-menu-right profile-notification">
+                  <div class="pro-head p-2 flex align-items-center">
+                    <img src="assets/images/default.png" class="rounded-circle" alt="User-Profile-Image">
+                    <span class="text-white" *ngIf="userName">{{this.userName}}</span>
+                    <!-- <a class="dud-logout" title="Logout" (click)="logout()">
+                      <i class="feather pi pi-fw pi-sign-out"></i>
+                    </a> -->
+                  </div>
+                </div>
+              </ng-template>
+              <ng-template pTemplate="body" let-menuItem>
+                <tr class="flex align-items-center p-1">
+                  <td class="topbar-menu c-pointer mt-2" ><i [class]="menuItem.icon" (click)="menuItemClicked(menuItem.label)"></i></td>  
+                  <td class="topbar-menu c-pointer mt-2" (click)="menuItemClicked(menuItem.label)">{{ menuItem.label }}</td>
+                </tr>
+              </ng-template>
+            </p-table>
+          </p-overlayPanel>
+        </div>
+    </div>
+   
+</div>
+
+
+<div class="modal" (keyup)="handleModalEscape()">
+  <div class="modal-content">
+    <app-about-us [displayAboutUsModal]="currentItem" (closeModal)="handleModalClose()" (unsubscribeAboutUs)="unsubscribeAboutUs()"
+    (escapeModal)="handleModalEscape()"></app-about-us>
+  </div>
+</div>
+ 
+<div class="modal-content">
+  <app-lock-screen [isUserLocked]="isUserLocked" (isUserLockedChange)="isUserLockedChanged($event)"></app-lock-screen>
+</div>
+
+
+
+      

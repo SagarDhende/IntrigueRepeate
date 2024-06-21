@@ -1,0 +1,293 @@
+ <div class="surface-ground flex align-items-center justify-content-center min-h-screen min-w-screen overflow-hidden">
+    <div class="flex flex-column align-items-center justify-content-center">
+        <div class="login-border ">
+            <div class="w-full surface-card py-4 px-5 sm:px-8 shadow-4">
+                <div class=" text-center mb-5 mt-2">
+                    <img src="{{logo}}" alt="Image" height="50"
+                    class="mb-4 mr-1">
+                    <div class="text-xl text-900 font-500 mb-3 width-14">{{cardLeftHeading.title}}</div>
+                </div>
+                <form [formGroup]="loginForm" class="main-form">
+                        <div>
+                            <label class="block text-900 font-medium mb-2">User Name</label>
+                            <input type="text" placeholder="User Name" pinputtext=""
+                                formControlName="userName" [ngClass]="{
+                                'ng-invalid ng-dirty':
+                                isFieldInvalid('userName') &&
+                                (loginForm.get('userName').touched || isSubmitted)
+                                }" class="p-inputtext p-component p-element w-full mb-2">
+                        </div>
+                        <div>
+                            <div class="p-error userName">
+                                @if(isFieldInvalid('userName') &&
+                                (loginForm.get('userName').touched || isSubmitted)) {
+                                @if(loginFormControls['userName'].errors['required']) { User name
+                                is required } }
+                            </div>
+                        </div>
+
+                        <div>
+                            <label for="password" class="block text-900 font-medium mb-2">Password</label>
+                            <p-password placeholder="Password" [toggleMask]="true" [feedback]="false" styleClass="mb-2"
+                                formControlName="password" [ngClass]="{
+                                        'ng-invalid ng-dirty':
+                                          isFieldInvalid('password') &&
+                                          (loginForm.get('password').touched || isSubmitted)
+                                      }" inputStyleClass="w-full md:w-30rem">
+                            </p-password>
+                        </div>
+                        <div class="p-error password">
+                            @if(isFieldInvalid('password') &&
+                            (loginForm.get('password').touched || isSubmitted)) {
+                            @if(loginFormControls['password'].errors['required']) { Password
+                            is required } }
+                        </div>
+                    
+                    <div class="flex align-items-center justify-content-between mb-5 gap-5">
+                        <div class="flex align-items-center">
+                            <input type="checkbox" formControlName="rememberMe" (change)="toggleRememberMe()" class="mr-2">
+                           <label for="rememberme">Remember me</label>
+                       </div>
+                        <a class="font-medium no-underline ml-2 text-right cursor-pointer" style="color: var(--primary-color)" [hidden]="true">
+                            Forgot password?
+                        </a>
+                    </div>
+                    <button  pbutton="" pripple="" label="Login" icon="pi pi-user"
+                        class="custom-button p-element p-ripple w-full p-button p-component" (click)="onSubmit()">
+                        <span class="p-button-icon p-button-icon-left pi pi-user" aria-hidden="true"></span>
+                        <span class="p-button-label mr-4">Login</span>
+                        <span class="p-ink"></span>
+                        <span *ngIf="actionInProgress" class="spinner"></span>
+                    </button>
+                </form>
+                <p-divider align="center" styleclass="my-6" class="p-element">
+                    <div role="separator"
+                        class="my-6 p-divider p-component p-divider-horizontal p-divider-solid p-divider-center">
+                        <div class="p-divider-content"><span class="text-600 font-normal text-sm">OR</span></div>
+                    </div>
+                </p-divider>
+                <div *ngIf="socialSso.googleAuthVisible" class="pb-3">  
+                    <app-google-signin [user]="user"  (loginWithGoogle)="googleSignin($event)"></app-google-signin>
+                </div>
+                <p-messages [(value)]="message" [enableService]="false"></p-messages>
+            </div>
+        </div>
+    </div>
+</div> 
+
+
+<!-- **************************************************card-2************************************************ -->
+
+<!-- <div class="surface-ground px-6 py-8 md:px-6 lg:px-8">
+    <div class="flex flex-wrap shadow-4">
+        <div class="w-full lg:w-6 px-0 py-4 lg:p-7 bg-blue-50">
+            <img src="https://www.inferyx.com/assets/images/home/inferyx_logo_v5.png" alt="Image" height="35"
+                class="mb-6" />
+           
+                <p-carousel [value]="images" [numVisible]="1">
+                    <ng-template let-image pTemplate="item">
+                      <div>
+                        <img alt="Image" class="mb-6 w-12 IG" [src]="image.url" />
+                        <div class="mx-auto font-medium text-xl mb-4 text-900 text-center">{{ image.title }}</div>
+                        <p class="m-0 text-blue-700 line-height-3">{{ image.description }}</p>
+                      </div>
+                    </ng-template>
+                  </p-carousel> 
+       
+        </div>
+        <div class="w-full lg:w-6 p-4 lg:p-7 surface-card">
+            <div class="flex align-items-center justify-content-between mb-7">
+                <span class="text-2xl font-medium text-900">Login to Inferyx</span><a tabindex="0"
+                    class="font-medium text-blue-500 hover:text-blue-700 cursor-pointer transition-colors transition-duration-150">Sign
+                    up</a>
+            </div>
+            <div class="flex justify-content-center">
+                <button pripple=""
+                    class="p-ripple p-element mr-2 w-6 font-medium border-1 surface-border surface-100 py-3 px-2 p-component hover:surface-200 active:surface-300 text-900 cursor-pointer transition-colors transition-duration-150 inline-flex align-items-center justify-content-center"><i
+                        class="pi pi-facebook text-indigo-500 mr-2"></i><span>Sign in With Facebook</span><span
+                        class="p-ink"></span></button>
+                <button pripple=""
+                    class="p-ripple p-element ml-2 w-6 font-medium border-1 surface-border surface-100 py-3 px-2 p-component hover:surface-200 active:surface-300 text-900 cursor-pointer transition-colors transition-duration-150 inline-flex align-items-center justify-content-center">
+                    <i class="pi pi-google text-red-500 mr-2"></i><span>Sign in With Google</span><span
+                        class="p-ink"></span>
+                </button>
+            </div>
+            <p-divider align="center" styleclass="my-4" class="p-element">
+                <div role="separator"
+                    class="my-4 p-divider p-component p-divider-horizontal p-divider-solid p-divider-center">
+                    <div class="p-divider-content">
+                        <span class="text-600 font-normal text-sm">OR</span>
+                    </div>
+                </div>
+            </p-divider>
+            <form [formGroup]="loginForm" class="main-form">
+                <div class="Input-group">
+                    <label for="userName" class="block text-900 text-xl font-medium mb-2">User Name</label>
+                    <div class="p-inputgroup">
+                        <span class="p-inputgroup-addon"><i class="pi pi-user"></i></span>
+                        <input type="userName" pInputText aria-describedby="userName-help"
+                            class="w-full md:w-20rem form-control mb-4" formControlName="userName" [ngClass]="{
+                            'ng-invalid ng-dirty':
+                            isFieldInvalid('userName') &&
+                            (loginForm.get('userName').touched || isSubmitted)
+                            }" style="padding: 1rem" />
+                    </div>
+                    <div class="p-error userName">
+                        @if(isFieldInvalid('userName') &&
+                        (loginForm.get('userName').touched || isSubmitted)) {
+                        @if(loginFormControls['userName'].errors['required']) { User name
+                        is required } }
+                    </div>
+                </div>
+                <label for="password4" class="block text-900 font-medium mb-2">Password</label>
+                <input type="password" formControlName="password" [ngClass]="{
+                    'ng-invalid ng-dirty':
+                    isFieldInvalid('password') &&
+                    (loginForm.get('password').touched || isSubmitted)
+                    }" inputStyleClass="w-full p-3 md:w-30rem" placeholder="Password" pinputtext=""
+                    class="p-inputtext p-component p-element w-full mb-3 p-3" />
+
+                <div class="p-error password">
+                    @if(isFieldInvalid('password') &&
+                    (loginForm.get('password').touched || isSubmitted)) {
+                    @if(loginFormControls['password'].errors['required']) { Password
+                    is required } }
+                </div>
+                <div class="flex align-items-center justify-content-between mb-6">
+                    <div class="flex align-items-center">
+                        <p-checkbox id="rememberme4" styleclass="mr-2 mt-2" class="p-element">
+                            <div class="mr-2 p-checkbox p-component">
+                                <div class="p-hidden-accessible">
+                                    <input type="checkbox" value="undefined" aria-checked="false" />
+                                </div>
+                                <div class="p-checkbox-box"></div>
+                            </div>
+                        </p-checkbox><label for="rememberme4">Remember me</label>
+                    </div>
+                    <a
+                        class="font-medium text-blue-500 hover:text-blue-700 cursor-pointer transition-colors transition-duration-150">Forgot
+                        password?</a>
+                </div>
+                <button pbutton="" pripple="" label="Sign In"
+                    class="p-element p-ripple w-full py-3 font-medium p-button p-component" (click)="onSubmit()">
+                    <span class="p-button-label">Sign In</span><span class="p-ink"></span>
+                </button>
+            </form>
+        </div>
+    </div>
+</div> -->
+
+<!-- ----------------------------------------------------card-3---------------------------------------->
+
+<!-- <div class="surface-card flex align-items-center justify-content-center min-h-screen  overflow-hidden">
+    <div class="ng-star-inserted">
+        <div class="px-4 py-8 md:px-6 lg:px-8">
+            <div class="flex flex-wrap surface-card shadow-4">
+                <div class="w-full lg:w-6 p-4 lg:p-7 bg-blue-50">
+                    <img src="{{logo}}" alt="Image" height="50"
+                        class="mb-6">
+                    <div class="text-xl text-900 font-500 mb-3 width-14">{{cardLeftHeading.title}}</div>
+                    <p [style.visibility]="cardLeftHeading.visibility" class="text-primary-color line-height-3 mt-0 mb-6 width-14" [innerHTML]="cardLeftHeading.description"></p>
+                    <ul class="list-none p-0 m-0" [style.visibility]="cardLeftHeading.visibility">
+                        <li class="flex align-items-start mb-4">
+                            <div><span class="flex align-items-center justify-content-center bg-primary-color"
+                                    style="width: 38px; height: 38px; border-radius: 10px;"><i
+                                        class="text-xl text-white pi pi-inbox"></i></span></div>
+                            <div class="ml-3"><span class="font-medium text-900 width-14">{{cardLeftIcons[0].title}}</span>
+                                <p class="mt-2 mb-0 text-primary-color line-height-3 width-14"[innerHTML]="cardLeftIcons[0].description"></p>
+                            </div>
+                        </li>
+                        <li class="flex align-items-start mb-4">
+                            <div><span class="flex align-items-center justify-content-center bg-primary-color"
+                                    style="width: 38px; height: 38px; border-radius: 10px;"><i
+                                        class="text-xl text-white pi pi-shield"></i></span></div>
+                            <div class="ml-3"><span class="font-medium text-900 width-14">{{cardLeftIcons[1].title}}</span>
+                                <p class="mt-2 mb-0 text-primary-color line-height-3 width-14"  [innerHTML]="cardLeftIcons[1].description"></p>
+                            </div>
+                        </li>
+                        <li class="flex align-items-start">
+                            <div><span class="flex align-items-center justify-content-center bg-primary-color"
+                                    style="width: 38px; height: 38px; border-radius: 10px;"><i
+                                        class="text-xl text-white pi pi-globe"></i></span></div>
+                            <div class="ml-3"><span class="font-medium text-900 width-14" [innerHTML]="cardLeftIcons[2].title"></span>
+                                <p class="mt-2 mb-0 text-primary-color line-height-3 width-14" [innerHTML]="cardLeftIcons[2].description"></p>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+                <div class="w-full lg:w-6 p-4 lg:p-7 ">
+                    <div class="text-900 text-2xl font-medium mb-6">Login</div>
+                    <form [formGroup]="loginForm" class="main-form">
+                        <div>
+                            <div>
+                                <label class="block text-900 font-medium mb-2">User Name</label>
+                                <input type="text" placeholder="User Name" pinputtext=""
+                                    formControlName="userName" [ngClass]="{
+                                    'ng-invalid ng-dirty':
+                                    isFieldInvalid('userName') &&
+                                    (loginForm.get('userName').touched || isSubmitted)
+                                    }" class="p-inputtext p-component p-element w-full mb-2">
+                            </div>
+
+                            <div>
+                                <div class="p-error userName">
+                                    @if(isFieldInvalid('userName') &&
+                                    (loginForm.get('userName').touched || isSubmitted)) {
+                                    @if(loginFormControls['userName'].errors['required']) { User name
+                                    is required } }
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <div>
+
+                                <label for="password" class="block text-900 font-medium mb-2">Password</label>
+                                <p-password placeholder="Password" [toggleMask]="true" [feedback]="false" styleClass="mb-2"
+                                    formControlName="password" [ngClass]="{
+                                            'ng-invalid ng-dirty':
+                                              isFieldInvalid('password') &&
+                                              (loginForm.get('password').touched || isSubmitted)
+                                          }" inputStyleClass="w-full" [style]="{'width':'100%'}">
+                                </p-password>
+                            </div>
+                            <div class="p-error password">
+                                @if(isFieldInvalid('password') &&
+                                (loginForm.get('password').touched || isSubmitted)) {
+                                @if(loginFormControls['password'].errors['required']) { Password
+                                is required } }
+                            </div>
+                        
+                        </div>
+                        <div class="flex align-items-center justify-content-between mb-6">
+                            <div class="flex align-items-center">
+                                 <input type="checkbox" formControlName="rememberMe" (change)="toggleRememberMe()" class="mr-2">
+                                <label for="rememberme">Remember me</label>
+                            </div>                             
+                            <a class="font-medium no-underline ml-2 text-blue-500 text-right cursor-pointer">Forgot
+                                password?</a>
+                        </div>
+                        <button pbutton="" pripple="" label="Login" icon="pi pi-user" class="p-element p-ripple w-full p-button p-component"
+                            (click)="onSubmit()">
+                            <span class="p-button-icon p-button-icon-left pi pi-user" aria-hidden="true"></span>
+                            <span class="p-button-label">Login</span>
+                            <span class="p-ink"></span>
+                        </button>
+                    </form>
+                    <p-divider align="center" styleclass="my-6" class="p-element">
+                        <div role="separator"
+                            class="my-6 p-divider p-component p-divider-horizontal p-divider-solid p-divider-center">
+                            <div class="p-divider-content"><span class="text-600 font-normal text-sm">OR</span></div>
+                        </div>
+                    </p-divider>
+                    
+                    <div *ngIf="socialSso.googleAuthVisible">
+                      
+                        <app-google-signin [user]="user"  (loginWithGoogle)="googleSignin($event)"></app-google-signin>
+                    </div>
+                    <p-messages [(value)]="message" [enableService]="false"></p-messages>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> -->

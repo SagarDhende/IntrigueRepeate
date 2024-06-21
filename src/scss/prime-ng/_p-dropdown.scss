@@ -1,0 +1,19 @@
+.p-dropdown-item,
+.p-dropdown-items {
+  text-overflow: ellipsis;
+}
+
+.p-dropdown-label,
+.p-inputtext {
+  font-size: 12px;
+}
+
+.p-dropdown-panel {
+  // width: 30ch;
+}
+
+.p-disabled,
+.p-disabled * {
+  cursor: not-allowed !important;
+  pointer-events: auto;
+}

@@ -1,0 +1,91 @@
+<!-- 
+<div class="test">
+    <div [ngClass]="{'bg-Image': isUserLocked}">
+    <p-dialog class="p-0" [(visible)]="isUserLocked" [modal]="false" [showHeader]="false" styleClass="p-dialog-custom"> 
+        <div class="row align-items-center text-center">
+            <div class="col-md-12">
+                <div class="d-flex flex-column align-items-center">
+      
+                    <div class="bgcolored w-100">
+                        <h4 class="text-white m-0 lock-screen-header flex align-items-center justify-content-center ">Locked</h4>
+                    </div>
+
+                    <div class="flex justify-content-center w-100 m-3">
+                        <div class="lockScreen-Image mb-4 mr-5 mt-2">
+                            <img src="assets/images/default.png" class="rounded-circle" alt="User-Profile-Image">
+                        </div>
+
+                        <div class="mb-4">
+                            <div class="mt-3"> 
+                                <h6 class="text-left">{{this.userName}}</h6>
+                            </div>
+                            <div class="mb-4">
+                                <input class="form-control p-2" type="password" autocomplete="off" placeholder="Password" name="password" style="width:230px" [(ngModel)]="password">
+                            </div>
+                            <div class="d-flex justify-content-start">
+                                <button pButton pRipple type="button" label="Cancel" class="p-button-outlined p-button-secondary mr-2" (click)="logout()"></button>
+                                <button pButton pRipple type="button" label="Submit" class="p-button-outlined p-button-raised" (click)="unlockUser()"></button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bgcolored w-100 cursor-pointer">
+                        <h6 class="text-white mt-3 p-1" (click)="logout()">Not {{this.userName}}?</h6>
+                    </div>
+                        <div class="flex justify-content-center mt-2">
+                            <span class="trademark text-dialog-color">&copy; {{currentYear}}, 
+                                <a target="_blank" [href]="conpanyInfo.companyLink" class="text-primary-color pb-4">{{conpanyInfo.companyName}},</a>
+                                or its subsidiaries. All rights reserved.
+                            </span>
+                        </div> 
+                </div>
+            </div>
+        </div>   
+    </p-dialog>
+</div>
+</div> -->
+
+    <!-- <div [ngClass]="{'bg-Image': isUserLocked}"> -->
+        <p-dialog class="p-0" [(visible)]="isUserLocked" [modal]="true" [showHeader]="false"
+            styleClass="p-dialog-custom">
+            <div class="surface-ground flex align-items-center justify-content-center w-full overflow-hidden">
+                <div class="flex flex-column align-items-center justify-content-center w-full">
+                    <div class="login-border w-full">
+                        <div class="w-full surface-card py-5 px-5 sm:px-8 shadow-4">
+                            <div class=" text-center mb-2 mt-4">
+                                <img src="{{logo}}" alt="Image" height="50" class="mr-1">
+                                <!-- <h2>Locked</h2> -->
+                                <!-- <div class="text-xl text-900 font- width-14">{{cardLeftHeading.title}}</div> -->
+                            </div>
+                            <!-- <div class="mt-2">
+                                <label class="block text-900 font-medium mb-2">User Name</label>
+                                <input type="text" class="p-inputtext p-component p-element w-full mb-2"
+                                [value]="userName" readonly>
+                            </div> -->
+                            <div class="flex justify-content-center"><h2>Locked</h2></div>
+                             <div class="mt-3 ml-2"> 
+                                <h4 class="text-left">{{this.userName}}</h4>
+                            </div>
+                            <div class="ml-2">
+                                <label class="block text-900 font-medium mb-2">Password</label>
+                                <p-password placeholder="Password" [toggleMask]="true" [feedback]="false"
+                                    name="password" class="md:w-20rem password" 
+                                    [(ngModel)]="password"></p-password>
+                            </div>
+                            <!-- <div class="cursor-pointer">
+                                <h6 class="mt-2 p-1 text-primary-color" (click)="logout()">Not {{this.userName}}?</h6>
+                            </div> -->
+                            <div class="d-flex justify-content-end mb-3 mt-6 mr-1">
+                                <button pButton pRipple type="button" label="Cancel"
+                                    class="p-button-outlined p-button-raised p-button-secondary mr-2"
+                                    (click)="logout()"></button>
+                                <button pButton pRipple type="button" label="Submit"
+                                    class="p-button-outlined p-button-raised" (click)="unlockUser()"></button>
+                            </div>
+
+                            <p-messages [(value)]="showErrorMessage" [enableService]="false" [closable]="true" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </p-dialog>
+    <!-- </div> -->

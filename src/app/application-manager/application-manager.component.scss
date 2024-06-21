@@ -1,0 +1,35 @@
+.card-title.text-500 {
+    color: var(--primary-color) !important;
+}
+.card-hr {
+    border-top: 1px solid var(--surface-400);
+    box-shadow:
+        rgba(0, 0, 0, 0.25) 0px 0.0625em 0.0625em,
+        rgba(0, 0, 0, 0.25) 0px 0.125em 0.5em,
+        rgba(255, 255, 255, 0.1) 0px 0px 0px 1px inset;
+}
+
+.card-inner:hover {
+    background-color: var(--surface-hover);
+    cursor: pointer;
+}
+
+.border-round {
+    border-radius: 20px !important;
+}
+
+.search-bar {
+    display: flex;
+    justify-content: end;
+}
+
+.dispaly-webkit-box {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+}
+
+.ng-scroll-h-100vh-18rem {
+    height: calc(100vh - 18rem) ;
+  }
+  

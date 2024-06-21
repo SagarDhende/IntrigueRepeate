@@ -1,0 +1,58 @@
+<!-- <div class="page-wrapper-container">
+    <br>
+    <app-breadcrumb [arrayList]="breadcrumb"></app-breadcrumb>
+</div> -->
+<!-- <div *ngIf="isDashboardLoad && application" class="dashboard-height"> -->
+<!-- <iframe width="100%" id="reportViewer" #reportViewer frameBorder="0" [src]="urlSafe"
+        class="iframe-dashbaord-height"></iframe> -->
+<!-- <app-dashboard-embed-container [id]="dashboardId" [version]="dashboardVersion">
+    </app-dashboard-embed-container> -->
+<!-- </div> -->
+<!-- <ng-container *ngIf="isDashboardLoad && application"></ng-container> -->
+<!-- <app-dashboard-integrated-container [id]="'f2b13068-1f02-417d-98c3-67f39be38b53'"></app-dashboard-integrated-container> -->
+<!-- <app-dashboard-integrated-container [id]="'5cea15da-5aa8-48c0-911f-2b004fdfd074'"></app-dashboard-integrated-container> -->
+<!-- <app-dashboard-integrated-container [id]="'89cab835-d74c-4860-a536-3e8be44a27ff'"></app-dashboard-integrated-container> -->
+
+ <!-- The above and below commented code is already commented  -->
+
+
+
+
+
+<!-- <ng-container *ngIf="!appConfigService.getDashboardSettings().dashboardIframeEnable"> -->
+    <div class="d-flex w-100" style="height: calc(100vh - 120px)" *ngIf="!dashboardId">
+        <div class="m-auto text-center">
+            Dashboard Not Configured
+        </div>
+    </div>
+    <app-dashboard-integrated-container [id]="dashboardId" *ngIf="dashboardId"></app-dashboard-integrated-container>
+<!-- </ng-container> -->
+
+<!-- <ng-container *ngIf="appConfigService.getDashboardSettings().dashboardIframeEnable">
+    <div *ngIf="isDashboardLoad && application" class="dashboard-height">
+        <iframe width="100%" id="reportViewer" #reportViewer frameBorder="0" [src]="urlSafe"
+            class="iframe-dashbaord-height"></iframe>
+        <app-dashboard-embed-container [id]="dashboardId" [version]="dashboardVersion">
+        </app-dashboard-embed-container>
+    </div>
+    <div *ngIf="!isDashboardLoad && application" class="dashboard-height">
+        <span class="text-center pt-8 w-100 d-block" style="font-size: 1rem;">Dashboard Not Configured</span>
+    </div>
+</ng-container> -->
+
+
+
+
+
+
+
+
+
+
+<!-- <div *ngIf="!isDashboardLoad && application" class="dashboard-height">
+    <app-dashboard-embed-container [id]="dashboardId" [version]="dashboardVersion" [customUrl]="dashboardURL">
+    </app-dashboard-embed-container>
+</div>
+<div *ngIf="!isDashboardLoad && application" class="dashboard-height">
+    <span class="text-center pt-8 w-100 d-block" style="font-size: 1rem;">Dashboard Not Configured</span>
+</div> -->

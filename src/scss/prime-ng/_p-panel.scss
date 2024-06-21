@@ -1,0 +1,64 @@
+.p-panel-custom .p-panel-content{
+    height: calc(100vh - 20rem) ;
+}
+
+.gen-ai-panel .p-panel-content{
+  //height: calc(100vh - 31.7rem);
+  padding: 0.5rem;
+
+}
+
+.bg-image-canvas .p-panel-content{
+  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAI0lEQVQYV2NkIBIwgtStWrXqf1hYGJiNC+CVRNY0qhBv0AMAsKgECyGgekgAAAAASUVORK5CYII=);
+ }
+
+.gen-ai-panel .p-panel {
+  margin-bottom: 1rem;
+  margin-top: 1rem;
+}
+
+div.p-tabview .p-tabview-panels{
+  height: calc(100vh - 28rem) ;
+}
+
+.p-panel-custom .p-panel-header{
+  padding: 0.75rem;
+}
+
+div.p-tabview-custom .p-tabview .p-tabview-panels{
+  height: auto;
+  width: calc(100vw - auto);
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.rules-tab-view .p-tabview-panels{
+  height: 0 !important;
+  padding-right: 0;
+  padding-left: 0;
+}
+
+.rules-tab-view .p-tabview-nav li {
+  width: 12rem;
+}
+
+.rules-tab-view .param-header{
+ text-overflow: ellipsis;
+ overflow: hidden;
+ cursor: pointer;
+ padding: 1.25rem !important;
+}
+
+.rules-tab-view .p-tabview-nav-link {
+  padding: unset;
+}
+
+div.custom-tabview .p-tabview .p-tabview-panels {
+  height: fit-content !important;
+}
+.p-panel-run-scenrio .p-panel-content{
+  height: calc(100vh - 35rem);
+}
+.run-panel .p-panel-content{
+  height: fit-content;
+}

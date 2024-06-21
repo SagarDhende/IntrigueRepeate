@@ -1,0 +1,831 @@
+<div class="grid">
+    <div class="col-12">
+        <div class="card p-0">
+            <div class="flex justify-content-end mr-3">
+                <button pbutton pTooltip="Save" icon="pi pi-save" showDelay="500" hideDelay="500"
+                    class="p-element p-button-rounded p-button-text p-button-plain p-button p-component p-button-icon-only"
+                    (click)="whatIfAnalysisSaveSession()" [disabled]="isAnalysisSaveDisabled" tooltipPosition="top"
+                    positionStyle="fixed">
+                    <span ptooltip="Filter" tooltipposition="bottom" aria-hidden="true"
+                        class="p-element p-button-icon pi pi-save">
+                    </span>
+                </button>
+                <button pbutton pTooltip="Reset" icon="fa-solid fa-rotate-right" showDelay="500" hideDelay="500"
+                    tooltipPosition="top" (click)="whatIfAnalysisReset()" class="p-panel-header-icon p-link mr-2">
+                    <span aria-hidden="true" class="p-element p-button-icon fa-solid fa-rotate-right"></span>
+                </button>
+            </div>
+
+            <hr class="mt-2">
+            <div class="col-12 md:col-12" style="height:fit-content !important">
+                <p-panel header="Select Analysis" [showHeader]="true" [toggleable]="false">
+                    <ng-template pTemplate="body">
+                        <div class="input-group grid mb-0">
+                            <label class="col-1 col:sm-2 col-form-label text-left mt-1">
+                                Select
+                            </label>
+                            <div class="col-12 md:col-1 mb-2 ml-1" *ngFor="let analysisType of analysisTypes">
+                                <p-radioButton [inputId]="analysisType.key" name="analysisType"
+                                    [value]="analysisType.key" (onClick)="OnClickAnalysisType($event)"
+                                    [(ngModel)]="selectedAnalysisType">
+                                </p-radioButton>
+                                <label class="ml-1 mb-0" [for]="analysisType.key">{{analysisType.name}}</label>
+                            </div>
+                        </div>
+                        <div class="ml-0">
+                            <form [formGroup]="analysisForm">
+                                <div class="input-group grid mb-0" *ngIf="selectedAnalysisType =='E'">
+                                    <label class="col-1 col:sm-2 col-form-label float-left mt-3 required">
+                                        Name
+                                    </label>
+                                    <div class="col-12 lg:col-4 lg:mb-0 sm:col-6 md:col-3 mb-2">
+                                        <p-dropdown [options]="allAnalysis" name="test"
+                                            formControlName="selectedAnalysis" optionLabel="name" [filter]="true"
+                                            filterBy="name" [showClear]="false" placeholder="-Select-"
+                                            (onChange)="onChangeAnalysis()" [style]="{'width':'100%'}">
+                                            <ng-template pTemplate="selected">
+                                                <div class="analysis-item analysis-item-value">
+                                                    <div>{{selectedAnalysis.name}}</div>
+                                                </div>
+                                            </ng-template>
+                                            <ng-template let-analysis pTemplate="item">
+                                                <div class="selected-item" title="{{analysis.name}}">
+                                                    <div>{{analysis.name}}</div>
+                                                </div>
+                                            </ng-template>
+                                        </p-dropdown>
+                                    </div>
+                                </div>
+                                <div class="input-group grid mb-0" *ngIf="selectedAnalysisType =='E'">
+                                    <label class="col-1 col:sm-2 col-form-label text-left mt-2">
+                                        Session
+                                    </label>
+                                    <div class="col-12 lg:col-4 lg:mb-0 sm:col-6 md:col-3">
+                                        <p-dropdown [options]="allAnalysisUuid" name="createdOn"
+                                            formControlName="selectedSession" optionLabel="createdOn" [filter]="true"
+                                            (onChange)="onAnalysisSession()" [style]="{'width':'100%'}">
+                                        </p-dropdown>
+                                    </div>
+                                </div>
+                                <div class="input-group grid mb-0" *ngIf="selectedAnalysisType =='N'">
+                                    <label class="col-1 col:sm-2 col-form-label text-left mt-2 required">
+                                        Name
+                                    </label>
+                                    <div class="col-12 lg:col-4 lg:mb-0 sm:col-6 md:col-3">
+                                        <input type="text" pinputtext="" class="w-100 p-inputtext p-component p-element"
+                                            name="analysisName" formControlName="analysisName" required
+                                            id="analysisName" (blur)="onAnalysisName($event)">
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </ng-template>
+                </p-panel>
+                <br>
+                <p-panel header="Input Dataset" class="no-bottom-margin" [toggleable]="true">
+                    <ng-template pTemplate="icons">
+                        <button pbutton pTooltip="Filter" icon="pi pi-filter-fill" (click)="openFilterDialog()"
+                            showDelay="500" hideDelay="500" tooltipPosition="top"
+                            class="p-panel-header-icon p-link mr-2">
+                            <span aria-hidden="true" class="p-element p-button-icon pi pi-filter-fill"></span>
+                        </button>
+                        <button pbutton pTooltip="Download" icon="pi pi-download" tooltipPosition="top" showDelay="500"
+                            hideDelay="500" class="p-panel-header-icon p-link mr-2"(click)="downloadAnalysisInput()">
+                            <span aria-hidden="true" class="p-element p-button-icon pi pi-download"></span>
+                        </button>
+                        <button pbutton pTooltip="Refresh" icon="fa fa-refresh" tooltipPosition="top" showDelay="500"
+                            hideDelay="500" (click)="refreshAnalysis()" tooltipPosition="top"
+                            class="p-panel-header-icon p-link mr-2">
+                            <span aria-hidden="true" class="p-element p-button-icon fa fa-refresh"></span>
+                        </button>
+                    </ng-template>
+                    <ng-template pTemplate="body">
+                        <form [formGroup]="inputAnalysisForm">
+                            <div class="pt-2 grid mb-0">
+                                <label class="col-1 col:sm-2 col-form-label text-left mt-2">
+                                    Type
+                                </label>
+                                <div class="col-12 lg:col-4 lg:mb-0 sm:col-6 md:col-3">
+                                    <p-dropdown [options]="allTypes" name="name" formControlName="type"
+                                        optionLabel="caption" [filter]="true" filterBy="caption" [showClear]="false"
+                                        placeholder="-Select-" [style]="{'width':'100%'}" (onChange)="onChangeType()">
+                                    </p-dropdown>
+                                </div>
+                            </div>
+                            <div class="pt-2 grid mb-0">
+                                <label class="col-1 col:sm-2 col-form-label text-left mt-2">
+                                    Name
+                                </label>
+                                <div class="col-12 lg:col-4 lg:mb-0 sm:col-6 md:col-3">
+                                    <p-dropdown [options]="allItem" name="item" dataKey="uuid"
+                                        formControlName="selectedItem" optionLabel="name" [filter]="true"
+                                        filterBy="name" [showClear]="false" placeholder="-Select-"
+                                        [style]="{'width':'100%'}" (onChange)="onChangeItem()">
+                                        <ng-template pTemplate="selected">
+                                            <div class="analysis-item analysis-item-value">
+                                                <div>{{selectedAnalysis.name}}</div>
+                                            </div>
+                                        </ng-template>
+                                        <ng-template let-analysis pTemplate="item">
+                                            <div class="selected-item" title="{{analysis.name}}">
+                                                <div>{{analysis.name}}</div>
+                                            </div>
+                                        </ng-template>
+                                    </p-dropdown>
+                                </div>
+                            </div>
+                        </form>
+                        <hr>
+                        <div class="col p-0">
+                            <div class="lg:col-12 md:col-12 sm:col-12 p-0">
+                                <ng-container [ngTemplateOutlet]="errorTemplate"
+                                    [ngTemplateOutletContext]="{errorTitle:errorTitle,errorContent:priviewErrorContent}">
+                                </ng-container>
+                                <div *ngIf="isInputPreviewInprogess"
+                                    class="h-30hv d-flex align-items-center justify-content-center position-relative">
+                                    <ngx-spinner name="input-preview" class="embeded-spinner" bdColor="rgba(0, 0, 0, 0)"
+                                        size="default" color="#000" type="line-spin-fade" [fullScreen]="false">
+                                        <p class="mt-1 mb-0 text-black">Loading </p>
+                                    </ngx-spinner>
+                                </div>
+                                <ng-container
+                                    *ngIf="!isInputPreviewInprogess && priviewResult.length ==0 && !isInputPreviewError 
+                                && !isInputPreviewNoRecord && inputAnalysisForm.controls.type && inputAnalysisForm.controls.selectedItem">
+                                    <div class="h-30hv d-flex align-items-center justify-content-center">
+                                        Select Input Dataset
+                                    </div>
+                                </ng-container>
+                                <ng-container
+                                    *ngIf="priviewResult.length ==0 && !isInputPreviewError && isInputPreviewNoRecord">
+                                    <div class=" h-30hv d-flex align-items-center justify-content-center">
+                                        No Records Found
+                                    </div>
+                                </ng-container>
+
+                                <ng-container *ngIf="isInputPreviewSuccess  && priviewResult.length >0">
+                                    <div class="lg:col-12 md:col-12 sm:col-12 p-0">
+                                        <div class="text-right mb-2">
+                                            <p-multiSelect [options]="cols" optionLabel="header"
+                                                [(ngModel)]="_selectedColumns" selectedItemsLabel="{0} columns selected"
+                                                [style]="{'max-width': '180px'}" placeholder="Choose Columns"
+                                                [value]="priviewResult" [filter]="true" [panelStyle]="{'width':'190px'}"
+                                                (ngModelChange)="onColumnSelectChange()" filterBy="header">
+                                            </p-multiSelect>
+                                        </div>
+
+                                        <p-table styleClass="custom-table p-datatable-gridlines p-datatable-sm"
+                                            [columns]="cols" [rowHover]="true" [value]="priviewResult"
+                                            [scrollable]="true" scrollDirection="vertical"
+                                            [scrollHeight]="pTablePriviewHeight" [paginator]="false" [rows]="10"
+                                            [showCurrentPageReport]="false"
+                                            currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+                                            [rowsPerPageOptions]="[10,25,50]">
+                                            <ng-template pTemplate="header" let-columns>
+                                                <tr>
+                                                    <ng-container *ngFor="let col of columns">
+                                                        <th *ngIf="col.visible" class="text-center py-3"
+                                                            style="min-width:auto;" [pSortableColumn]="col.header"
+                                                            pResizableColumn pReorderableColumn>
+                                                            <div class="d-flex w-100">
+                                                                <span class="flex-grow-1 overflow-hidden"
+                                                                    style="max-width: calc(100% - 20px);">
+                                                                    {{col.header}}
+                                                                </span>
+                                                                <span style="max-width: 20px;">
+                                                                    <p-sortIcon [field]="col.header"></p-sortIcon>
+                                                                </span>
+                                                            </div>
+
+                                                        </th>
+                                                    </ng-container>
+                                                </tr>
+                                            </ng-template>
+                                            <ng-template pTemplate="body" let-rowData let-columns="columns">
+                                                <tr [pReorderableRow]="index" (click)="openDetailsTab(rowData)">
+                                                    <td *ngFor="let col of columns" class="no-left-right"
+                                                        [style.text-align]="'center'">
+                                                        <span>
+                                                            {{rowData[col.field]}}
+                                                        </span>
+                                                    </td>
+                                                </tr>
+                                            </ng-template>
+                                            <ng-template pTemplate="emptymessage" let-columns>
+                                                <tr>
+                                                    <td class="d-flex justify-content-center"
+                                                        [attr.colspan]="columns.length" *ngIf="entitys != undefined">
+                                                        No Records Found
+                                                    </td>
+                                                </tr>
+                                            </ng-template>
+                                        </p-table>
+                                    </div>
+                                </ng-container>
+                            </div>
+                        </div>
+                    </ng-template>
+                </p-panel>
+                <br>
+                <div>
+                <p-panel header="Run Scenario" class="no-bottom-margin run-panel" [toggleable]="true">
+                    <ng-template pTemplate="icons">
+                        <button pbutton pTooltip="Add" icon="pi pi-plus" showDelay="500" hideDelay="500"
+                            tooltipPosition="top" (click)="addScenario()" class="p-panel-header-icon p-link mr-2">
+                            <span aria-hidden="true" class="p-element p-button-icon pi pi-plus"></span>
+                        </button>
+                        <button pbutton pTooltip="Justify" icon="pi pi-align-justify" showDelay="500" hideDelay="500"
+                            tooltipPosition="top" (click)="openParamDialog(scenarioTabIndex)"
+                            class="p-panel-header-icon p-link mr-2">
+                            <span aria-hidden="true" class="p-element p-button-icon pi pi-align-justify"></span>
+                        </button>
+                        <button pbutton pTooltip="Downlaod" icon="pi pi-download" showDelay="500" hideDelay="500"
+                            tooltipPosition="top" [disabled]="!scenarioTab[scenarioTabIndex].isTabReady"
+                            (click)="downloadRuleResult()" class="p-panel-header-icon p-link mr-2">
+                            <span aria-hidden="true" class="p-element p-button-icon pi pi-download"></span>
+                        </button>
+                        <button pbutton pTooltip="Refresh" icon="fa fa-refresh" showDelay="500" hideDelay="500"
+                            tooltipPosition="top" (click)="refreshRuleScenario(scenarioTabIndex)"
+                            class="p-panel-header-icon p-link mr-2">
+                            <span aria-hidden="true" class="p-element p-button-icon fa fa-refresh"></span>
+                        </button>
+                    </ng-template>
+                    <ng-template pTemplate="body">
+                        <ng-container>
+                            <div class="custom-tabview">
+                            <p-tabView [controlClose]="true" [(activeIndex)]="scenarioTabIndex" 
+                                (onClose)="handleScenarioClose($event)" (onChange)="onChangeScenarioTab()">
+                                @for(tabInfo of scenarioTab; track tabInfo; let i = $index) {
+                                <p-tabPanel [selected]="scenarioTabIndex == i" [closable]="false"
+                                    headerStyleClass="scenario">
+                                    <ng-template pTemplate="header">
+                                        @if(!tabInfo.isHeaderEdit) {
+                                        <div (dblclick)="tabInfo.isHeaderEdit=!tabInfo.isHeaderEdit"
+                                            class="tab-container">
+                                            <span>{{tabInfo.name}}</span>
+                                            <span (click)="tabInfo.isHeaderEdit=!tabInfo.isHeaderEdit"
+                                                class="tab-edit fa fa-edit pl-2">
+                                            </span>
+                                        </div>
+                                        }
+                                        @if(tabInfo.isHeaderEdit) {
+                                        <div>
+                                            <span>
+                                                <input class="w-100" pInputText type="text" [(ngModel)]="tabInfo.name"
+                                                    (keyup.enter)="enterKeyChangeHeader($event,i)">
+                                            </span>
+                                        </div>
+                                        }
+
+                                    </ng-template>
+
+                                    <!------------------rule name & delete----------------------------->
+
+                                    <form [formGroup]="tabInfo.inputBusinessRuleForm">
+                                        <div class="input-group grid mb-0 d-flex">
+                                            <label class="col-form-label text-left mt-4" style="width: 8rem;">
+                                                Rule Name
+                                            </label>
+                                            <div class="col-10 lg:col-4 lg:mb-0 sm:col-3 md:3">
+                                                <p-dropdown [options]="allRules" name="rule" dataKey="uuid"
+                                                    optionLabel="name" formControlName="selectedRule" [filter]="true"
+                                                    filterBy="name" [showClear]="false" placeholder="-Select-"
+                                                    [style]="{'width':'100%'}" (onChange)="onChangeBusinessRule(i)">
+                                                </p-dropdown>
+                                            </div>
+                                            <div class="flex-grow-1"></div>
+                                            <div class="text-right ml-auto mt-3 delete-Button">
+                                                <button pbutton="" pripple="" type="button" label="Danger"
+                                                    *ngIf="scenarioTab.length > 1 && scenarioTabIndex != 0"
+                                                    (click)="handleScenarioClose(i,$event)"
+                                                    class="p-button-outlined p-element p-ripple p-button-danger p-button p-component">
+                                                    <span class="p-button-label">Delete</span>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </form>
+
+                                    <hr>
+                                    <div class="row">
+                                        <div class="col-sm-12 pb-1">
+                                            <ng-container
+                                                *ngIf="!tabInfo.isRuleExecutionInprogess && !tabInfo.isRuleExecutionSuccess && !tabInfo.isRuleExecutionError && tabInfo.inputBusinessRuleForm.controls.selectedRule">
+                                                <div class="h-50hv flex justify-content-center align-items-center mt-6">
+                                                    Select Rule Name
+                                                </div>
+                                            </ng-container>
+
+                                            <ng-container *ngIf="tabInfo.isRuleExecutionError"
+                                                [ngTemplateOutlet]="errorTemplate"
+                                                [ngTemplateOutletContext]="{errorTitle:errorTitle,errorContent:ruleErrorContent}">
+                                            </ng-container>
+
+                                            <ng-container>
+                                                <div *ngIf="tabInfo.isRuleExecutionInprogess && !tabInfo.isRuleExecutionError  "
+                                                    class="h-30hv d-flex align-items-center justify-content-center position-relative
+                                                    ">
+                                                    <ngx-spinner name="rule-execution" class="embeded-spinner"
+                                                        bdColor="rgba(0, 0, 0, 0)" size="default" color="#000"
+                                                        type="line-spin-fade" [fullScreen]="false">
+                                                        <p class="mt-1 mb-0 text-black">Loading </p>
+                                                    </ngx-spinner>
+                                                </div>
+                                            </ng-container>
+                                            <!-- ----------------------->
+                                            <ng-container
+                                                *ngIf="!tabInfo.isRuleExecutionInprogess && tabInfo.isRuleExecutionSuccess">
+                                                <div class="custom-tabview">
+                                                <p-tabView [(activeIndex)]="tabIndex" [controlClose]="true"
+                                                    (onClose)="handleSeverityTabClose($event)"
+                                                    (onChange)="onChangeScenarioTab()">
+                                                    <p-tabPanel header="Overview" [closable]="false">
+                                                        <ng-container>
+                                                            <div class="grid">
+                                                                <div class="sm:col-4"
+                                                                    [ngClass]="tabInfo.overViewTabCol[0].isExpand?'sm:col-12':'sm:col-4'"
+                                                                    *ngIf="tabInfo.overViewTabCol[0].isShow">
+                                                                    <div class="div-custom ruleScenarioTitle">
+                                                                        <p-panel [showHeader]="true" header="Severity"
+                                                                            [toggleable]="false"
+                                                                            class="p-panel-run-scenrio mb-0" >
+                                                                            <ng-template pTemplate="icons">
+                                                                                <button pButton
+                                                                                    *ngIf="!tabInfo.overViewTabCol[0].isExpand"
+                                                                                    class="p-panel-header-icon p-link"
+                                                                                    icon="fa-solid fa-up-right-and-down-left-from-center"
+                                                                                    (click)="onClickOverviewExpend(scenarioTabIndex,tabInfo.overViewTabCol[0].id)"></button>
+
+                                                                                <button pButton
+                                                                                    *ngIf="tabInfo.overViewTabCol[0].isExpand"
+                                                                                    class="p-panel-header-icon p-link"
+                                                                                    icon="fa-solid fa-down-left-and-up-right-to-center"
+                                                                                    (click)="onClickOverviewCollapse(scenarioTabIndex,tabInfo.overViewTabCol[0].id)"></button>
+                                                                            </ng-template>
+                                                                            <div *ngIf="tabInfo.isRuleOverViewResultInprogess"
+                                                                                class="h-30hv d-flex align-items-center justify-content-center position-relative">
+                                                                                <ngx-spinner name="rule-overview-result"
+                                                                                    class="embeded-spinner"
+                                                                                    bdColor="rgba(0, 0, 0, 0)"
+                                                                                    size="default" color="#000"
+                                                                                    type="line-spin-fade"
+                                                                                    [fullScreen]="false">
+                                                                                    <p class="mt-1 mb-0 text-black">LOADING</p>
+                                                                                </ngx-spinner>
+                                                                            </div>
+                                                                            <ng-template pTemplate="body">
+                                                                                <ng-container
+                                                                                    *ngIf="tabInfo.isRuleOverviewResultError "
+                                                                                    [ngTemplateOutlet]="errorTemplate"
+                                                                                    [ngTemplateOutletContext]="{errorTitle:errorTitle,errorContent:tabInfo.ruleOverViewErrorContent}">
+                                                                                </ng-container>
+                                                                                <div>
+                                                                                    <ng-container
+                                                                                        *ngIf="!tabInfo.isRuleOverViewResultInprogess &&!tabInfo.isRuleOverviewResultError">
+                                                                                        <app-c3-chart
+                                                                                            id="pi_{{ tabInfo.id }}"
+                                                                                            [data]="tabInfo.ruleSeverityData"
+                                                                                            (onC3ClickEvent)="onClickSeverity($event)">
+                                                                                        </app-c3-chart>
+                                                                                    </ng-container>
+                                                                                </div>
+                                                                            </ng-template>
+                                                                        </p-panel>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="sm:col-4"
+                                                                    [ngClass]="tabInfo.overViewTabCol[1].isExpand?'sm:col-12':'sm:col-4'"
+                                                                    *ngIf="tabInfo.overViewTabCol[1].isShow">
+                                                                    <div class="div-custom ruleScenarioTitle">
+                                                                        <p-panel [showHeader]="true"
+                                                                            header="Score Histogram"
+                                                                            [toggleable]="false"
+                                                                            class="p-panel-run-scenrio mb-0" >
+                                                                            <ng-template pTemplate="icons">
+                                                                                <button pButton
+                                                                                    *ngIf="!tabInfo.overViewTabCol[1].isExpand"
+                                                                                    class="p-panel-header-icon p-link"
+                                                                                    icon="fa-solid fa-up-right-and-down-left-from-center"
+                                                                                    (click)="onClickOverviewExpend(scenarioTabIndex,tabInfo.overViewTabCol[1].id)">
+                                                                                </button>
+                                                                                <button pButton
+                                                                                    *ngIf="tabInfo.overViewTabCol[1].isExpand"
+                                                                                    class="p-panel-header-icon p-link"
+                                                                                    icon="fa-solid fa-down-left-and-up-right-to-center"
+                                                                                    (click)="onClickOverviewCollapse(scenarioTabIndex,tabInfo.overViewTabCol[1].id)">
+                                                                                </button>
+                                                                            </ng-template>
+                                                                            <div *ngIf="tabInfo.isRuleOverViewResultInprogess"
+                                                                                class="h-30hv d-flex align-items-center justify-content-center position-relative">
+                                                                                <ngx-spinner name="rule-overview-result"
+                                                                                    class="embeded-spinner"
+                                                                                    bdColor="rgba(0, 0, 0, 0)"
+                                                                                    size="default" color="#000"
+                                                                                    type="line-spin-fade"
+                                                                                    [fullScreen]="false">
+                                                                                    <p class="mt-1 mb-0 text-black">LOADING
+                                                                                    </p>
+                                                                                </ngx-spinner>
+                                                                            </div>
+                                                                            <ng-template pTemplate="body">
+                                                                                <ng-container
+                                                                                    *ngIf="tabInfo.isRuleOverviewResultError"
+                                                                                    [ngTemplateOutlet]="errorTemplate"
+                                                                                    [ngTemplateOutletContext]="{errorTitle:errorTitle,errorContent:tabInfo.ruleOverViewErrorContent}">
+                                                                                </ng-container>
+                                                                                <div>
+                                                                                    <ng-container 
+                                                                                        *ngIf="!tabInfo.isRuleOverViewResultInprogess && !tabInfo.isRuleOverviewResultError">
+                                                                                        <app-c3-chart
+                                                                                            id="his_{{tabInfo.id}}"
+                                                                                            [data]="tabInfo.ruleSHData">
+                                                                                        </app-c3-chart>
+                                                                                    </ng-container>
+                                                                                </div>
+                                                                            </ng-template>
+                                                                        </p-panel>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="sm:col-4"
+                                                                    *ngIf="tabInfo.overViewTabCol[2].isShow">
+                                                                    <div class="div-custom ruleScenarioTitle">
+                                                                        <p-panel [showHeader]="true"
+                                                                            header="Set Thresholds" [toggleable]="false"
+                                                                            class="p-panel-run-scenrio mt-5" >
+                                                                            <ng-template pTemplate="icons">
+                                                                                <div class="p-panel-header-icon">
+                                                                                </div>
+                                                                            </ng-template>
+                                                                            <ng-template pTemplate="body">
+                                                                                <div class="col"></div>
+                                                                                <div
+                                                                                    class="form-group row low-slider slider-Height">
+                                                                                    <label
+                                                                                        class="col-sm-2 col-form-label mt-4">
+                                                                                        Low : {{ tabInfo.lowValue }}
+                                                                                    </label>
+                                                                                    <div
+                                                                                        class="col-sm-8 px-0 pl-0 mt-3">
+                                                                                        <p-slider
+                                                                                            [(ngModel)]="tabInfo.lowValue"
+                                                                                            [min]="0" [max]="100"
+                                                                                            [step]="1"
+                                                                                            (onChange)="onChangeLowValue(i)"></p-slider>
+                                                                                    </div>
+                                                                                </div>
+
+                                                                                <div
+                                                                                    class="form-group row slider-Height">
+                                                                                    <label
+                                                                                        class="col-sm-2 col-form-label mt-4">
+                                                                                        Med : {{tabInfo.medValue}}
+                                                                                    </label>
+                                                                                    <div
+                                                                                        class="col-sm-8 px-0 pl-0 mt-3">
+                                                                                        <p-slider
+                                                                                            [(ngModel)]="tabInfo.medValue"
+                                                                                            [min]="0" [max]="100"
+                                                                                            [step]="1"
+                                                                                            (onChange)="onChangeMedValue(i)"></p-slider>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div
+                                                                                    class="form-group row slider-Height">
+                                                                                    <label
+                                                                                        class="col-sm-2 col-form-label mt-4">
+                                                                                        High : {{tabInfo.highValue}}
+                                                                                    </label>
+                                                                                    <div
+                                                                                        class="col-sm-8 px-0 pl-0 mt-3">
+                                                                                        <p-slider
+                                                                                            [(ngModel)]="tabInfo.highValue"
+                                                                                            [min]="0" [max]="100"
+                                                                                            [step]="1"
+                                                                                            (onChange)="onChangeHighValue(i)"></p-slider>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="form-group grid col-12 m-1">
+                                                                                    <a class="ml-auto">
+                                                                                        <p-button label="Submit"
+                                                                                            (click)="submitThreshold(i)"
+                                                                                            [disabled]="isSubmitDisabled">
+
+                                                                                        </p-button>
+                                                                                    </a>
+                                                                                </div>
+                                                                                <br>
+                                                                            </ng-template>
+                                                                        </p-panel>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </ng-container>
+                                                    </p-tabPanel>
+                                                    <p-tabPanel header="Results" [closable]="false">
+                                                        <div class="col-12 lg:col-12 md:col-12 sm:col-12 p-0">
+
+
+                                                            <div *ngIf="tabInfo.isRuleResltInprogess && !tabInfo.isRuleResultError"
+                                                                class="h-30hv d-flex align-items-center justify-content-center position-relative">
+
+                                                                <ngx-spinner name="rule-result" class="embeded-spinner"
+                                                                    bdColor="rgba(0, 0, 0, 0)" size="default"
+                                                                    color="#000" type="line-spin-fade"
+                                                                    [fullScreen]="false">
+                                                                    <p class="mt-1 mb-0 text-black">Loading </p>
+                                                                </ngx-spinner>
+                                                            </div>
+                                                            <ng-container
+                                                                *ngIf="tabInfo.ruleResult.length ==0 && !tabInfo.isRuleResultError && tabInfo.isRuleNoRecord">
+                                                                <div
+                                                                    class="h-30hv d-flex align-items-center justify-content-center">
+                                                                    No Records Found
+                                                                </div>
+                                                            </ng-container>
+                                                            <ng-container *ngIf="tabInfo.isRuleResultError"
+                                                                [ngTemplateOutlet]="errorTemplate"
+                                                                [ngTemplateOutletContext]="{errorTitle:errorTitle,errorContent:tabInfo.ruleResultErrorContent}">
+                                                            </ng-container>
+                                                            <ng-container
+                                                                *ngIf="tabInfo.isRuleResultSuccess && tabInfo.ruleResult.length >0">
+                                                                <div class="text-right mb-2">
+                                                                    <p-multiSelect [options]="tabInfo.ruleResultCols" optionLabel="header"
+                                                                        [(ngModel)]="tabInfo.ruleResultCols" [panelStyle]="{'width':'190px'}"
+                                                                        selectedItemsLabel="{0} columns selected"
+                                                                        [style]="{'max-width': '200px'}"
+                                                                        placeholder="Choose Columns"
+                                                                        (ngModelChange)="ResultTabOnColumnSelectChange()"
+                                                                        value="tabInfo.ruleResult" [filter]="true"
+                                                                        filterBy="header"></p-multiSelect>
+                                                                </div>
+                                                                <p-table styleClass="p-datatable-gridlines"
+                                                                    [columns]="tabInfo.ruleResultCols" [rowHover]="true"
+                                                                    [value]="tabInfo.ruleResult" [scrollable]="true"
+                                                                    scrollDirection="vertical" [autoLayout]="true"
+                                                                    [scrollHeight]="tabInfo.pTableResultHeight"
+                                                                    [paginator]="true" [rows]="10"
+                                                                    [showCurrentPageReport]="true"
+                                                                    currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries">
+                                                                    <ng-template pTemplate="header" let-columns>
+                                                                        <tr>
+                                                                            <th class="text-center py-3"
+                                                                                style="min-width:auto;"
+                                                                                [pSortableColumn]="col.header"
+                                                                                *ngFor="let col of columns"
+                                                                                pFrozenColumn [frozen]="col.frozen">
+                                                                                <div class="d-flex w-100">
+                                                                                    <span
+                                                                                        class="flex-grow-1 overflow-hidden"
+                                                                                        style="max-width: calc(100% - 20px);">
+                                                                                        {{col.header}}
+                                                                                    </span>
+                                                                                    <span style="max-width: 20px;">
+                                                                                        <p-sortIcon
+                                                                                            [field]="col.header"></p-sortIcon>
+                                                                                    </span>
+                                                                                </div>
+                                                                            </th>
+                                                                        </tr>
+                                                                    </ng-template>
+                                                                    <ng-template pTemplate="body" let-rowData
+                                                                        let-columns="columns">
+                                                                        <tr class="hover-pointer"
+                                                                            [pReorderableRow]="index"
+                                                                            (click)="openDetailsTab(rowData)">
+
+                                                                            <td *ngFor="let col of columns"
+                                                                                style="width:200px"
+                                                                                class="no-left-right"
+                                                                                [style.text-align]="'center'"
+                                                                                pFrozenColumn [frozen]="col.frozen">
+
+                                                                                <span
+                                                                                    *ngIf="col.field !='severity';else severityCol">
+                                                                                    {{rowData[col.field]}}
+                                                                                </span>
+                                                                                <ng-template #severityCol>
+                                                                                    <span
+                                                                                        class="severity px-4 py-1 text-white"
+                                                                                        [tdColor]="'severity'"
+                                                                                        [tdValues]="rowData[col.field]"
+                                                                                        *ngIf="col.field =='severity';else col_not_severity">
+                                                                                        {{getSeveritryCaption(rowData[col.field])}}
+                                                                                    </span>
+                                                                                </ng-template>
+
+                                                                            </td>
+                                                                        </tr>
+                                                                    </ng-template>
+                                                                    <ng-template pTemplate="emptymessage" let-columns>
+                                                                        <tr>
+                                                                            <td class="d-flex justify-content-center"
+                                                                                [attr.colspan]="columns.length"
+                                                                                *ngIf="entitys != undefined">
+                                                                                No Records Found
+                                                                            </td>
+                                                                        </tr>
+                                                                    </ng-template>
+                                                                    <ng-template pTemplate="paginatorleft">
+                                                                    </ng-template>
+                                                                </p-table>
+                                                            </ng-container>
+                                                        </div>
+                                                    </p-tabPanel>
+
+                                                    <p-tabPanel
+                                                        *ngFor="let severity of tabInfo.severityTab ;let SRIndex=index"
+                                                        [header]="severity.name" [closable]="true">
+                                                        <app-data-table [Url]="severity.url"></app-data-table>
+                                                    </p-tabPanel>
+                                                </p-tabView>
+                                            </div>
+                                            </ng-container>
+                                        </div>
+                                    </div>
+                                </p-tabPanel>
+                                }
+                            </p-tabView>
+                        </div>
+                        </ng-container>
+                    </ng-template>
+                </p-panel>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!------------------------************************--------------------------->
+
+    <p-dialog header="Run Params" [(visible)]="isOpenParamsDialog" [breakpoints]="{'960px': '75vw', '640px': '100vw'}"
+        [style]="{width: '50vw'}" [modal]="true" [maximizable]="false">
+        <ng-template pTemplate="body">
+            <form [formGroup]="scenarioTab[scenarioTabIndex].ruleParamForm">
+                <p-table [value]="scenarioTab[scenarioTabIndex].ruleParamForm.controls.rows.controls"
+                    responsiveLayout="scroll">
+                    <ng-template pTemplate="header">
+                        <tr>
+                            <th>ID</th>
+                            <th>Param Name</th>
+                            <th>Param Value</th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-row let-rowIndex="rowIndex">
+                        <ng-container formArrayName="rows">
+                            <tr [formGroupName]="rowIndex">
+                                <td>{{rowIndex+1}}</td>
+                                <td>{{row.value.param.paramName}}</td>
+                                <td> <input pInputText type="text" formControlName="paramValue"></td>
+                            </tr>
+                        </ng-container>
+                    </ng-template>
+                    <ng-template pTemplate="emptymessage" let-row let-rowIndex="rowIndex">
+                        <tr>
+                            <td colspan="3" class="text-center">No Record Found</td>
+                        </tr>
+                    </ng-template>
+                </p-table>
+            </form>
+        </ng-template>
+        <ng-template pTemplate="footer">
+            <button pbutton="" pripple="" label="Submit" (click)="paramSubmit(scenarioTabIndex)"
+                class="p-button-outlined p-element p-ripple p-button p-component">
+                <span class="p-button-label">Submit</span>
+                <span class="p-ink" aria-hidden="true" role="presentation"></span>
+            </button>
+        </ng-template>
+    </p-dialog>
+
+
+    <p-dialog header="Configure Filter" [(visible)]="filterDialog" [breakpoints]="{'960px': '75vw', '640px': '100vw'}"
+        [style]="{width: '85vw'}" [modal]="true" [maximizable]="false" responsive="true"
+        [contentStyle]="{'overflow':'visible'}">
+        <hr>
+        <ng-template pTemplate="body">
+            <div style="overflow-y: auto;">
+                <div class="flex justify-content-between align-items-center">
+                    <div class="md:col-6">
+                        <h4>Filter</h4>
+                    </div>
+                    <div class="md:col-3">
+                        <div class="flex justify-content-end">
+                            <button pTooltip="Add" tooltipPosition="top" (click)="addFilterRow()" pButton pRipple
+                                type="button" icon="pi pi-plus"
+                                class="p-button-rounded p-button-secondary p-button-outlined ml-2"></button>
+                            <button pTooltip="Delete" tooltipPosition="top" (click)="deleteFilterRow()" pButton pRipple
+                                type="button" icon="pi pi-minus"
+                                class="p-button-rounded p-button-secondary p-button-outlined ml-2"></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <br>
+            <form [formGroup]="filterForm">
+                <p-table [value]="filterForm.controls.rows.controls" formArrayName="rows" dataKey="index"
+                    styleClass="p-datatable-gridlines">
+                    <ng-template pTemplate="header">
+                        <tr>
+                            <th class="col-sm-1 text-center"><p-checkbox (onChange)="onChangeSelectAllFilter($event)"
+                                    binary="true" class="text-center"></p-checkbox></th>
+                            <th class="col-sm-2">Logical Operator</th>
+                            <th class="col-sm-1">LHS Type</th>
+                            <th class="col-sm-3">LHS Attribute</th>
+                            <th class="col-sm-2">Operator</th>
+                            <th class="col-sm-1">RHS Type</th>
+                            <th class="col-sm-3">RHS Attribute</th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-row let-i="rowIndex">
+                        <tr [formGroupName]="i">
+                            <td class="text-center" style="width: 5%">
+                                <p-checkbox binary="true" formControlName="select" [(ngModel)]="row.get('select').value"
+                                    class="text-center mt-1"></p-checkbox>
+                            </td>
+                            <td>
+                                <p-dropdown [options]="logicalOperators" name="logicalOperator"
+                                    formControlName="logicalOperator" optionLabel="caption" [filter]="true"
+                                    filterBy="caption" [showClear]="false" placeholder="-Select-" appendTo="body"
+                                    [style]="{'width':'100%'}">
+                                </p-dropdown>
+                            </td>
+                            <td>
+                                <p-dropdown [options]="lhsTypes" name="lhsType" formControlName="lhsType"
+                                    optionLabel="caption" [filter]="true" filterBy="caption" [showClear]="false"
+                                    placeholder="-Select-" [style]="{'width':'100%'}" appendTo="body">
+                                </p-dropdown>
+                            </td>
+                            <td>
+                                <p-dropdown [options]="allAttr" name="lhsAttr" formControlName="lhsAttr"
+                                    optionLabel="dname"
+                                    [ngClass]="{ 'ng-dirty ng-invalid': filterForm.controls.rows.controls[i].controls.lhsAttr.touched && filterForm.controls.rows.controls[i].controls.lhsAttr.errors?.['required']}"
+                                    [filter]="true" filterBy="caption" [showClear]="false" placeholder="-Select-"
+                                    [style]="{'width':'100%'}" appendTo="body">
+                                </p-dropdown>
+                            </td>
+                            <td>
+                                <p-dropdown [options]="operators" name="operator" formControlName="operator"
+                                    optionLabel="caption" [filter]="true" filterBy="caption" [showClear]="false"
+                                    placeholder="-Select-" [style]="{'width':'100%'}" appendTo="body">
+                                </p-dropdown>
+                            </td>
+                            <td>
+                                <p-dropdown (onChange)="onChangeRhsType(i)" [options]="rhsTypes" name="rhsType"
+                                    formControlName="rhsType" optionLabel="caption" [filter]="true" filterBy="caption"
+                                    [showClear]="false" placeholder="-Select-" [style]="{'width':'100%'}"
+                                    appendTo="body">
+                                </p-dropdown>
+                            </td>
+                            <td>
+                                <ng-container [ngSwitch]="row.value.rhsType.text">
+                                    <ng-container *ngSwitchCase="dataTypeEnum.STRING">
+                                        <input
+                                            [ngClass]="{ 'ng-dirty ng-invalid': filterForm.controls.rows.controls[i].controls.rhsValue.touched && filterForm.controls.rows.controls[i].controls.rhsValue.errors?.['required']}"
+                                            class="w-100" pInputText type="text" formControlName="rhsValue">
+                                    </ng-container>
+                                    <ng-container *ngSwitchCase="dataTypeEnum.INTEGER">
+                                        <input
+                                            [ngClass]="{ 'ng-dirty ng-invalid': filterForm.controls.rows.controls[i].controls.rhsValue.touched && filterForm.controls.rows.controls[i].controls.rhsValue.errors?.['required']}"
+                                            class="w-100" pInputText type="number" formControlName="rhsValue">
+                                    </ng-container>
+                                    <ng-container *ngSwitchDefault>
+                                        <p-dropdown [options]="allAttr" name="rhsAttr" formControlName="rhsAttr"
+                                            [ngClass]="{ 'ng-dirty ng-invalid': filterForm.controls.rows.controls[i].controls.rhsAttr.touched && filterForm.controls.rows.controls[i].controls.rhsAttr.errors?.['required']}"
+                                            optionLabel="dname" [filter]="true" filterBy="caption" [showClear]="false"
+                                            placeholder="-Select-" [style]="{'width':'100%'}" appendTo="body">
+                                        </p-dropdown>
+                                    </ng-container>
+                                </ng-container>
+                            </td>
+                        </tr>
+
+                    </ng-template>
+                </p-table>
+                <ng-container *ngIf="filterForm.get('rows').length === 0">
+                    <tr class="d-flex justify-content-center">
+                        <td class="h-10hv mt-2">No Record Found</td>
+                    </tr>
+                </ng-container>
+            </form>
+        </ng-template>
+
+        <ng-template pTemplate="footer">
+            <button pButton pRipple type="button" class="p-button-outlined" label="Submit" (click)="filterSubmit()"></button>
+        </ng-template>
+    </p-dialog>
+
+
+    <ngx-spinner name="analysis-load" class="embeded-spinner" bdColor="rgba(0, 0, 0, 0.8)" size="medium" color="#000"
+        type="line-spin-fade" [fullScreen]="true">
+        <p class="mt-1 mb-0 text-black">Loading </p>
+    </ngx-spinner>
+
+
+    <ngx-spinner name="analysis-save" class="embeded-spinner" bdColor="rgba(0, 0, 0, 0.8)" size="medium" color="#fff"
+        type="line-spin-fade" [fullScreen]="true" *ngIf="!isNameEntered">
+        <p class="mt-1 mb-0 text-black">Loading </p>
+    </ngx-spinner>
+
+    <ng-template let-title="errorTitle" let-content="errorContent" #errorTemplate>
+        <div class="center-element h-40hv">
+            <app-error-dialog [title]="title" [content]="content" [messageHead]="title">
+            </app-error-dialog>
+        </div>
+    </ng-template>
+</div>

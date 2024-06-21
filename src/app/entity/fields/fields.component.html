@@ -1,0 +1,115 @@
+<div class="grid mb-2 mx-2">
+    
+    @if(data.filterType == 'SINGLE'){
+    <ng-container>
+        <div class="col-12 lg:col-12 xl:col-12 md:col-12">
+            <label class="" for="{{data.dispName}}">{{data.dispName}}</label>
+            <div class="input-group mt-4">
+                <p-dropdown [options]="allOptions" optionLabel="value" [filter]="true" filterBy="value"
+                    [showClear]="true" placeholder="-Select-" [style]="{'width':'100%'}" 
+                    [tabindex]=1 [emptyFilterMessage]="emptySearch" [formControl]="control"
+                    (onFilter)="searchChange($event)">
+                    <ng-template pTemplate="selected">
+                        @if(value){
+                            <div class="selected-item item-value">
+                                <div>{{value.value}}</div>
+                            </div>
+                        }
+                    </ng-template>
+                    <ng-template let-item pTemplate="item">
+                        <div class="selected-item">
+                            <div>{{item.value}}</div>
+                        </div>
+                    </ng-template>
+                </p-dropdown>
+            </div>
+        </div>
+    </ng-container>
+    }
+
+    @if(data.filterType == 'CALENDAR'){
+    <ng-container>
+        <div class="col-12 lg:col-12 xl:col-12 md:col-12">
+            <label for="{{data.dispName}}">{{data.dispName}}</label>
+            <div class="input-group mt-3">
+                     <p-calendar placeholder="yyyy-mm-dd" dateFormat="yy-mm-dd"
+                        showIcon="true" [style]="{'width':'100%'}" dataType="string" 
+                        styleClass="custom-calender" [formControl]="control" placeholder="yyyy-mm-dd">
+                    </p-calendar>
+            </div>
+        </div>
+    </ng-container>
+    }
+
+    @if(data.filterType == 'MULTISELECT'){
+    <ng-container>
+        <div class="col-12 lg:col-12 xl:col-12 md:col-12">
+            <label for="{{data.dispName}}">{{data.dispName}}</label>
+            <div class="input-group mt-3">
+                <p-multiSelect [options]="allOptions" optionLabel="value" [filter]="true" filterBy="value"
+                    [showClear]="true" placeholder="-Select-" [style]="{'width':'100%'}" 
+                    [tabindex]=0 [emptyFilterMessage]="emptyFilterMessage" [formControl]="control"
+                    (onFilter)="searchChange($event)">
+                    <ng-template pTemplate="selected">
+                            @if(value){
+                            <div class="selected-item item-value">
+                                <div>{{value.value}}</div>
+                            </div>
+                        }
+                        </ng-template>
+                    <ng-template let-item pTemplate="item">
+                        <div class="selected-item">
+                            <div>{{item.value}}</div>
+                        </div>
+                    </ng-template>
+                </p-multiSelect>
+            </div>
+        </div>
+    </ng-container>
+    }
+
+    @if(data && data.filterType == 'RANGE'){
+    <ng-container>
+        <div class="col-12 lg:col-12 xl:col-12 md:col-12">
+            <label for="{{data.dispName}}">{{data.dispName}}: {{model[0]}} - {{model[1]}}</label>
+            <div class="input-group mt-4">
+                <p-slider [(ngModel)]="model" [formControl]="control" [min]="rangeMinMax[0]" [max]="rangeMinMax[1]"
+                    [range]="true"></p-slider>
+            </div>
+        </div>
+    </ng-container>
+    }
+
+    @if(data.filterType == 'RADIOBUTTON'){
+    <ng-container>
+        <div class="col-12 lg:col-12 xl:col-12 md:col-12">
+            <label for="{{data.dispName}}" [style]="{'width':'100%'}">{{data.dispName}}</label>
+            <div class="input-group mt-2">
+                <ng-container *ngFor="let item of data.unique">
+                    <div class="pb-5px">
+
+                        <p-radioButton class="filter-fields" name="radioButton" [value]="item.name"
+                            [formControl]="control" [style]="{'width':'100%'}" [label]="item.name">
+                        </p-radioButton>
+                    </div>
+                </ng-container>
+            </div>
+        </div>
+    </ng-container>
+    }
+
+    @if(data.filterType == 'CHECKBOX'){
+    <ng-container>
+        <div class="col-12 lg:col-12 xl:col-12 md:col-12">
+            <label for="{{data.dispName}}" [style]="{'width':'100%'}">{{data.dispName}}</label>
+            <div class="input-group mt-2">
+                <ng-container *ngFor="let item of data.unique">
+                    <p-checkbox name="checkbox" value="item.name" [formControl]="control" [style]="{'width':'100%'}"
+                        [label]="item.name"></p-checkbox>
+                </ng-container>
+            </div>
+        </div>
+    </ng-container>
+    }
+
+</div>

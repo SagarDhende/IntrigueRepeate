@@ -1,0 +1,42 @@
+<ng-sidebar-accordion #rightAccordion class="sidebar-accordion-main sidebar-accordion-height">
+    <!-- A sidebar -->
+    <ng-sidebar position="right" [opened]="false">
+        <ng-sidebar-content class="sidebar-content-design">
+            <app-search-list [metaType]="metaType" (searchParameterData)="getSearchCriteria($event)" (panelclose)="panelClose()"
+                             (clearButtonClick)="panelClose()" [options]="options" (setIsEditFlagEmitter)="onIsEditEnableChanged($event)"></app-search-list>
+        </ng-sidebar-content>
+    </ng-sidebar>
+<ng-sidebar-accordion-content class="page-wrapper-container">
+        <div class="card card-height-85hv-80px border-radius-12">
+            <div class="flex align-items-center justify-content-between header-margin">
+                <h5 class="mb-0">Simulation Results</h5>
+                <div><button pbutton="" type="button" icon="pi pi-ellipsis-v" (click)="addNewSimulation()"
+                        class="p-element p-button-rounded p-button-text p-button-plain p-button p-component p-button-icon-only"><span
+                            class="p-button-icon pi pi-plus" pTooltip="Add New" tooltipPosition="top"
+                            aria-hidden="true"></span></button>
+                    <button #body pbutton="" type="button" icon="pi pi-ellipsis-v" (click)="menu.toggle($event)"
+                        class="p-element p-button-rounded p-button-text p-button-plain p-button p-component p-button-icon-only"><span
+                            class="p-button-icon pi pi-filter" pTooltip="Filter" tooltipPosition="top"
+                            aria-hidden="true"></span></button>
+                    <p-menu #menu [popup]="true" [model]="items" appendTo="body"></p-menu>
+                    <button pbutton="" type="button" icon="pi pi-ellipsis-v" (click)="refreshClick()"
+                        class="p-element p-button-rounded p-button-text p-button-plain p-button p-component p-button-icon-only"><span
+                            class="p-button-icon fa fa-refresh" aria-hidden="true" pTooltip="Refresh"
+                            tooltipPosition="top"></span></button>
+                </div>
+            </div>
+            <hr>
+            <app-table-list [metaType]="metaType" [options]="options" (setLength)="getLength($event)"></app-table-list>
+                <div class="flex align-items-center justify-content-between mt-1">
+                    <div class="md:col-3">
+                        {{length}} rows
+                    </div>
+                    <div class="md:col-9">
+                        <div style="float:right; font-style: italic;">
+                            Note : Displaying max 500 rows
+                        </div>
+                    </div>
+                </div>
+   </div>
+</ng-sidebar-accordion-content>
+</ng-sidebar-accordion>

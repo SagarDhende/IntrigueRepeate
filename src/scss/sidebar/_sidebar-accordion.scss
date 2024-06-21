@@ -1,0 +1,47 @@
+.ng-sidebar-accordion{
+   overflow: unset !important;
+}
+    
+.sidebar-accordion-main{
+    // border: 1px solid var(--surface-border);
+    border-radius: 10px;
+}
+
+.sidebar-accordion-height {
+    height: calc(100vh - 10rem) !important;
+    box-sizing: border-box;
+}
+
+.sidebar-content-design {
+    // overflow-y: auto !important;
+    // border-left: 1px solid var(--surface-border);
+    background: var(--surface-card);
+    box-shadow: var(--card-shadow);
+    // border: 1px solid var(--surface-border);
+}
+
+div.ng-sidebar-accordion__content-pane {
+    overflow : unset;
+    background: var(--surface-card);
+    box-shadow: var(--card-shadow);
+    right: -3px;
+    height: calc(100vh - 8rem) !important;
+  }
+
+
+.sidebar-content-header-btn{
+    border-radius: 0;
+    border: 1px solid var(--surface-border);
+    border-top: none;
+    border-bottom: 2px solid #3B82F6 !important;;
+}
+.ng-sidebar-accordion__top-pane, .ng-sidebar-accordion__bottom-pane, .ng-sidebar-accordion__left-pane,
+.ng-sidebar-accordion__right-pane {
+    background-color: unset !important;
+}
+.ng-sidebar-accordion__right-pane{
+    height: calc(100vh - 8rem) !important;
+    margin-left: 15px;
+
+}
+

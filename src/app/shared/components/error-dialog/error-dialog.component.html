@@ -1,0 +1,13 @@
+<div class="flex" [ngClass]="{'justify-content-center':position=='CENTER','justify-content-end':position=='END'}" *ngIf="!isErrorDialogOpen">
+    <p-messages severity="error">
+        <ng-template pTemplate>
+            <span class="ml-2">{{messageHead}} : <a href="javascript:void(0);" class="alert-link" (click)="isErrorDialogVisible = true">
+                    Show Error
+                </a></span>
+        </ng-template>
+    </p-messages>
+</div>
+
+<p-dialog [draggable]="false" [header]="title" [(visible)]="isErrorDialogVisible" [style]="{width: '50vw'}">
+    {{content}}
+</p-dialog>

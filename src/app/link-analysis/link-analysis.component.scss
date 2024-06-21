@@ -1,0 +1,140 @@
+
+::ng-deep .p-inputnumber-buttons-stacked .p-inputnumber-button-group .p-button.p-inputnumber-button{
+    padding: 0rem !important;
+}
+
+hr {
+    margin: 1rem 0;
+    color: inherit;
+    border: 0;
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+    opacity: 10;
+}
+
+
+.border-top .p-panel .p-panel-content{
+    border-top: 1px solid  rgba(0, 0, 0, 0.1);
+}
+
+.analysis-graph {
+    background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAI0lEQVQYV2NkIBIwgtStWrXqf1hYGJiNC+CVRNY0qhBv0AMAsKgECyGgekgAAAAASUVORK5CYII=");
+     min-height: 300px;
+     display: block;
+     height: 100%;
+     justify-content: center;
+     align-items: center;
+     overflow: auto;
+   }
+// ------------------misc tab--------------------
+   .node-circle{
+    margin:0px 20px 5px 0px;
+    padding:5px 10px 5px 10px;
+    text-align:center;
+    color:white;
+    border-radius:20px;
+    cursor:pointer;
+    width:30px;
+    height:30px;
+    display: inline-block;
+    background-color: #bbb;
+}
+
+.span-input-text {
+    display: flex;
+    flex-flow: row;
+    -webkit-box-align: center;
+    align-items: center;
+    overflow: initial;
+    flex: 1 1 0%;
+    -webkit-box-pack: justify;
+    justify-content: space-between;
+    border-radius: 4px;
+    height: 40px;
+    padding: 0px 8px;
+    border: none;
+    text-overflow: ellipsis;
+    cursor: pointer;
+    box-shadow: rgb(52 58 67 / 10%) 0px 1px 4px, rgb(52 58 67 / 10%) 0px 1px 2px, rgb(52 58 67 / 10%) 0px 0px 2px;
+    transition: box-shadow 0.2s ease-in-out 0s;
+}
+
+.edge-line{
+    //margin:15px 0px 0px 0px;
+    text-align:center;
+    color:black;
+    border-radius:20px;
+    opacity:0.7;
+    cursor:pointer;
+    height:4px;
+    width:60px;
+}
+
+// ----------------------nodes tab ---------------------------
+
+.popover-edge-line{
+    height: 20px;
+    justify-content: space-around;
+    -webkit-box-align: center;
+    align-items: center;
+    width: 12%;
+    transition: all 0.2s ease-in-out 0s;
+    height: 66px;
+    display: flex;
+    -webkit-box-align: center;
+    align-items: center;
+    display: inline-block;
+    cursor: pointer;
+    margin-top: 10px;
+    vertical-align: middle;
+    display: inline-flex;
+    vertical-align: middle;
+    text-align: center;
+}
+
+.h-75hv{
+    height: calc(70vh - 10rem);
+}
+
+.height-100vh-28rem{
+    height: calc(100vh - 28rem);
+}
+
+height-100vh-15rem{
+    height: calc(100vh - 15rem); 
+}
+  
+.height-100vh-31rem{
+    height: calc(100vh - 30rem);
+}
+
+  .label-property{
+    cursor: pointer;
+    user-select: none;
+    display: inline-block;
+    padding: 6px 6px;
+    font-size: 14px;
+    line-height: 1em;
+    color: rgb(145, 149, 160);
+    border: 1px solid rgb(145, 149, 160);
+    overflow: hidden;
+    border-radius: 1em;
+    margin-right: 0.2rem;
+    margin-top: 0.2rem;
+    font-weight: bold;
+}
+
+.label-property.active{
+    background-color: #7a7272;
+    color:white
+}
+
+.label-margin {
+    margin-top: 0.15rem;
+}
+
+.label-height{
+    height: calc(100vh - 30rem);
+}
+.edge-label{
+    height: calc(100vh - 15rem);
+}

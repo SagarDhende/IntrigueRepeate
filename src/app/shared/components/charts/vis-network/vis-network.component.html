@@ -1,0 +1,322 @@
+<ng-container *ngIf="isHierarchical && !isShowRightSidePanel">
+    <div class="zoom-panel" *ngIf="isHierarchical && !isShowRightSidePanel">
+        <button type="button" class="btn zoom-panel-btn" *ngIf="isHierarchical && !isShowRightSidePanel" (click)="zoomIn()">
+            <i class="pi pi-search-plus"></i>
+        </button>
+
+        <button type="button" class="btn  zoom-panel-btn" *ngIf="isHierarchical && !isShowRightSidePanel"(click)="zoomOut()">
+            <i class="pi pi-search-minus"></i>
+        </button>
+
+
+        <button type="button" class="btn zoom-panel-btn" (click)="toogleHierarchical('UD')"
+            *ngIf="isHierarchical && !isShowRightSidePanel">
+            <i class="fa fa-sitemap"></i>
+        </button>
+    </div>
+</ng-container>
+<ng-container *ngIf="isError">
+    <div class="position-absolute top-88 right-10 w-25 z-index-100000">
+        <app-error-dialog [title]="errorTitle" [content]="errorContent" [messageHead]="errorTitle">
+        </app-error-dialog>
+    </div>
+</ng-container>
+
+
+<div class="row" [ngClass]="{'d-flex justify-content': controlPanel == true}">
+    <div class="col-md-5 pl-0" [ngClass]="{'d-block': controlPanel == true, 'd-none': controlPanel != true}">
+        <div class="network-advance-setting border-300 surface-overlay border-1 mb-1">
+            <div class="network-advance-setting-title ">
+                Advanced Settings
+            </div>
+            <!-- <div style="height: 500px; overflow-y: scroll;" id="filter1" class="px-3 pt-2">
+            </div> -->
+            <div class="w-15rem">
+                <ng-scrollbar style="height: 500px;">
+                <div id="filter1" class="px-3  pt-2 pb-1"></div>
+                </ng-scrollbar>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-8 padding-left-zero padding-right-zero"
+        [ngClass]="{'col-md-8': controlPanel == true, 'col-md-12': controlPanel != true}">
+        <div #network style="background: inherit;" [ngStyle]="vizNetworkStyleObj">
+        </div>
+    </div>
+</div>
+
+
+
+<div style="display:none;">
+    <a #downloadLink></a>
+    <img #canvas>
+
+</div>
+<p-contextMenu *ngIf="isCMMenuShow" [model]="items" #cm appendTo="body" ></p-contextMenu>
+<p-contextMenu [model]="edgeItems" #cm2 appendTo="body"></p-contextMenu>
+
+<ng-container *ngIf="isShowRightSidePanel">
+    <div [ngStyle]="{'z-index': fromGenAI ? '1' : '0'}" class="rsp-container" [@slideInOut]="sidepanelState">
+        <div class="rsp-content">
+            <div class="rps-header">
+                <div class="rps-header-title1">
+                    <span>{{rshPanel.header}}</span>
+                </div>
+                <div class="rps-header-title2" [ngStyle]="{'background-color': rshPanel.titleColor}">
+                    {{ rshPanel.type }}
+                </div>
+                
+                <span class="rps-header-title3"> - {{rshPanel.label}}</span>
+            </div>
+            <div class="rsp-body">
+                <ul class="rsp-list">
+      
+                    <p-table [value]="rshPanel.properties" class="rps-table">
+                        <ng-template pTemplate="body" let-property let-i="rowIndex">
+                            <tr>
+                                <td class="td-key">{{property.name}}</td>
+                                <td class="td-value">{{property.value}}</td>
+                            </tr>
+                        </ng-template>
+                    </p-table>
+
+                </ul>
+            </div><span class="react-resizable-handle react-resizable-handle-w"></span>
+        </div>
+        <div  class="aVJit" (click)="toggleSidenav()">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"
+                *ngIf="isShowRightSidePanel">
+                <path fill-rule="evenodd"
+                    d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                    clip-rule="evenodd"></path>
+            </svg>
+        </div>
+    </div>
+</ng-container>
+
+ 
+
+
+
+<p-dialog header="New Node" [contentStyle]="{'overflow':'visible'}" [(visible)]="addNodeDialog" [modal]="false"
+    [style]="{width: '50vw', minHeight: '20vh',maxHeight: '70vh','overflow-y': 'auto'}" [maximizable]="false"
+    [baseZIndex]="10000" [draggable]="false" [resizable]="false">
+
+    <div class="form-group row">
+        <div class="col-md-3 form-label pt-2">
+            Node Type
+        </div>
+        <div class="col-md-6">
+            <span class="p-float-label form-row">
+                <p-dropdown [options]="graphpodMeta?.nodeInfo" [(ngModel)]="addNodeSelectedTypeId" optionLabel="nodeType"
+                    [filter]="true" filterBy="nodeType" placeholder="Select Node Type" optionValue="displayId"
+                    (onChange)="nodeModalTypeChange()">
+                </p-dropdown>
+            </span>
+        </div>
+    </div>
+    <ng-container>
+        <ng-template pTemplate="body">
+            <form [formGroup]="nodeFormBuilder">
+                <table class="table table-bordered no-left-right">
+                    <tr>
+                        <th class="no-left-right">Name</th>
+                        <th class="no-left-right">Type</th>
+                        <th class="no-left-right">Value</th>
+                    </tr>
+                    <ng-container *ngIf="addNodeSelectedType && nodeFormBuilder.controls.addNodes.controls ">
+                        <tbody formArrayName="addNodes">
+                            <tr *ngFor="let item of nodeFormBuilder.controls.addNodes.controls; let i=index;"
+                                [formGroupName]="i">
+                                <td class="no-left-right">{{item.value.attrName}}</td>
+                                <td class="no-left-right">{{item.value.attrType}}</td>
+                                <td class="no-left-right"
+                                    *ngIf="['VARCHAR'].indexOf(item.value.attrType.toUpperCase()) !=-1">
+                                    <input type="text" class="form-control" formControlName="value"
+                                        [ngClass]="{ 'is-invalid': submitted && nodeFormBuilder.controls.addNodes.controls[i].controls.value.errors }">
+                                </td>
+                                <td class="no-left-right"
+                                    *ngIf="['BIGINT','DOUBLE','INT','INTEGER','FLOAT','DECIMAL'].indexOf(item.value.attrType.toUpperCase()) !=-1">
+                                    <input type="number" class="form-control" formControlName="value">
+                                </td>
+                            </tr>
+                        </tbody>
+                    </ng-container>
+                </table>
+            </form>
+        </ng-template>
+        <ng-template pTemplate="footer">
+            <button type="submit" label="Submit" (click)="createNode()"
+                class="search-button btn btn-primary">Submit</button>
+        </ng-template>
+    </ng-container>
+
+
+</p-dialog>
+
+<p-dialog [header]="'Edit Node - '+nodeTitle" [(visible)]="editNodeDialog" [modal]="false"
+    [style]="{width: '50vw', minHeight: '20vh',maxHeight: '70vh'}" [maximizable]="false"
+    [baseZIndex]="10000" [draggable]="false" [resizable]="false">
+    <ng-template pTemplate="body">
+        <div class="">
+
+            <!-- <table id="customers">
+                <tr class="table-header" >
+                    <th>Name</th>
+                    <th>Type</th>
+                    <th>Value</th>
+                </tr>
+            <ng-container *ngIf="editEdgeSelectedType2">
+
+                <tr *ngFor="let item of editEdgeSelectedType2.edgeProperties">
+                    <td>{{item.attrName}}</td>
+                    <td>{{item.attrType}}</td>
+                    <td><input type="text" class="form-control" [(ngModel)]="item.value"
+                            [disabled]="isEdgeKeyAttr(item)"></td>
+                </tr>
+            </ng-container>
+        </table> -->
+        <ng-scrollbar class="scrollHeight">
+            <table class="Custom-EditNode-table">
+                <tr class="table-header">
+                    <th>Name</th>
+                    <th>Type</th>
+                    <th>Value</th>
+                </tr>
+                <ng-container *ngIf="editNodeDialog">
+                    <tr *ngFor="let item of editNodeSelected.nodeProperties">
+                        <ng-container *ngIf="editNodeSelectedType != editNodeSelected.nodeType">
+                            <td>{{item.attrName}}</td>
+                            <td>{{item.attrType}}</td>
+                            <td *ngIf="['VARCHAR'].indexOf(item.attrType.toUpperCase()) !=-1">
+                                <input type="text" class="form-control td-input" [(ngModel)]="item.value"
+                                    [disabled]="isNodeKeyAttr(item)" style="border-top: 1px solid #ced4da;">
+                            </td>
+                            <td
+                                *ngIf="['BIGINT','DOUBLE','INT','INTEGER','FLOAT','DECIMAL'].indexOf(item.attrType.toUpperCase()) !=-1">
+                                <input type="number" class="form-control td-input" [(ngModel)]="item.value"
+                                    [disabled]="isNodeKeyAttr(item)" style="border-top: 1px solid #ced4da;">
+                            </td>
+
+                        </ng-container>
+                    </tr>
+                </ng-container>
+            </table>
+        </ng-scrollbar>
+        </div>
+    </ng-template>
+
+    <ng-template pTemplate="footer">
+        <div class="mt-4 flex justify-content-end align-items-center">
+            <p-button label="Submit" (click)="editNode()"></p-button>
+        </div>
+    </ng-template>
+</p-dialog>
+
+<p-dialog header="New Edge" [contentStyle]="{'overflow':'visible'}" [(visible)]="addEdgeDialog" [modal]="false"
+    [style]="{width: '50vw', minHeight: '20vh',maxHeight: '70vh','overflow-y': 'auto'}" [maximizable]="false"
+    [baseZIndex]="10000" [draggable]="false" [resizable]="false">
+
+    <div class="form-group row">
+        <div class="col-md-3 form-label pt-2">
+            Edge Type
+        </div>
+        <div class="col-md-6">
+            <span class="p-float-label form-row">
+                <p-dropdown [options]="edgesTypes" [(ngModel)]="addEdgeSelectedTypeId" optionLabel="edgeType"
+                    [filter]="true" filterBy="edgeType" placeholder="Select Edge Type" optionValue="edgeType"
+                    (onChange)="edgeModalTypeChange()">
+                </p-dropdown>
+            </span>
+        </div>
+    </div>
+    <ng-template pTemplate="body">
+        <form [formGroup]="edgeFormBuilder">
+
+            <table class="table table-bordered no-left-right">
+                <tr>
+                    <th class="no-left-right">Name</th>
+                    <th class="no-left-right">Type</th>
+                    <th class="no-left-right">Value</th>
+                </tr>
+                <ng-container *ngIf="addEdgeSelectedType && edgeFormBuilder.controls.addEdges.controls">
+                    <tbody formArrayName="addEdges">
+                        <tr *ngFor="let item of edgeFormBuilder.controls.addEdges.controls; let i=index;"
+                            [formGroupName]="i">
+                            <td class="no-left-right">{{item.value.attrName}}</td>
+                            <td class="no-left-right">{{item.value.attrType}}</td>
+                            <td class="no-left-right"
+                                *ngIf="['VARCHAR'].indexOf(item.value.attrType.toUpperCase()) !=-1">
+                                <input type="text" class="form-control" formControlName="value"
+                                    [ngClass]="{ 'is-invalid': submitted && edgeFormBuilder.controls.addEdges.controls[i].controls.value.errors }">
+                            </td>
+                            <td class="no-left-right"
+                                *ngIf="['BIGINT','DOUBLE','INT','INTEGER','FLOAT','DECIMAL'].indexOf(item.value.attrType.toUpperCase()) !=-1">
+                                <input type="number" class="form-control" formControlName="value">
+                            </td>
+                        </tr>
+                    </tbody>
+                </ng-container>
+            </table>
+        </form>
+    </ng-template>
+
+    <ng-template pTemplate="footer">
+        <button type="button" label="Submit" class="search-button btn btn-primary"
+            (click)="createEdge()">Submit</button>
+    </ng-template>
+</p-dialog>
+<p-dialog header="Edit Edge" [(visible)]="editEdgeDialog" [modal]="false"
+    [style]="{width: '50vw', minHeight: '20vh',maxHeight: '70vh','overflow-y': 'auto'}" [maximizable]="false"
+    [baseZIndex]="10000" [draggable]="false" [resizable]="false">
+    <ng-template pTemplate="body">
+
+        <!-- <div class="table-header">
+            <table>
+                <tr>
+                    <th>Name</th>
+                    <th>Type</th>
+                    <th>Value</th>
+                </tr>
+            </table>
+        </div>
+        <div class="table-body">
+            <table>
+                <ng-container *ngIf="editEdgeSelectedType2">
+                    <tr *ngFor="let item of editEdgeSelectedType2.edgeProperties">
+                        <td>{{item.attrName}}</td>
+                        <td>{{item.attrType}}</td>
+                        <td><input type="text" class="form-control" [(ngModel)]="item.value"
+                                [disabled]="isEdgeKeyAttr(item)"></td>
+                    </tr>
+                </ng-container>
+            </table>
+        </div> -->
+        
+
+        <table id="customers">
+                <tr class="table-header" >
+                    <th>Name</th>
+                    <th>Type</th>
+                    <th>Value</th>
+                </tr>
+            <ng-container *ngIf="editEdgeSelectedType2">
+
+                <tr *ngFor="let item of editEdgeSelectedType2.edgeProperties">
+                    <td>{{item.attrName}}</td>
+                    <td>{{item.attrType}}</td>
+                    <td><input type="text" class="form-control" [(ngModel)]="item.value"
+                            [disabled]="isEdgeKeyAttr(item)"></td>
+                </tr>
+            </ng-container>
+        </table>
+    </ng-template>
+    <ng-template pTemplate="footer">
+        <p-button label="Edit" severity="primary" (click)="editEdge()"></p-button>
+    </ng-template>
+</p-dialog>
+<p-dialog header="Info" [(visible)]="edgeCheck">
+    Edge not configured between these node types.
+</p-dialog>
+<p-confirmDialog header="Confirmation" icon="pi pi-exclamation-triangle">
+</p-confirmDialog>

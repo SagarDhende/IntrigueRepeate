@@ -1,0 +1,121 @@
+<ng-sidebar-accordion #rightAccordion class="sidebar-accordion-main sidebar-accordion-height">
+    <ng-sidebar position="right" [opened]="false">
+        <ng-sidebar-content class="sidebar-content-design">
+            <app-search-list [metaType]="metaType" (searchParameterData)="getSearchCriteria($event)"
+                (panelclose)="panelClose()" (clearButtonClick)="panelClose()" [options]="options" (setIsEditFlagEmitter)="onIsEditEnableChanged($event)"></app-search-list>
+        </ng-sidebar-content>
+    </ng-sidebar>
+    <ng-sidebar-accordion-content class="page-wrapper-container">
+        <div class="card card-height-85hv-80px border-radius-12">
+            <div class="flex align-items-center justify-content-between header-margin">
+                <p-breadcrumb [model]="breadcrumbItems" [home]="breadcrumbHome"></p-breadcrumb>
+                <div>
+                    <button pbutton="" type="button" 
+                        pTooltip="History" tooltipPosition="top" (click)="navigateToArchive()"
+                        class="p-element p-button-rounded p-button-text p-button-plain p-button p-component p-button-icon-only">
+                        <i class="fa-solid fa-clock-rotate-left"></i>
+                    </button>
+                    <button pbutton="" type="button" icon="pi pi-ellipsis-v" (click)="onChangeStyle()"
+                        [pTooltip]="tooltipValue" tooltipPosition="top"
+                        class="p-element p-button-rounded p-button-text p-button-plain p-button p-component p-button-icon-only">
+                        <span class="p-button-icon" [ngClass]="icon" aria-hidden="true"></span>
+                    </button>
+                    <button #body pbutton="" type="button" icon="pi pi-ellipsis-v" (click)="isEditEnable ?  menu.toggle($event) : panelToggle()"
+                        class="p-element p-button-rounded p-button-text p-button-plain p-button p-component p-button-icon-only"><span
+                            class="p-button-icon pi pi-filter" pTooltip="Filter" tooltipPosition="top"
+                            aria-hidden="true"></span></button>
+                    <p-menu #menu [popup]="true" [model]="items" appendTo="body"></p-menu>
+
+
+                    <button pbutton="" type="button" icon="pi pi-ellipsis-v" (click)="refreshClick()"
+                        class="p-element p-button-rounded p-button-text p-button-plain p-button p-component p-button-icon-only">
+                        <span class="p-button-icon fa fa-refresh" aria-hidden="true" pTooltip="Refresh"
+                            tooltipPosition="top"></span>
+                    </button>
+                </div>
+            </div>
+            <hr>
+            <ng-scrollbar  [excludeBeforeClick]="true" [usePSClass]="'next'"
+            [disabled]="null" [exclude]="'#mobile-collapse'" id="nav-ps-next" class="ng-scroll-h-100vh-16rem grid-height">
+            <div class="col-12 grid-height">
+                <div class="grid" >
+                    <div class="col-12 flex justify-content-center align-items-center error-height" *ngIf="showError">
+                        <ng-container [ngTemplateOutlet]="errorTemplate"
+                            [ngTemplateOutletContext]="{errorTitle:errorTitle,errorContent:errorContent}">
+                        </ng-container>
+                    </div>
+                    @if(isTileShow){
+                    <ng-container *ngIf="!showError">
+                        <div class="col-12 position-relative spinner-height" *ngIf="!reportFetched">
+                            <ngx-spinner name="report-spinner" bdColor="rgba(0, 0, 0, 0)" size="default" color="black"
+                                type="line-spin-fade" [fullScreen]="false">
+                                <p class="mt-0 mb-0 text-black">Loading </p>
+                            </ngx-spinner>
+                        </div>
+                        <ng-container *ngIf="reportFetched">
+                            <div *ngIf="reportData.length ==0"
+                                class="flex justify-content-center align-items-center no-records-height w-100">
+                                <span>No Records Found</span>
+                            </div>
+                            <div class="col-12 pb-0 flex justify-content-between" *ngIf="reportData !=null && reportData.length >0">
+                                <div>
+                                    <span class="p-input-icon-left p-input-icon-right"><i class="pi pi-user"></i>
+                                        <input [(ngModel)]="search" type="text" pInputText placeholder="Search Reports"
+                                            class="p-inputtext p-component p-element" 
+                                            (input)="searchReport()"><i class="pi pi-search"></i>
+                                    </span>
+                                </div>
+                                <p-paginator (onPageChange)="onPageChange($event)" [first]="0" [rows]="9" [totalRecords]="length" ></p-paginator>
+                            </div>
+                            <div class="col-12 lg:col-6 xl:col-4 md:col-6"
+                                *ngFor="let report of paginatedReportData; index as index">
+                                <div (click)="submitReport(report.uuid, report.version,report.name)" class="card card-inner mb-0"
+                                    pTooltip="{{null}}"
+                                    tooltipPosition="top">
+                                    <div class="flex justify-content-between mb-3">
+                                        <div>
+                                            <span class="card-title block text-500 font-medium mb-3">{{report.name}}</span>
+                                        </div>
+                                        <div class="flex align-items-center justify-content-center bg-blue-100 border-round"
+                                            [ngStyle]="{width: '2.5rem', height: '2.5rem'}">
+                                            <i class="fa-regular fa-newspaper text-blue-500 text-xl"></i>
+                                        </div>
+                                    </div>
+                                    <hr class="card-hr">
+                                    <div class="mt-2">
+                                        <span class="text-500 text-sm">{{report.desc !== null && report.desc !== undefined ? report.desc : "-NA-"}}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </ng-container>
+                    </ng-container>
+                    }
+                    @else if(!isTileShow){
+                    <div class="col-12">
+                        <app-table-list [metaType]="metaType" [options]="options"
+                            (setLength)="getLength($event)"></app-table-list>
+                        <div class="flex align-items-center justify-content-between mt-1">
+                            <div class="md:col-3">
+                                {{length}} rows
+                            </div>
+                            <div class="md:col-9">
+                                <div style="float:right; font-style: italic;">
+                                    Note : Displaying max 500 rows
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    }
+                </div>
+            </div>
+            </ng-scrollbar>
+        </div>
+    </ng-sidebar-accordion-content>
+</ng-sidebar-accordion>
+<ng-template let-title="errorTitle" let-content="errorContent" #errorTemplate>
+    <div class="height-inherit flex justify-content-center align-items-center">
+        <app-error-dialog [title]="title" [content]="errorContent" [messageHead]="title">
+        </app-error-dialog>
+    </div>
+</ng-template>

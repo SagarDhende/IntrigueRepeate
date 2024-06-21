@@ -1,0 +1,27 @@
+
+::ng-deep {
+    .p-calendar .p-datepicker {
+        transform: scale(.7);
+    }
+}
+
+.dropdown-menu {
+    min-width: 8rem !important;
+}
+
+.dropdown-item {
+    width: 112px;
+}
+
+.ng-scroll-h-70hv {
+    height: calc(70vh - 80px) ;
+  }
+  
+  :host ::ng-deep ul.p-inputtext.p-chips-multiple-container{
+    width: 100%;
+  }
+  .tag-height{
+    height: 3rem;
+  }
+
+

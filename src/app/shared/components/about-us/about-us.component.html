@@ -1,0 +1,78 @@
+<div class="">
+    <div class="modal-container position-fixed top-50 left-50 z-1000" (click)="handleClickOutside($event)" (keyup)="handleKeyDown($event)">
+        <p-dialog [(visible)]="displayAboutUsModal" [modal]="true" [style]="{ width: '35rem'}" [draggable]="false"
+            [resizable]="false" [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }" [dismissableMask]="false" >
+            <ng-template pTemplate="headless">
+                <div class="flex justify-content-end bg-dialog-color">
+                </div>
+                <div class="bg-dialog-color">
+                    @if(licenseDetail) {
+                    <form class="login-form" name="form" role="form" ng-submit="close()">
+                        <div class="grid input-group input-group-custom">
+                            <div class="lg:col-2"></div>
+                            <div class="md:col-10"></div>
+                        </div>
+                        <div class="grid input-group logo-grid">
+                            <div class="lg:col-2 sm:col-2">
+                                <div class="company-logo timesburner d-flex justify-content-center align-items-center">
+                                    <img alt="" class="w-42px h-47px" [src]="lightLogo">
+                                </div>
+                            </div>
+                            <div class="col-10">
+                                <div class="about-licenseFrom font-Size16 text-dialog-color">{{licenseDetail.licenseFrom}}.
+                                </div>
+                                <div class="about-licenseVersionSplit font-size24 text-dialog-color  mb-1">Analytics Platform
+                                    {{licenseDetail.licenseVersion.split(".")[0]}}.0</div>
+                                <div class="about-licenseVersion font-Size13 text-dialog-color d-block">Version
+                                    {{licenseDetail.licenseVersion}}
+                                    <span class="about-licenseType text-lowercase">{{licenseDetail.licenseEdition}}</span>
+                                    Edition
+                                    <span class="about-licenseType text-dialog-color text-lowercase">
+                                        {{licenseDetail.licenseType }}
+                                    </span> License
+                                </div>
+                            </div>
+                        </div>
+                        <div class="grid input-group position-relative d-flex align-items-strech w-99">
+                            <div class="lg:col-2"></div>
+                            <div class="md:col-10">
+                                <span class="about-licenseVersion font-Size13 d-block text-dialog-color">
+                                    This product is licensed to
+                                    {{licenseDetail.licenseTo}} 
+                                    and expires on
+                                </span>
+                                <span class="about-licenseVersion font-Size13 d-block text-dialog-color">
+                                    {{licenseDetail.licenseEndDate}} with a grace period of
+                                    {{licenseDetail.licenseGracePeriod}} days.
+                                </span>
+                            </div>
+                        </div>
+                        <form class="grid input-group">
+                            <div class="lg:col-2"></div>
+                            <div class="md:col-10">
+                                <div class="font-Size12 text-dialog-color">Inferyx is a registered trademark of Inferyx Inc and/or its
+                                    subsidiaries. Other names may be trademarks of their respective owners.
+                                </div>
+                            </div>
+                        </form>
+                        <div class="grid input-group input-group-custom">
+                            <div class="lg:col-2"></div>
+                            <div class="md:col-10">
+                                <span class="trademark text-dialog-color">&copy; {{currentYear}}, 
+                                    <a target="_blank" [href]="conpanyInfo.companyLink" class="text-primary-color pb-4">{{conpanyInfo.companyName}},</a>
+                                    or its subsidiaries. All rights reserved.
+                                </span>
+                            </div>
+                        </div>
+                        <div class="grid input-group input-group-custom">
+                            <div class="lg:col-2"></div>
+                            <div class="md:col-10"></div>
+                        </div>
+                    </form>
+                    }
+                </div>
+            </ng-template>
+        </p-dialog>
+    </div>
+</div>
+

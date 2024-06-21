@@ -1,0 +1,27 @@
+.gen-ai-toast .p-toast-message-content {
+    background: black !important;
+}
+
+.gen-ai-toast  .p-toast-message {
+    border: unset !important;
+    border-width: unset !important;
+}
+
+.gen-ai-toast .p-toast-message-content {
+    color: #fff;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+.gen-ai-toast p-toast-message-warn {
+    border: none !important;
+}
+
+.gen-ai-toast p-toast-message-warn{
+    margin-left: 70px;
+}
+
+.gen-ai-toast .p-toast-icon-close {
+    color: var(--surface-600) !important;;
+}
+

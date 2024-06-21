@@ -1,0 +1,146 @@
+<p-panel header="{{this.type}} - {{this.id}}" [toggleable]="false" styleClass="p-panel-custom">
+    <ng-template pTemplate="icons">
+        <div class="flex">
+        <button pButton pTooltip="Minimize" tooltipPosition="top" positionStyle="fixed" *ngIf="isMaximized"
+            class="p-element p-button-rounded p-button-text p-button-plain p-button p-component p-button-icon-only"
+            (click)="toogleIsMaximized()">
+            <span class="fa-solid fa-down-left-and-up-right-to-center"></span>
+        </button>
+        <button (click)="toogleIsMaximized()" pTooltip="Maximize" tooltipPosition="top" positionStyle="fixed"
+        *ngIf="!isMaximized"
+        class="p-element p-button-rounded p-button-text p-button-plain p-button p-component p-button-icon-only">
+        <span class="fa-solid fa-up-right-and-down-left-from-center"></span>
+       </button>
+       <button pButton (click)="refreshDetails()" pTooltip="Refresh" tooltipPosition="top" positionStyle="fixed"
+       class="p-element p-button-rounded p-button-text p-button-plain p-button p-component p-button-icon-only">
+       <span class="fa fa-refresh"></span>
+       </button>
+       <button pButton (click)="closeTab()" pTooltip="Close" tooltipPosition="top" positionStyle="fixed" *ngIf="!details"
+       class="p-element p-button-rounded p-button-text p-button-plain p-button p-component p-button-icon-only">
+       <span class="fa fa-close"></span>
+      </button>
+    </div>
+    </ng-template>
+
+    <ng-template pTemplate="body">
+        <p-tabView orientation="left" [(activeIndex)]="tabIndex" (onChange)="tabChange()" #tabs>
+            <p-tabPanel [(activeIndex)]="tabIndex" header="Details">
+                <div class="height-100vh-28rem">
+                    @if (isEntityDetailsNoRecods) {
+                    <div class="flex justify-content-center align-items-center height-inherit ">
+                        No Records Found
+                    </div>
+                    }
+                    @else if(isEntityDetailsError) {
+                    <ng-container [ngTemplateOutlet]="errorTemplate"
+                        [ngTemplateOutletContext]="{errorTitle:errorTitle,errorContent:errorContent}">
+                    </ng-container>
+                    }
+                    @else if(isEntityDetailsInProgress){
+                    <div class="position-relative height-inherit">
+                        <ngx-spinner name="entityDetails" class="embeded-spinner" bdColor="rgba(0, 0, 0, 0)"
+                            size="default" color="black" type="line-spin-fade" [fullScreen]="false">
+                            <p class="mt-0 mb-0 text-black">Loading </p>
+                        </ngx-spinner>
+                    </div>
+                    }
+                    @else if (isEntityDetailsComplete && !isEntityDetailsNoRecods) {
+                        <ng-scrollbar (clickOutside)="navMob()" [excludeBeforeClick]="true"
+                        [exclude]="'#mobile-collapse'" class="ng-scroll-h-80hv">
+                    <div class="row">
+                        <ngx-spinner name="entityDetails" bdColor="rgba(0, 0, 0, 0)" size="default" color="#fff"
+                            type="line-spin-fade" [fullScreen]="false">
+                            <p class="mt-0 mb-0 text-black">Loading </p>
+                        </ngx-spinner>
+                
+                        <div class="grid mx-3">
+                            <div class="col-12 md:col-6 lg:col-6">
+                              
+                                <p-table [value]="entityDetailsLeft" [paginator]="false">
+                                    <ng-template pTemplate="body" let-item>
+                                        <tr>
+                                            <td>{{convertName(item)}}</td>
+                                            <td pTooltip="{{null}}" tooltipPosition="top"
+                                                positionStyle="fixed">
+                                                <strong>{{shortenText(entityDetails[item])}}
+                                                    @if (entityDetails[item] == null) {
+                                                    -NA-
+                                                    }
+                                                </strong>
+                                            </td>
+                                        </tr>
+                                    </ng-template>
+                                </p-table>
+                            
+                            </div>
+    
+                            <div class="col-12 md:col-6 lg:col-6">
+                                <p-table [value]="entityDetailsRight" [paginator]="false">
+                                    <ng-template pTemplate="body" let-item>
+                                        <tr>
+                                            <td>{{convertName(item)}}</td>
+                                            <td pTooltip="{{null}}" tooltipPosition="top"
+                                                positionStyle="fixed">
+                                                <strong>{{shortenText(entityDetails[item])}}
+                                                    @if (entityDetails[item] == null) {
+                                                    -NA-
+                                                    }
+                                                </strong>
+                                            </td>
+                                        </tr>
+                                    </ng-template>
+                                </p-table>
+                            </div>
+                        </div>
+                    </div>
+                </ng-scrollbar>
+                    }
+                </div>
+   
+            </p-tabPanel>
+
+            <p-tabPanel [(activeIndex)]="tabIndex" header="Link Analysis">
+                <div class="height-100vh-28rem position-relative bg-image-canvas d-block overflow-hidden">
+                    @if(isLinkAnalysisNoRecords && !isAppendMode) {
+                        <div class="flex justify-content-center align-items-center height-inherit">
+                            No Records Found
+                        </div>
+                        }
+                        @if(isLinkAnalysisError) {
+                        <ng-container [ngTemplateOutlet]="errorTemplate"
+                            [ngTemplateOutletContext]="{errorTitle:errorTitle,errorContent:errorContent}">
+                        </ng-container>
+                        }
+                        @if(isLinkAnalysisInProgress) {
+                        <div class="col-12">
+                            <ngx-spinner name="entity-graph-analysis" class="embeded-spinner" bdColor="rgba(0, 0, 0, 0)" size="default"
+                                color="#000" type="line-spin-fade" [fullScreen]="false">
+                                <p class="mt-0 mb-0 text-black">Loading </p>
+                            </ngx-spinner>
+                        </div>
+                        }
+                        @if(isLinkAnalysisComplete) {
+                        <ng-container>
+                            <div class="linkanlysis-tab">
+                                <app-vis-network [graphResult]="linkAnalysisResult" [graphpodMeta]="graphpodMeta"
+                                    (nodeDblClick)="onNodeDblClick($event)" [theam]="themeConfig">
+                                </app-vis-network>
+                            </div>
+                        </ng-container>
+                        }
+                        @if(isGraphpodMeta) {
+                        <div class="flex justify-content-center align-items-center height-inherit">
+                            No Graph Configured
+                        </div>
+                        }
+                </div>
+            </p-tabPanel>
+        </p-tabView>
+    </ng-template>
+</p-panel>
+
+<ng-template let-title="errorTitle" let-content="errorContent" #errorTemplate>
+    <div class="height-inherit flex justify-content-center align-items-center">
+        <app-error-dialog [title]="title" [content]="content" [messageHead]="title"></app-error-dialog>
+    </div>
+</ng-template>

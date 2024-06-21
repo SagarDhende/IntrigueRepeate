@@ -1,0 +1,92 @@
+.note-buttons{
+  text-align: end;
+  margin-bottom: -80px; 
+  padding-top: 20px;
+  
+}
+
+.ng-scroll-h-80hv {
+  height: calc(100vh - 25rem) ;
+}
+
+.height-100vh-40rem{
+  height: calc(100vh - 40rem) ;
+}
+
+.height-100vh-20rem{
+  height: calc(100vh - 20rem) ;
+}
+
+.height-100vh-25rem{
+  height: calc(100vh - 25rem) ;
+}
+.height-100vh-28rem{
+  height: calc(100vh - 28rem) ;
+}
+
+.height-100vh-34rem{
+  height: calc(100vh - 34.3rem) ;
+}
+
+.height-100vh-10rem{
+  height: calc(100vh - 10rem) ;
+}
+
+.doc-spinner-height{
+  height: calc(100vh - 38rem);
+}
+
+.severity-max-width{
+  width: 115px;
+}
+
+.case-spinner-height{
+  height: calc(100vh - 33rem);
+}
+
+.notificaton-spinner-height{
+  height: calc(100vh - 34rem);
+}
+
+.spinner-height{
+  height: 400px;
+}
+
+.form-control{
+  width: 100%;
+  height: calc(1.5em + 0.75rem + 2px);
+  padding: 0.375rem 0.95rem;
+  font-size: .875rem;
+  font-weight: 400;
+  line-height: 1.5;
+  color: #495057;
+  background-color: #fff;
+  background-clip: padding-box;
+  border: 1px solid #ced4da;
+  border-radius: 2px;
+  transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+  margin: 0;
+  font-family: inherit;
+}
+
+.audit-spinner-height{
+  height: calc(100vh - 34rem);
+}
+
+.custom-chips-documents {
+  border: 1px solid var(--surface-border);
+  height: 32px;
+  width: 73%;
+  border-radius: 6px;
+  padding-left: 0.75rem;
+  overflow: hidden;
+}
+.icon{
+  color: #ccc;
+  margin-top: 0.3rem;
+  cursor:pointer;
+  font-size: 11px;
+}
+.icon:hover{
+  color: #f75c03;
+}

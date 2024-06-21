@@ -1,0 +1,85 @@
+{
+    "/api/*": {
+        "target": "http://65.1.212.204:8080/framework/",
+        "secure": false,
+        "logLevel": "debug",
+        "changeOrigin": true
+    },
+    "/common/*": {
+        "target": "http://65.1.212.204:8080/framework/",
+        "secure": false,
+        "logLevel": "debug",
+        "changeOrigin": true
+    },
+    "/datapod/*": {
+        "target": "http://65.1.212.204:8080/framework/",
+        "secure": false,
+        "logLevel": "debug",
+        "changeOrigin": true
+    },
+    "/graphpod/*": {
+        "target": "http://65.1.212.204:8080/framework/",
+        "secure": false,
+        "logLevel": "debug",
+        "changeOrigin": true
+    },
+    "/metadata/*": {
+        "target": "http://65.1.212.204:8080/framework/",
+        "secure": false,
+        "logLevel": "debug",
+        "changeOrigin": true
+    },
+    "/rule/*": {
+        "target": "http://65.1.212.204:8080/framework/",
+        "secure": false,
+        "logLevel": "debug",
+        "changeOrigin": true
+    },
+    "/pipeline/*": {
+        "target": "http://65.1.212.204:8080/framework/",
+        "secure": false,
+        "logLevel": "debug",
+        "changeOrigin": true
+    },
+    "/workflow/*": {
+        "target": "http://65.1.212.204:8080/framework/",
+        "secure": false,
+        "logLevel": "debug",
+        "changeOrigin": true
+    },
+    "/log/*":{
+        "target": "http://65.1.212.204:8080/framework/",
+        "secure": false,
+        "ws": true,
+        "changeOrigin": false
+
+    },
+    "/upload/*":{
+        "target": "http://65.1.212.204:8080/framework/",
+        "secure": false,
+        "ws": true,
+        "changeOrigin": false
+
+    },
+
+    "/report/*": {
+        "target": "http://65.1.212.204:8080/framework/",
+        "secure": false,
+        "logLevel": "debug",
+        "changeOrigin": true
+    },
+
+    "/meta/*": {
+        "target": "http://65.1.212.204:8080/framework/",
+        "secure": false,
+        "logLevel": "debug",
+        "changeOrigin": true
+    },
+
+    "/dashboard/*": {
+        "target": "http://65.1.212.204:8080/framework/",
+        "secure": false,
+        "logLevel": "debug",
+        "changeOrigin": true
+    }
+}

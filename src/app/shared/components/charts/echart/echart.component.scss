@@ -1,0 +1,36 @@
+.graph-wrapper {
+    width: 100%;
+    height: 480px;
+    background: #fff;
+    position: relative;
+    align-items: center;
+    justify-content: center;
+}
+
+.graph-wrapper .graph {
+    width: 100%;
+    height: inherit;
+    min-height: inherit;
+    position: relative;
+    overflow: hidden;
+    display: block;
+
+}
+
+.echarts-context-menu {
+    position: absolute;
+    display: none;
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+}
+
+.echarts-context-menu ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+
+.echarts-context-menu li {
+    padding: 8px 12px;
+    cursor: pointer;
+}

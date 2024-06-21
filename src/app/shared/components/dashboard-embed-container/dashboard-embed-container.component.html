@@ -1,0 +1,15 @@
+<app-embed-iframe *ngIf="isURLReady" [url]="url" [spinnerActive]="spinner"></app-embed-iframe>
+
+<div *ngIf="!isURLReady && !isError">
+    <span class="text-center pt-8 w-100 d-block" style="font-size: 1rem;">Token Not Configured</span>
+</div>
+<ng-container *ngIf="isError" [ngTemplateOutlet]="errorTemplate"
+    [ngTemplateOutletContext]="{errorTitle:errorTitle,errorContent:errorContent}">
+</ng-container>
+<ng-template let-title="errorTitle" let-content="errorContent" #errorTemplate>
+    <div class="center-element h-80hv">
+        <app-error-dialog [title]="title" [content]="errorContent" [messageHead]="title">
+        </app-error-dialog>
+    </div>
+
+</ng-template>

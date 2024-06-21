@@ -1,0 +1,28 @@
+export enum MetaType {
+    GRAPHPOD = "graphpod",
+    ENTITY = "entity",
+    ALERTEXEC = "alertExec",
+    CASERULEExec = "caseruleexec",
+    DASHBOARD = "dashboard",
+    GRAPHANALYSIS = "graphanalysis",
+    WhatIFANALYSIS = "whatifanalysis",
+    DATAPOD = "datapod",
+    DATASET = "dataset",
+    SIMPLE = "simple",
+    ATTRIBUTE = "ATTRIBUTE",
+    RULE = "rule",
+    USER="user",
+    USERGROUP="userGroup",
+    APPLICATION="application",
+    GRAPHSIMULATE="graphSimulate",
+    GRAPHSIMULATEExec="graphSimulateExec",
+    MAP="map",
+    MAPEXEC="mapExec",
+    DAG='dag',
+    UPLOADEXEC="uploadExec",
+    REPORT="report",
+    DATASOURCE = "datasource",
+    DOCUMENT = "document",
+    REPORTEXEC ='reportExec'
+}   
+

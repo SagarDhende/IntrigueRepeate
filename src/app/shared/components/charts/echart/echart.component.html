@@ -1,0 +1,9 @@
+<div class="graph-wrapper">
+    <div class="graph" [id]="'_id_'+chartId"></div>
+    <div #contextMenu class="echarts-context-menu" (click)="onContextMenuClick($event)">
+        <ul>
+            <li>Drill-to-Detail</li>
+            <li>Drill-Down</li>
+        </ul>
+    </div>
+</div>

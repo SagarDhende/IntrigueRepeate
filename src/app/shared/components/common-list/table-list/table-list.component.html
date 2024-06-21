@@ -1,0 +1,267 @@
+<p-table #dt1 [value]="tableRows" dataKey="id" [rows]="10"  [(selection)]="selectedRows"  [rowHover]="true" styleClass="p-datatable-gridlines"
+    responsiveLayout="scroll" [scrollHeight]="pTableHeight" scrollDirection="both" [scrollable]="true"
+    responsiveLayout="scroll" [columns]="tableHeader">
+    <ng-template pTemplate="caption" *ngIf="options.isTableCaptionEnable">
+        <div class="flex justify-content-between sm:flex-row">
+            <span class="p-input-icon-left search-keyword">
+                <i class="pi pi-search"></i>
+                <input pInputText type="text" #filter [(ngModel)]="value" (input)="searchTableRows(value)"
+                    placeholder="Search Keyword" class="w-full" />
+            </span>
+            <p-multiSelect [options]="dropdownOptions" [(ngModel)]="selectedOptions" placeholder="Choose Columns"
+                selectedItemsLabel="{0} columns selected"  [filter]="true"
+                (ngModelChange)="onColumnSelectChange()" appendTo="body" [panelStyle]="{'width':'100%'}" styleClass="multiselect" optionLabel="header">
+            </p-multiSelect> 
+        </div>
+    </ng-template>
+    <ng-template pTemplate="header" let-columns>
+        <tr>
+            <ng-container *ngFor="let col of columns">
+                @if (col.visible && col.controlType ==undefined) {
+                    <th class="text-center text-nowrap" pSortableColumn="{{col.field}}">
+                        {{col.header}}
+                        <p-sortIcon *ngIf="col.field != 'action'" field="{{col.field}}"></p-sortIcon>
+                    </th>
+                }
+                @else if (col.visible && col.controlType !=undefined && col.controlType
+                =='checkbox') {
+                    <th class="text-center">
+                        <p-tableHeaderCheckbox (click)="selectAllRows($event)"></p-tableHeaderCheckbox>
+                    </th>
+                }
+            </ng-container>
+        </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-rowData let-columns="columns">
+        <tr [ngClass]="{'c-pointer' : options.isRowClickable}" (click)="options.isRowClickable ? testData(rowData): null">
+            <ng-container *ngFor="let col of columns">
+                <td *ngIf="col.field =='createdBy'&& col.visible && col.controlType ==undefined" pTooltip="{{null}}"
+                    tooltipPosition="top" positionStyle="fixed" class="text-center text-nowrap">
+                    {{rowData[col.field]?.ref?.name}}
+                </td>
+                <td *ngIf="col.field =='categoryInfo'&& col.visible && col.controlType ==undefined" pTooltip="{{null}}"
+                tooltipPosition="top" positionStyle="fixed" class="text-center text-nowrap">
+                {{rowData[col.field]==null?'-NA-': rowData[col.field]?.ref?.name}}
+
+                <td *ngIf="col.field =='updatedOn'&& col.visible && col.controlType ==undefined" pTooltip="{{null}}"
+                tooltipPosition="top" positionStyle="fixed" class="text-center text-nowrap">
+                {{rowData[col.field]==null ? rowData['createdOn'] != null ? rowData['createdOn'] : '-NA-': rowData[col.field]}}
+                </td>
+                <td *ngIf="col.field =='metaStatus'&& col.visible && col.controlType ==undefined">
+                    <div class="severity-td-text flex justify-content-center align-items-center pl-0" 
+                          [tdColor]="'notificationStatus'" [tdValues]="rowData[col.field]">
+                        <span class="text-white" positionStyle="fixed">
+                            {{getSevertyStatusCaption(rowData[col.field])}}</span>
+                    </div>
+                </td>
+                <td *ngIf="col.field =='status'&& col.visible && col.controlType ==undefined && options.isExec">
+                    <div class="severity-td-text flex justify-content-center align-items-center pl-0" 
+                    [tdColor]="'notification'" [tdValues]="rowData[col.field][0]?.stage">
+                        <span class="text-white" 
+                            positionStyle="fixed">
+                            {{getSeveritryCaption(rowData[col.field][0]?.stage)}}</span>
+                    </div>
+                </td>
+                <td *ngIf="col.field =='status'&& col.visible && col.controlType ==undefined && !options.isExec">
+                    <div class="severity-td-text flex justify-content-center align-items-center px-1 text-nowrap" 
+                    [tdColor]="'notification'" [tdValues]="rowData[col.field]?.stage">
+                        <span class="text-white" 
+                            positionStyle="fixed">
+                            {{getSeveritryCaption(rowData[col.field]?.stage)}}</span>
+                    </div>
+                </td>
+                <td *ngIf="col.field =='statusList' && col.visible && col.controlType == undefined && options.isExec">
+                    <div class="severity-td-text flex justify-content-center align-items-center px-1 text-nowrap"
+                        [tdColor]="'notification'" [tdValues]="rowData[col.field][rowData[col.field].length - 1]?.stage">
+                        <span class="text-white" positionStyle="fixed">
+                            {{getSeveritryCaption(rowData[col.field][rowData[col.field].length - 1].stage)}}</span>
+                    </div>
+                </td>
+                <td *ngIf="col.field == 'action' && col.visible && col.controlType ==undefined" [style.text-align]="col.contentAlign"
+                    class="overflow-visible d-block">
+                    <div #body class="severity-td-text flex justify-content-center align-items-center fixed-dropdown text-center">
+                        <p-menu #menu [popup]="true" [model]="actionMenu" appendTo="body"></p-menu>
+                        <button type="button" pButton class="p-button-outlined padding-2 padding-left-3"
+                            icon="p-button-icon p-button-icon-right pi pi-chevron-down" label="Action"
+                            (click)="activeItem = rowData;menu.toggle($event)"></button>
+                    </div>
+                </td>
+                <td *ngIf="col.visible && col.field != 'action' && col.field != 'status'
+                    && col.field!='metaStatus' && col.field!='createdBy' && col.field!='name' && col.field!='desc' && col.field!='categoryInfo'
+                    && col.field != 'updatedOn' && col.controlType ==undefined && col.field != 'statusList'"
+                    pTooltip="{{null}}" tooltipPosition="top" positionStyle="fixed"
+                    class="text-center text-nowrap">
+                    {{rowData[col.field]==null?'-NA-': rowData[col.field]=='Y' ? 'Yes' : rowData[col.field]=='N' ? 'No' : 
+                    rowData[col.field]}}
+                </td>
+                <td class="text-left nameWidth text-nowrap" *ngIf="col.visible && col.field == 'name' && col.controlType ==undefined"
+                    pTooltip="{{null}}" tooltipPosition="top" positionStyle="fixed">
+                    {{rowData[col.field]==null?'-NA-': rowData[col.field]}}
+                </td>
+                <td class="text-left text-nowrap" *ngIf="col.visible && col.field == 'desc' && col.controlType ==undefined"
+                pTooltip="{{null}}" tooltipPosition="top" positionStyle="fixed">
+                {{rowData[col.field]==null?'-NA-': rowData[col.field]}}
+                </td>
+                <td class="text-center" *ngIf="col.visible && col.controlType !=undefined && col.controlType =='checkbox'">
+                    <p-tableCheckbox (click)="onSelectCheckbox()" [value]="rowData"></p-tableCheckbox>
+                </td>
+            </ng-container>
+        </tr>
+    </ng-template>
+  
+    <ng-template pTemplate="emptymessage">
+        <tr>
+            <td [attr.colspan]="tableHeader.length" class="text-center" *ngIf="tableRows == 0 && listFetched">No Records Found</td>
+            <td [attr.colspan]="tableHeader.length" *ngIf="!listFetched">
+                <div class="col-12 h-50hv position-relative w-100">
+                    <ngx-spinner name="table-spinner" bdColor="rgba(0, 0, 0, 0)" size="default" color="black"
+                        type="line-spin-fade" [fullScreen]="false">
+                        <p class="mt-0 mb-0 text-black">Loading </p>
+                    </ngx-spinner>
+                </div>
+            </td>
+           
+        </tr>
+    </ng-template>
+</p-table>
+<p-dialog [header]="popUpTitle" [(visible)]="isDelDialogOpen" [modal]="true" showEffect="fade" 
+  [style]="{width: '23vw'}" [breakpoints]="{'960px': '75vw'}" responsive="false">
+    <p class="line-height-3 m-0">
+        Delete Simulation ?
+    </p>
+    <ng-template pTemplate="footer">
+        <p-button label="Cancel" severity="secondary" [outlined]="true" (click)="closeDialog()"></p-button>
+        <p-button label="Ok" [outlined]="true" (click)="deleteData()"></p-button>
+    </ng-template>
+</p-dialog>
+
+<p-dialog [header]="popUpTitle" [(visible)]="isDownloadDialog" [modal]="true" showEffect="fade" 
+  [style]="{width: '23vw'}" [breakpoints]="{'960px': '75vw'}" responsive="false">
+    <p class="line-height-3 m-0">
+        Download Report ?
+    </p>
+    <ng-template pTemplate="footer">
+        <p-button label="Cancel" severity="secondary" [outlined]="true" (click)="isDownloadDialog = false"></p-button>
+        <p-button label="Ok" [outlined]="true" (click)="downloadData()"></p-button>
+    </ng-template>
+</p-dialog>
+
+<p-dialog header="Confirm" [(visible)]="isExecutDialogOpen" [modal]="true" showEffect="fade" [style]="{width: '20vw'}"
+    [breakpoints]="{'960px': '75vw'}" responsive="false">
+    <p class="line-height-3 m-0">
+        Execute Pipeline ?
+    </p>
+    <ng-template pTemplate="footer">
+        <p-button label="Cancel" severity="secondary" [outlined]="true" (click)="closeExecuteDialog()"></p-button>
+        <p-button label="Ok" [outlined]="true" (click)="onClickExecuteAction()"></p-button>
+    </ng-template>
+</p-dialog>
+
+<p-dialog header="Configure Params" [(visible)]="isExecDialogOpen" [modal]="true" showEffect="fade" [draggable]="false"
+    [style]="{'width': '52vw', 'height': '55vh', 'overflow-y': 'auto'}" [breakpoints]="{'960px': '75vw'}"
+    responsive="false">
+            <table id="customers">
+                <thead>
+                    <tr>
+                        <th class="text-center">ID</th>
+                        <th class="text-center">Param Name</th>
+                        <th class="text-center">Param Type</th>
+                        <th class="text-center">Param Value</th>
+                        <th class="text-center">Param Attributes</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let param of ExcuteParam">
+                        <td class="text-center">{{param.paramId}}</td>
+                        <td class="text-center">{{param.paramName}}</td>
+                        <td class="text-center">{{param.paramType}}</td>
+                        <td class="text-center">
+                            <input class="w-100" pInputText type="text" [(ngModel)]="param.paramValue.value">
+                        </td>
+                        <td class="text-center">-NA-</td>
+                    </tr>
+                </tbody>
+            </table>
+    <ng-template pTemplate="footer">
+        <div class="mt-4">
+            <p-button label="Close" severity="secondary" [outlined]="true"
+                (click)="isExecDialogOpen = false"></p-button>
+            <p-button label="Submit" [outlined]="true" (click)="onClickExecute()" [loading]="false"></p-button>
+        </div>
+    </ng-template>
+</p-dialog>
+
+<p-dialog header="Logs" [contentStyle]="{'overflow':'visible'}" [(visible)]="uploadLogExec"
+    [style]="{width: '85vw',height:'calc(100vh - 38rem)'}" [modal]="true" [maximizable]="false" responsive="true"
+    [resizable]="false">
+    <hr class="m-0">
+    <div class="ml-1 mb-2 mt-2">
+        <div class="flex align-items-center justify-content-between">
+            <div class="flex align-items-center justify-content-between">
+            <span for="ny" class="mr-2">Auto Refresh :</span>
+            <p-checkbox value="Auto Refresh" name="autorefersh" [(ngModel)]="isCheckedLog" [binary]="true"
+                inputId="binary" (onChange)="onCheckboxChange()" ></p-checkbox>
+            </div>
+            @if(!isErrorLogs){
+                <div class="flex align-items-center justify-content-between my-2">
+                    <button pTooltip="Download" tooltipPosition="bottom" pButton pRipple type="button" icon="pi pi-download"
+                        class="p-button-rounded p-button-secondary p-button-outlined mr-2 height-8 width-8"
+                        (click)="downloadLogs()"></button>
+                    <button pTooltip="Refresh" tooltipPosition="bottom" (click)="refreshLogs()" pButton pRipple type="button"
+                        icon="fa fa-refresh" class="p-button-rounded p-button-secondary p-button-outlined height-8 width-8"></button>
+                </div>
+            }
+        </div>
+
+    </div>
+    <div class="simulate-logs">
+        @if(!isErrorLogs){
+            <div class="log-sec" #websocketLogRef [scrollTop]="websocketLogRef.scrollHeight">
+                <ng-scrollbar class="log-scroll">
+                        <div class="py-2 px-1 mx-4 log-textarea">
+                            @if(fetchLog){
+                            <p>{{similateLogs}}</p>
+                            }
+                            @if (!fetchLog && !isErrorLogs) {
+                            <div class="h-50hv position-relative w-100 spinner-height flex justify-content-center">
+                                <ngx-spinner name="database-details" class="embeded-spinner" bdColor="rgba(0, 0, 0, 0)" size="default"
+                                    color="black" type="line-spin-fade" [fullScreen]="false">
+                                    <p class="mt-0 mb-0 text-black">Loading</p>
+                                </ngx-spinner>
+                            </div>
+                            }
+                        </div>
+                </ng-scrollbar>
+            </div>
+        }
+        <div class="center-element h-30hv flex justify-content-center align-items-center" *ngIf="isErrorLogs">
+            <app-error-dialog [title]="errorTitle" [content]="errorContent" [messageHead]="errorTitle">
+            </app-error-dialog>
+        </div>
+    </div>
+</p-dialog>
+
+<p-toast key="confirm"></p-toast>
+<ng-template let-title="errorTitle" let-content="errorContent" let-position="errorPosition" #errorTemplate>
+    <app-error-dialog [title]="title" [content]="errorContent" [position]="errorPosition" [messageHead]="title">
+    </app-error-dialog>
+</ng-template>
+
+<p-dialog styleClass="" header="SQL" [(visible)]="isShowSQLDialogOpen" [modal]="true"
+    showEffect="fade" [style]="{'min-width': '55vw', 'min-height': '30vh'}" [breakpoints]="{'960px': '75vw'}"
+    responsive="false">
+    <ng-scrollbar  [excludeBeforeClick]="true" [usePSClass]="'next'"
+    [disabled]="null" [exclude]="'#mobile-collapse'" id="nav-ps-next" class="ng-scroll-h-100vh-30rem">
+    <div class="flex align-items-center">
+        <pre class="line-height-3 m-0">
+            {{sqlQuery}}
+        </pre>
+    </div>
+    </ng-scrollbar>
+    <ng-template pTemplate="footer">
+        <div class="mt-3">
+            <p-button label="Cancel" severity="secondary" [outlined]="true"
+                (click)="isShowSQLDialogOpen=false"></p-button>
+        </div>
+    </ng-template>
+</p-dialog>

@@ -1,0 +1,18 @@
+<div class="grid">
+    <div class="col-12 lg:col-12 md:col-12 xl:12 ">
+        @if(!isDashboardRender){
+        <div class="flex align-items-center justify-content-center h-80hv">
+            Dashboard Not Configured
+        </div>
+        }
+        @else {
+            <!-- <div class="card h-90hv" style="overflow-y:auto; overflow-x:hidden;"> -->
+                <div>
+
+                <app-dashboard-containter [id]="uuid"></app-dashboard-containter>
+
+            </div>
+        }
+        
+    </div>
+</div>

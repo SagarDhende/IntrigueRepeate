@@ -1,0 +1,494 @@
+<div class="card card-height-85hv-80px border-radius-12 mb-0">
+    <div class="flex align-items-center justify-content-between header-margin">
+        <p-breadcrumb [model]="breadcrumbItems" [home]="breadcrumbHome"></p-breadcrumb>
+        <div>
+            @if(genAIForm.get('sourceType').value?.value == 'document'){
+            <button pbutton="" type="button" icon="pi pi-ellipsis-v" tooltipPosition="top" (click)="openUploadModal()"
+                class="p-element p-button-rounded p-button-text p-button-plain p-button p-component p-button-icon-only"
+                pTooltip="Upload"> <span class="p-button-icon fa fa-upload" aria-hidden="true"></span>
+            </button>
+            }
+            @if(isMaximized){
+            <button pbutton="" pTooltip="Maximize" type="button" icon="pi pi-ellipsis-v" (click)="windowMaximize()"
+                tooltipPosition="top"
+                class="p-element p-button-rounded p-button-text p-button-plain p-button p-component p-button-icon-only"><span
+                    class="p-button-icon fa-solid fa-up-right-and-down-left-from-center"
+                    ria-hidden="true"></span></button>
+            }
+            @if(!isMaximized){
+            <button pbutton="" pTooltip="Mimimize" type="button" icon="pi pi-ellipsis-v" (click)="windowMinimize()"
+                tooltipPosition="top"
+                class="p-element p-button-rounded p-button-text p-button-plain p-button p-component p-button-icon-only"><span
+                    class="p-button-icon fa-solid fa-down-left-and-up-right-to-center"
+                    aria-hidden="true"></span></button>
+            }
+            <button pbutton="" type="button" icon="pi pi-ellipsis-v" (click)="refreshClick()" pTooltip="Refresh"
+                tooltipPosition="top"
+                class="p-element p-button-rounded p-button-text p-button-plain p-button p-component p-button-icon-only">
+                <span class="p-button-icon fa fa-refresh" aria-hidden="true"></span>
+            </button>
+        </div>
+    </div>
+    <hr class="mb-0">
+    <form [formGroup]="genAIForm">
+        <div class="flex align-items-center mt-2 mb-3 ml-2">
+            <div class="flex justify-content-end text-nowrap source-type">
+                <label htmlFor="name3" class="text-right star required">Source Type:</label>
+            </div>
+            <div class="md:col-3">
+                <p-dropdown [disabled]="true" [options]="sourceTypes" optionLabel="name" [filter]="true" filterBy="name"
+                    [showClear]="false" placeholder="-Select-" [style]="{'width':'100%'}" formControlName="sourceType"
+                    (onChange)="onChangeSourceType()">
+                </p-dropdown>
+            </div>
+            @if(genAIForm.get('sourceType').value.value == 'document'){
+            <div class="flex justify-content-end ml-5 text-nowrap source-type">
+                <label htmlFor="name3" class="text-right star required">Categories:</label>
+            </div>
+            <div class="md:col-3">
+                <p-dropdown [options]="allCategories" optionLabel="name" [filter]="true" filterBy="name"
+                    (onChange)="onChangeCategory()" [showClear]="false" placeholder="-Select-"
+                    [style]="{'width':'100%'}" formControlName="category">
+                </p-dropdown>
+            </div>
+            }
+            <div class="flex justify-content-end ml-5 name">
+                <label htmlFor="name3" class="text-right star required">Name:</label>
+            </div>
+            <div #body class="md:col-3">
+                <p-dropdown [options]="allDocuments" optionLabel="name" [filter]="true" filterBy="documentId"
+                    (onChange)="onChangeSourceName()" [showClear]="false" placeholder="-Select-"
+                    [style]="{'width':'100%'}" formControlName="sourceName" appednTo="body">
+                </p-dropdown>
+            </div>
+        </div>
+    </form>
+    @if(genAIForm.get('sourceType').value.value == 'document'){
+    <div class="col-12 justify-content-center p-0">
+        <div class="flex justify-content-center">
+            <div class="md:col-12 p-0">
+                <div class="document-box">
+                    <ng-scrollbar #scrollbarRef="ngScrollbar" class="document-scrollbar">
+                        <div class="col-12 pt-0">
+                            <div class="mt-3">
+                                @for(item of documentArray; track item; let index = $index) {
+                                <div class="justify-content-end mt-0 flex mr-3 text-500 text-sm">
+                                    {{item.currentDateAndTimeForQuestion | date : 'short'}}</div>
+                                <div class="flex justify-content-end mt-1">
+                                    <div class="md:col-10 ai-question">
+                                        <div class="flex align-items-center">
+                                            <label class="text-white" for=""> {{item.question}}</label>
+                                            @if(item.isGenAIInProgress){
+                                            <span class="document-progress">
+                                                <i class="fa-solid fa-sync fa-spin text-white"></i>
+                                            </span>
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="justify-content-start flex ml-3 text-500 text-sm">
+                                    {{item.currentDateAndTimeForAnswer | date : 'short'}}</div>
+                                @if(item.isGenAINoAnswer){
+                                <div class="flex justify-content-start">
+                                    <div class="md:col-10 ai-answer text-600 no-answer-found">
+                                        No Answer Found
+                                    </div>
+                                </div>
+                                }
+                                @if(item.isGenAICompleted){
+                                <div class="flex mt-1">
+                                    <div class="justify-content-start md:col-10 ai-answer text-600"
+                                        [ngClass]="{'answer-button-bottom-padding': !item.isDeleted}">
+                                        <div class="doc-answer-inner-div">
+                                            {{item.answer}}
+                                        </div>
+                                        @if(!item.isDeleted){
+                                        <div class="flex justify-content-end mr-1 mt-1 mb-1">
+                                            <button pbutton="" type="button" icon="pi pi-ellipsis-v"
+                                                (click)="openDeleteDialog(index)" pTooltip="Delete"
+                                                tooltipPosition="top"
+                                                class="answer-buttons p-element p-button-rounded p-button-text p-button-plain p-button p-component p-button-icon-only">
+                                                <span class="p-button-icon trash-btn fa-regular fa-trash"
+                                                    aria-hidden="true"></span>
+                                            </button>
+                                            <button pbutton="" type="button" icon="pi pi-ellipsis-v"
+                                                (click)="onClickDocumentAnswerLike(item)" pTooltip="Like"
+                                                tooltipPosition="top"
+                                                [ngClass]="{'showLikeColor': item.isLike, 'hideLikeColor': !item.isLike}"
+                                                class="answer-buttons p-element p-button-rounded p-button-text p-button-plain p-button p-component p-button-icon-only">
+                                                <span class="p-button-icon fa-regular thumbs-up-btn fa-thumbs-up"
+                                                    aria-hidden="true"></span>
+                                            </button>
+                                            <button pbutton="" type="button" icon="pi pi-ellipsis-v"
+                                                (click)="onClickDocumentAnswerDisLike(item)" pTooltip="Dislike"
+                                                tooltipPosition="top"
+                                                [ngClass]="{'showDislikeColor': item.isDislike, 'hideDislikeColor': !item.isDislike}"
+                                                class="answer-buttons p-element p-button-rounded p-button-text p-button-plain p-button p-component p-button-icon-only">
+                                                <span class="p-button-icon thumbs-down-btn fa-regular fa-thumbs-down"
+                                                    aria-hidden="true"></span>
+                                            </button>
+                                            <button pbutton="" type="button" icon="pi pi-ellipsis-v"
+                                                (click)="onClickDocumentAnswerRefresh(item)" pTooltip="Refresh"
+                                                tooltipPosition="top"
+                                                class="answer-buttons p-element p-button-rounded p-button-text p-button-plain p-button p-component p-button-icon-only">
+                                                <span class="p-button-icon refresh-btn fa-solid fa-arrows-rotate"
+                                                    aria-hidden="true"></span>
+                                            </button>
+                                            <button pbutton="" type="button" icon="pi pi-ellipsis-v"
+                                                (click)="copyAnswer(item)" [pTooltip]="copyTooltip"
+                                                tooltipPosition="top" tooltipEvent="focus"
+                                                class="answer-buttons p-element p-button-rounded p-button-text p-button-plain p-button p-component p-button-icon-only">
+                                                <span class="p-button-icon copy-btn fa-regular fa-copy"
+                                                    aria-hidden="true"></span>
+                                            </button>
+                                            <button pbutton="" type="button" icon="pi pi-ellipsis-v"
+                                                [ngClass]="{'showFlaggedColor': item.flagged, 'hideFlaggedColor': !item.flagged}"
+                                                pTooltip="Flagged" tooltipPosition="top"
+                                                (click)="onClickDocumentAnswerBookmar(item)"
+                                                class="answer-buttons p-element p-button-rounded p-button-text p-button-plain p-button p-component p-button-icon-only">
+                                                <span class="p-button-icon bookmar-btn fa-regular fa-bookmark"
+                                                    aria-hidden="true"></span>
+                                            </button>
+                                        </div>
+                                        }
+                                    </div>
+                                </div>
+                                }
+                                @if(item.isGenAIError){
+                                    <div class="flex justify-content-start">
+                                        <ng-container [ngTemplateOutlet]="errorTemplate"
+                                            [ngTemplateOutletContext]="{errorTitle:item.errorTitle,errorContent:item.errorContent}">
+                                        </ng-container>
+                                    </div>
+                                }
+                            }
+                            </div>
+                        </div>
+                    </ng-scrollbar>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 flex p-0 mt-3 align-items-center flex">
+            <div class="document-question-div p-0">
+                <input type="text" [(ngModel)]="question" pInputText placeholder="Type Your Question"
+                    [style]="{'width': '100%', 'border-radius': '12px'}">
+            </div>
+            <div class="p-0 flex justify-content-center document-question-send-div">
+                <button pButton pRipple type="button" (click)="onClickSendQuestion()" icon="pi pi-send"
+                    class="p-button-rounded p-button-text document-question-send-btn"></button>
+            </div>
+        </div>
+    </div>
+    }
+
+    @if(genAIForm.get('sourceType').value.value == 'graphpod' || 
+    genAIForm.get('sourceType').value.value == 'datasource' || genAIForm.get('sourceType').value.value == 'datapod'){
+        <div class="col-12 justify-content-center p-0">
+            <div class="flex justify-content-center">
+                <div class="md:col-12 p-0" style="border: 1px solid var(--surface-border);">
+                    <ng-scrollbar #scrollbarRef="ngScrollbar" style="height: calc(100vh - 25rem); overflow-y: auto;">
+                        <div class="col-12 graphpod-box">
+                            <ng-container *ngFor="let item of chatConversationDataArray;let i=index;">
+                                <div class="justify-content-end mt-0 flex mr-3 text-500 text-sm">
+                                    {{item.currentDateAndTimeForQuestion | date : 'short'}}</div>
+                                <div class="flex justify-content-end mt-1">
+                                    <div class="md:col-10 ai-question" style="max-width: 83.33%; width: auto;">
+                                        <div class="flex align-items-center">
+                                            <label class="text-white" for=""> {{item.question}}</label>
+                                            <span *ngIf="item.isDataInProgress"
+                                                style="margin-left: 5px; margin-top: 1.2px;">
+                                                <i class="fa-solid fa-sync fa-spin text-white"></i>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="flex mt-1">
+                                    <div *ngIf="item.isDeleted" class="justify-content-start md:col-10 ai-answer text-600">
+                                        <div class="doc-answer-inner-div">
+                                            Answer Deleted
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="flex justify-content-start" *ngIf="item.isDataError">
+                                    <ng-container [ngTemplateOutlet]="errorTemplate"
+                                        [ngTemplateOutletContext]="{errorTitle:item.errorTitle,errorContent:item.errorContent}">
+                                    </ng-container>
+                                </div>
+                                <p-panel [showHeader]="true" header="Response" *ngIf="item.isDataFetched"
+                                    [toggleable]="true" class="gen-ai-panel mb-3">
+                                    <ng-template pTemplate="icons">
+                                        <button (click)="openDeleteDialog(i)" pTooltip="Delete" tooltipPosition="top"
+                                            pButton class="answer-buttons p-panel-header-icon p-link">
+                                            <span style="margin-top: 1px;" class="p-button-icon fa-regular fa-trash"
+                                                aria-hidden="true"></span>
+                                        </button>
+                                        <button pTooltip="Like" tooltipPosition="top" (click)="onClickLikeAnswer(item)"
+                                            [ngClass]="{'showLikeColor': item.isLike, 'hideLikeColor': !item.isLike}"
+                                            pButton class="answer-buttons p-panel-header-icon p-link">
+                                            <span class="p-button-icon fa-regular fa-thumbs-up" aria-hidden="true"></span>
+                                        </button>
+                                        <button pTooltip="Dislike" tooltipPosition="top"
+                                            [ngClass]="{'showDislikeColor': item.isDislike, 'hideDislikeColor': !item.isDislike}"
+                                            (click)="onClickDisLikeAnswer(item)" pButton
+                                            class="answer-buttons p-panel-header-icon p-link">
+                                            <span style="margin-top: 3px;" class="p-button-icon fa-regular fa-thumbs-down"
+                                                aria-hidden="true"></span>
+                                        </button>
+                                        <button pTooltip="Refresh" tooltipPosition="top"
+                                            (click)="onClickRefreshAnswer(item)" pButton
+                                            class="answer-buttons p-panel-header-icon p-link">
+                                            <span style="margin-top: 2px;" class="p-button-icon fa-solid fa-arrows-rotate"
+                                                aria-hidden="true"></span>
+                                        </button>
+                                        <button pTooltip="Flagged" tooltipPosition="top"
+                                            [ngClass]="{'showFlaggedColor': item.flagged, 'hideFlaggedColor': !item.flagged}"
+                                            (click)="onClickBookmarkAnswer(item)" pButton
+                                            class="answer-buttons p-panel-header-icon p-link">
+                                            <span style="margin-top: 2px;" class="p-button-icon fa-regular fa-bookmark"
+                                                aria-hidden="true"></span>
+                                        </button>
+                                        <button *ngIf="item.isQueryBtnShow" pTooltip="Show SQL" tooltipPosition="top"
+                                            (click)="showSQL(item)" pButton
+                                            class="answer-buttons p-panel-header-icon p-link">
+                                            <span style="margin-top: 2px;" class="p-button-icon fa-regular fa-file-code"
+                                                aria-hidden="true"></span>
+                                        </button>
+                                    </ng-template>
+                                    <ng-template pTemplate="body">
+                                        <div *ngIf="item.isDataInProgress" class="position-relative height-inherit">
+                                            <ngx-spinner name="{{item.spinnerId}}" class="embeded-spinner"
+                                                bdColor="rgba(0, 0, 0, 0)" size="default" color="black"
+                                                type="line-spin-fade" [fullScreen]="false">
+                                                <p class="mt-0 mb-0 text-black">Loading </p>
+                                            </ngx-spinner>
+                                        </div>
+                                        <div class="flex justify-content-center align-items-center height-inherit"
+                                            *ngIf="item.isDataNoRecords">
+                                            No Record Found
+                                        </div>
+                                        <ng-container *ngIf="item.isDataFetched && item.responseType == 'graph'">
+                                            <div class="position-relative bg-image-canvas">
+                                                <div class="md:col-12 p-0">
+                                                    <app-vis-network #visNetworkComp [graphResult]="item.linkAnalysisResult"
+                                                        [graphpodMeta]="graphpodMeta"
+                                                        (nodeDblClick)="onNodeDblClick($event)" [theam]="themeConfig"
+                                                        [vizNetworkHeightObj]="vizNetworkHeightObj">
+                                                    </app-vis-network>
+                                                </div>
+                                            </div>
+                                        </ng-container>
+                                        <ng-container *ngIf="item.isDataFetched && item.responseType == 'table'">
+                                            <p-table #dt1 [value]="item.tableRows" dataKey="id" [rows]="10"
+                                                [rowHover]="true" styleClass="p-datatable-gridlines"
+                                                responsiveLayout="scroll" [scrollHeight]="'500px'" scrollDirection="both"
+                                                [scrollable]="true" responsiveLayout="scroll" [columns]="item.tableCols">
+                                                <ng-template pTemplate="caption">
+                                                    <div
+                                                        class="search flex justify-content-between align-items-center sm:flex-row">
+                                                        <span class="p-input-icon-left">
+                                                            <i class="pi pi-search"></i>
+                                                            <input pInputText type="text" #filter
+                                                                [(ngModel)]="item.searchText" [style]="{'width': '321px'}"
+                                                                (input)="searchTableRows(item)"
+                                                                placeholder="Search Keyword" />
+                                                        </span>
+                                                        <div class="flex align-items-center multiselect-option">
+                                                            <p-multiSelect appendTo="body" [options]="item.tableCols"
+                                                                [(ngModel)]="item.selectedOptions"
+                                                                placeholder="Choose Columns" class="multiselect-custom"
+                                                                selectedItemsLabel="{0} columns selected"
+                                                                (ngModelChange)="onColumnSelectChange(item)"
+                                                                [style]="{'width': '321px'}" optionLabel="header">
+                                                            </p-multiSelect>
+                                                        </div>
+                                                    </div>
+                                                </ng-template>
+                                                <ng-template pTemplate="header" let-columns>
+                                                    <tr>
+                                                        <ng-container *ngFor="let col of columns">
+                                                            <th *ngIf="col.visible" class="text-center text-nowrap"
+                                                                pSortableColumn="{{col.field}}">
+                                                                {{col.field}}
+                                                                <p-sortIcon field="{{col.field}}"></p-sortIcon>
+                                                            </th>
+                                                        </ng-container>
+                                                    </tr>
+                                                </ng-template>
+                                                <ng-template pTemplate="body" let-rowData let-columns="columns">
+                                                    <tr>
+                                                        <ng-container *ngFor="let col of columns">
+                                                            <td *ngIf="col.visible" #td
+                                                                class="text-center td-max-width text-nowrap"
+                                                                tooltipPosition="top" positionStyle="fixed">
+                                                                <span #span>
+                                                                    {{rowData[col.field]==null?'-NA-': rowData[col.field]}}
+                                                                </span>
+                                                            </td>
+                                                        </ng-container>
+                                                    </tr>
+                                                </ng-template>
+                                                <ng-template pTemplate="emptymessage">
+                                                    <tr>
+                                                        <td [attr.colspan]="item.tableCols?.length" class="text-center"
+                                                            *ngIf="item.isDataNoRecords || item.tableRows.length == 0">No
+                                                            Records Found
+                                                        </td>
+                                                    </tr>
+                                                </ng-template>
+                                            </p-table>
+                                        </ng-container>
+                                    </ng-template>
+                                </p-panel>
+                            </ng-container>
+                        </div>
+                    </ng-scrollbar>
+                </div>
+            </div>
+            <div class="col-12 flex p-0 mt-3 align-items-center flex">
+                <div class="p-0" style="width: 96%;">
+                    <input type="text" [(ngModel)]="question" pInputText placeholder="Type Your Question"
+                        [style]="{'width': '100%', 'border-radius': '12px'}">
+                </div>
+                <div class="p-0 flex justify-content-center" style="width: 4%;">
+                    <button style="transform: rotate(44deg);" pButton pRipple type="button" (click)="onClickSendQuestion()"
+                        icon="pi pi-send" class="p-button-rounded p-button-text"></button>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+<p-dialog header="Upload" [(visible)]="uploadModal" [modal]="true" [style]="{'min-width': '38vw', 'min-height': '21vw'}"
+    [draggable]="false" [resizable]="false">
+    <div class="flex align-items-center">
+        <div class="md:col-3 flex justify-content-end"> <label class="">Schema</label></div>
+        <div class="md:col-9">
+            <input id="float-input" type="text" pInputText disabled="true"
+                [value]="'Selected ' + selectedSchema.length + ' schema'"
+                placeholder="Selected {{selectedSchema.length}} schema" class="mr-2 w-9">
+            <button pButton class="p-button-outlined btn btn-primary" (click)="fileSelectClick()"
+                styleClass="upload-button"><i class=" pi pi-upload"></i><input #fileSelect type="file" class="d-none"
+                    accept=".json" [(ngModel)]="selectedFile" (change)="onFileChange($event)"
+                    (click)="$event.target.value=null">
+            </button>
+        </div>
+    </div>
+    @for(item of selectedSchema; track item; let index = $index) {
+        <div class="md:col-7 p-0 flex align-items-center schema-chip">
+            <div class="flex align-items-center custom-chips-schema">
+                <label class="text-sm schema-chip-label"
+                    pTooltip="{{item.name}}" tooltipPosition="top" positionStyle="fixed">{{item.name}}
+                </label>
+                <button type="button" class="ml-1 mr-1 border-none bg-transparent" (click)="popFiles()"
+                    title="Delete File">
+                    <i class="pi pi-times icon"></i>
+                </button>
+            </div>
+        </div>
+    }
+    <div class="flex align-items-center">
+        <div class="md:col-3 flex justify-content-end"> <label class="">Document(s)</label></div>
+        <div class="md:col-9">
+            <input id="float-input" type="text" pInputText disabled="true"
+                [value]="'Selected ' + selectedDocuments.length + ' documents'"
+                placeholder="Selected {{selectedDocuments.length}} documents" class="mr-2 w-9">
+            <button pButton class="p-button-outlined btn btn-primary" (click)="documentSelectClick()"><i
+                    class=" pi pi-upload"></i><input #documentSelect type="file" multiple class="d-none"
+                    [(ngModel)]="selectedFile" (change)="onDocumentChange($event)" (click)="$event.target.value=null">
+            </button>
+        </div>
+    </div>
+
+    @if(selectedDocuments.length > 0){
+    <ng-scrollbar class="md:col-9 documents-scrollbar">
+        @for(item of selectedDocuments; track item; let index = $index) {
+            <div class="flex align-items-center custom-chips-documents m-1">
+                <label class="text-sm document-chip-label"
+                    pTooltip="{{item.name}}" tooltipPosition="top" positionStyle="fixed">{{shortenText(item.name)}}
+                </label>
+                <button type="button" class="ml-1 mr-1 border-none bg-transparent" (click)="popDocument(index)"
+                    title="Delete Document">
+                    <i class="pi pi-times icon"></i>
+                </button>
+            </div>
+        }
+    </ng-scrollbar>
+    }
+    <form [formGroup]="uploadForm">
+        <div class="flex align-items-center">
+            <div class="md:col-3 flex justify-content-end"> <label class="">Categories</label></div>
+            <div #body class="md:col-7">
+                <p-dropdown [options]="uploadCategories" optionLabel="name" [filter]="true" filterBy="name"
+                    (onChange)="onChangeUploadCategory()" [showClear]="false" placeholder="-Select-"
+                    [style]="{'width':'100%'}" formControlName="uploadCategory" appendTo="body">
+                </p-dropdown>
+            </div>
+        </div>
+        <!-- <div class="flex align-items-center">
+            <div class="md:col-3 flex justify-content-end"> <label class="">RAGType</label></div>
+            <div #body class="md:col-7">
+                <p-dropdown [options]="ragTypes" optionLabel="name" [filter]="true" filterBy="name"
+                (onChange)="onChangeRagType()" [showClear]="false" placeholder="-Select-"
+                [style]="{'width':'100%'}" formControlName="ragType" appendTo="body">
+            </p-dropdown>
+            </div>
+        </div> -->
+    </form>
+
+    <ng-template pTemplate="footer">
+        <div class="flex justify-content-end align-items-center mt-3">
+            @if (isDocumentsUploadError) {
+            <ng-container [ngTemplateOutlet]="errorTemplate"
+                [ngTemplateOutletContext]="{errorTitle:errorTitle,errorContent:errorContent}">
+            </ng-container>
+            }
+            <div class="ml-7">
+                <p-button label="Close" [outlined]="true" severity="secondary" class=""
+                    (click)="uploadModal = false"></p-button>
+
+                <p-button label="Submit" [outlined]="true" severity="primary" class="" (click)="uploadDocuments()"
+                    [loading]="actionButtonLoading" iconPos="right"></p-button>
+            </div>
+        </div>
+    </ng-template>
+</p-dialog>
+<p-toast [showTransformOptions]="'translateY(100%)'" [showTransitionOptions]="'1000ms'" styleClass="gen-ai-toast"
+    [hideTransitionOptions]="'1000ms'" [showTransformOptions]="'translateX(100%)'" position="bottom-right"></p-toast>
+
+<p-dialog styleClass="gen-ai-delete-dialog" [header]="popUpTitle" [(visible)]="isDialogOpen" [modal]="true"
+    showEffect="fade" [style]="{'min-width': '32vw', 'min-height': '25vh'}" [breakpoints]="{'960px': '75vw'}"
+    responsive="false">
+    <div class="flex align-items-center">
+        <p class="line-height-3 m-0">
+            Are you sure want to delete answer ?
+        </p>
+    </div>
+    <ng-template pTemplate="footer">
+        <div class="mt-3">
+            <p-button label="Cancel" severity="secondary" [outlined]="true" (click)="isDialogOpen=false"></p-button>
+            <p-button label="Ok" [outlined]="true" (click)="deleteAnswer()"></p-button>
+        </div>
+    </ng-template>
+</p-dialog>
+
+<p-dialog styleClass="show-sql-dialog" header="Gen AI SQL" [(visible)]="isShowSQLDialogOpen" [modal]="true"
+    showEffect="fade" [style]="{'min-width': '32vw', 'min-height': '25vh'}" [breakpoints]="{'960px': '75vw'}"
+    responsive="false">
+    <div class="flex align-items-center">
+        <p class="line-height-3 m-0">
+            {{sqlQuery}}
+        </p>
+    </div>
+    <ng-template pTemplate="footer">
+        <div class="mt-3">
+            <p-button label="Cancel" severity="secondary" [outlined]="true"
+                (click)="isShowSQLDialogOpen=false"></p-button>
+        </div>
+    </ng-template>
+</p-dialog>
+
+<ng-template let-title="errorTitle" let-content="errorContent" #errorTemplate>
+    <div class="height-inherit flex justify-content-center align-items-center">
+        <app-error-dialog [title]="title" [content]="content" [messageHead]="title"></app-error-dialog>
+    </div>
+</ng-template>

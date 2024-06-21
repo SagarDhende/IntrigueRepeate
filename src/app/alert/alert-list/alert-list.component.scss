@@ -1,0 +1,29 @@
+::ng-deep {
+  .p-calendar .p-datepicker {
+    transform: scale(0.7) !important;
+  }
+}
+
+.ng-scroll-h-80hv {
+  // height: calc(85vh - 15rem);
+  height: calc(100vh - 20rem);
+
+}
+.p-tabview .p-tabview-panels {
+  height: calc(100vh - 10rem) !important;
+  padding: 0.75rem !important;
+}
+
+.spinner-height {
+  height: 481px;
+}
+
+.country-item{
+  text-overflow: ellipsis;
+  width: 260px;
+}
+.shortened-text {
+  // white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

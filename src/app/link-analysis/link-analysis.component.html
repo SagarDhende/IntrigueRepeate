@@ -1,0 +1,865 @@
+<!-- <ng-container> -->
+
+<p-overlayPanel #op>
+    <ng-template #popContent>
+        <!-- <div class="p-tabview-custom">
+            <p-tabView [(activeIndex)]="activeIndex" class="flex  mt-5 right-50 border-1 ">
+                <p-tabPanel> -->
+        <ng-container>
+            <div *ngIf="popoverDetail.type=='node'" class="max-w-30rem">
+                <div class="grid max-w-full h-4rem flex align-items-center  ">
+
+                    <!-- <p-button [link]="true"
+                                        [ngClass]="{'p-button-success': popoverDetail.linkType === 'color', 'p-button-outlined': popoverDetail.linkType !== 'color'}"
+                                        (click)="onClickNodePopover('color')">
+                                        <span class="font-semibold"
+                                            style="color: var(--primary-color) !important;">Color</span>
+                                    </p-button>
+                                    <p-button [link]="true"
+                                        [ngClass]="{'p-button-success': popoverDetail.linkType === 'size', 'p-button-outlined': popoverDetail.linkType !== 'size'}"
+                                        (click)="onClickNodePopover('size')">
+                                        <span class="font-semibold"
+                                            style="color: var(--primary-color) !important;">Size</span>
+                                    </p-button>
+                                    <p-button [link]="true"
+                                        [ngClass]="{'p-button-success': popoverDetail.linkType === 'icon', 'p-button-outlined': popoverDetail.linkType !== 'icon'}"
+                                        (click)="onClickNodePopover('icon')">
+                                        <span class="font-semibold"
+                                            style="color: var(--primary-color) !important;">Icon</span>
+                                    </p-button>
+                                    <p-button [link]="true"
+                                        [ngClass]="{'p-button-success': popoverDetail.linkType === 'label', 'p-button-outlined': popoverDetail.linkType !== 'label'}"
+                                        (click)="onClickNodePopover('label')">
+                                        <span class="font-semibold"
+                                            style="color: var(--primary-color) !important;">Label</span>
+                                    </p-button>-->
+
+                    <div class="p-tabview-custom">
+                        <p-tabView [(activeIndex)]="activeIndex" class="flex flex-wrap  h-full mt-5 right-50 shadow-2"
+                            (onChange)="onTabChange($event)">
+                            <p-tabPanel header="Color" [selected]="popoverDetail.linkType === 'color'">
+                                <div class="w-25rem h-8rem py-3 flex flex-wrap">
+                                    <span *ngFor="let color of colors">
+                                        <span class="node-circle" [ngStyle]="{'background-color':color}"
+                                            (click)="applyNodeColor(color,popoverDetail.key)"></span>
+                                    </span>
+                                </div>
+
+                            </p-tabPanel>
+                            <p-tabPanel header="Size" [selected]="popoverDetail.linkType === 'size'">
+                                <div class="w-25rem h-8rem d-flex justify-content-evenly align-items-center">
+                                    <span *ngFor="let size of nodeSizes">
+                                        <span class="node-circle" [ngStyle]="styleNodeSize(size)"
+                                            (click)="applyNodeSize(size,popoverDetail.key)"></span>
+                                    </span>
+                                </div>
+                            </p-tabPanel>
+                            <p-tabPanel header="Icon" [selected]="popoverDetail.linkType === 'icon'">
+                                <div class=" w-25rem h-8rem m-0 p-0 flex flex-column">
+                                    <div class="pcoded-header icons-search max-w-30rem">
+                                        <div class="main-search open  w-100 mt-2 mb-3">
+                                            <div class="input-group">
+                                                <p-inputGroup>
+                                                    <input type="text" pInputText placeholder="Search ..."
+                                                        [(ngModel)]="searchStr"
+                                                        (input)="onSearchString($event.target.value)">
+                                                    <button type="button" pButton icon="pi pi-search"
+                                                        class="p-button-primary">
+                                                        <span class="sr-only">Search</span>
+                                                    </button>
+                                                </p-inputGroup>
+
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                    <ng-container *ngIf="icons.length > 0">
+                                        <div class=" w-12 d-flex justify-content-evenly ">
+                                            <div class="d-inline-block p-2" *ngFor="let icon of icons.slice(0, 10)">
+                                                <div class="{{icon.class}} cursor-pointer fa-node-icon"
+                                                    (click)="applyNodeIcon(icon.unicode,popoverDetail.key)">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </ng-container>
+
+                                    <div class="center-element h-30hv mt-4" *ngIf="icons.length ==0">
+                                        <div>No match found</div>
+                                    </div>
+                                </div>
+                            </p-tabPanel>
+                            <p-tabPanel header="Label" [selected]="popoverDetail.linkType === 'label'">
+                                <div class="w-25rem h-8rem py-2">
+                                    <ng-scrollbar class="label-height flex align-items-center justify-content-center">
+                                        <div class="flex flex-wrap">
+                                            <div class=""
+                                            *ngFor="let label of nodeProperty;let i=index;">
+                                            <span class="label-property max-w-max" [ngClass]="{'active':label === activeAttrName}"
+                                                (click)="applyNodeLabel(label,popoverDetail.key,i)">{{label}}</span>
+                                            </div>
+                                        </div>
+                                    </ng-scrollbar>
+                                </div>
+                            </p-tabPanel>
+                        </p-tabView>
+                    </div>
+
+                </div>
+                <!-- <hr class="mt-0"> -->
+                <!-- ---------commented------------- -->
+                <!-- 
+                            <div class=" p-0 mx-1 mt-3 max-w-30rem h-6rem flex flex-wrap">
+                                <ng-container *ngIf="popoverDetail.linkType=='color'">
+                                    <span *ngFor="let color of colors">
+                                        <span class="node-circle" [ngStyle]="{'background-color':color}"
+                                            (click)="applyNodeColor(color,popoverDetail.key)"></span>
+                                    </span>
+                                </ng-container>
+                                <ng-container *ngIf="popoverDetail.linkType=='size'">
+                                    <span class="mt-3">
+                                        <span *ngFor="let size of nodeSizes">
+                                            <span class="node-circle" [ngStyle]="styleNodeSize(size)"
+                                                (click)="applyNodeSize(size,popoverDetail.key)"></span>
+                                        </span>
+                                    </span>
+                                </ng-container>
+                                <ng-container *ngIf="popoverDetail.linkType=='icon'">
+                                    <div class=" w-12 m-0 p-0 flex flex-column">
+
+                                        <div class="pcoded-header icons-search max-w-30rem">
+                                            <div class="main-search open  w-100 mt-2 mb-3">
+                                                <div class="input-group">
+                                                    <p-inputGroup>
+                                                        <input type="text" pInputText placeholder="Search ..."
+                                                            [(ngModel)]="searchStr"
+                                                            (input)="onSearchString($event.target.value)">
+                                                        <button type="button" pButton icon="pi pi-search"
+                                                            class="p-button-primary">
+                                                            <span class="sr-only">Search</span>
+                                                        </button>
+                                                    </p-inputGroup>
+
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                        <ng-container *ngIf="icons.length > 0">
+                                            <div class=" w-12 d-flex justify-content-evenly ">
+                                                <div class="d-inline-block p-2" *ngFor="let icon of icons.slice(0, 10)">
+                                                    <div class="{{icon.class}} cursor-pointer fa-node-icon"
+                                                        (click)="applyNodeIcon(icon.unicode,popoverDetail.key)">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </ng-container>
+
+                                        <div class="center-element h-30hv mt-4" *ngIf="icons.length ==0">
+                                            <div>No match found</div>
+                                        </div>
+                                    </div>
+
+                                </ng-container>
+                                <ng-container *ngIf="popoverDetail.linkType=='label'">
+                                    <ng-container *ngIf="nodeProperty.length >0">
+                                        <div class="d-inline-block ml-2">
+                                            <p-chips [ngModel]="nodeProperty"
+                                                [ngClass]="{'active': nodeLableActive !== null && nodeLableActive >= 0}">
+                                                <ng-template let-label let-i="index" pTemplate="item">
+                                                    <div class="chip"
+                                                        (click)="applyNodeLabel(label, popoverDetail.key, i)">
+                                                        {{label}}
+                                                    </div>
+                                                </ng-template>
+                                            </p-chips>
+                                        </div>
+                                    </ng-container>
+                                </ng-container>
+
+                            </div> -->
+
+                <!-- ------------------------------>
+
+            </div>
+
+            <div *ngIf="popoverDetail.type=='edge'">
+                <div class="p-tabview-custom">
+                    <p-tabView [(activeIndex)]="activeIndex" class="flex flex-wrap  h-full right-50 shadow-2">
+
+                        <p-tabPanel header="Color" [selected]="popoverDetail.linkType === 'color'" class="pl-4">
+                            <div class="w-25rem h-8rem py-3 flex flex-wrap">
+                                <span *ngFor="let color of colors">
+                                    <span class="node-circle" [ngStyle]="{'background-color':color}"
+                                        (click)="applyEdgeColor(color,popoverDetail.key)"></span>
+                                </span>
+                            </div>
+                        </p-tabPanel>
+
+                        <p-tabPanel header="Size" [selected]="popoverDetail.linkType === 'size'">
+                            <div class="w-25rem h-8rem py-2">
+                                <div *ngFor="let size of edgeSize" class="popover-edge-line"
+                                    style="vertical-align: middle;">
+                                    <div class=" edge-bg-color" [ngStyle]="styleEdgeSize(size)"
+                                        (click)="applyEdgeSize(size,popoverDetail.key)"></div>
+                                </div>
+                            </div>
+                        </p-tabPanel>
+                        <p-tabPanel header="Label" *ngIf="false"  [selected]="popoverDetail.linkType === 'label'">
+                            <ng-container *ngIf="edgeProperty.length >0">
+                                <div class="d-inline-block ml-2" *ngFor="let label of edgeProperty;let i=index">
+                                    <span class="label-property"
+                                        (click)="applyEdgeLabel(label,popoverDetail.key,i)">{{label}}</span>
+                                </div>
+                            </ng-container>
+                        </p-tabPanel>
+                    </p-tabView>
+                </div>
+                <!-- ---------------commented------------------------- -->
+
+                <!-- <div class="row mt-3">
+                    <div class="col-md-12">
+                        <a class="btn btn-default mr-2 a-item active" role="button"
+                            [ngClass]="{'active': popoverDetail.linkType === 'color'}"
+                            (click)="onClickNodePopover('color')">Color</a>
+                        <a class="btn btn-default mr-2 a-item" role="button" (click)="onClickNodePopover('size')"
+                            [ngClass]="{'active': popoverDetail.linkType === 'size'}">Size</a>
+                        <a class="btn btn-default mr-2 a-item" role="button" (click)="onClickNodePopover('label')"
+                            [ngClass]="{'active': popoverDetail.linkType === 'label'}">Label</a>
+
+                    </div>
+                </div>
+                <div class="row mx-1 mt-3">
+                    <div class="col-md-12 pl-2 pr-0">
+                        <ng-container *ngIf="popoverDetail.linkType=='color'">
+                            <span *ngFor="let color of colors">
+                                <span class="node-circle" [ngStyle]="{'background-color':color}"
+                                    (click)="applyEdgeColor(color,popoverDetail.key)"></span>
+                            </span>
+                        </ng-container>
+                        <ng-container *ngIf="popoverDetail.linkType=='size'">
+                            <div class="ml-4 mb-3">
+                                <div *ngFor="let size of edgeSize" class="popover-edge-line"
+                                    style="vertical-align: middle;">
+                                    <div class=" edge-bg-color" [ngStyle]="styleEdgeSize(size)"
+                                        (click)="applyEdgeSize(size,popoverDetail.key)"></div>
+                                </div>
+                            </div>
+
+                        </ng-container>
+                        <ng-container *ngIf="popoverDetail.linkType=='label'">
+
+                            <ng-container *ngIf="edgeProperty.length >0">
+                                <div class="d-inline-block ml-2" *ngFor="let label of edgeProperty;let i=index">
+                                    <span class="label-property" [ngClass]="{'active':edgeLableActive==i}"
+                                        (click)="applyEdgeLabel(label,popoverDetail.key,i)">{{label}}</span>
+                                </div>
+                            </ng-container>
+                        </ng-container>
+                    </div>
+                </div> -->
+                <!-- ------------------------------------------  -->
+            </div>
+        </ng-container>
+        <!-- </p-tabPanel>
+            </p-tabView>
+        </div> -->
+    </ng-template>
+</p-overlayPanel>
+<!-- </ng-container> -->
+
+
+
+<ng-sidebar-accordion #rightAccordion [sidebarResizable]="true" class="sidebar-accordion-height">
+    <ng-sidebar position="right" [opened]="false">
+        <ng-sidebar-content class="sidebar-content-design">
+            <div class="card card-height-85hv-80px border-radius-12 p-1">
+                <div class="flex align-items-center justify-content-between position-absolute end-0">
+                    <h5></h5>
+                    <div class="mr-2 mt-2">
+                        <button pButton (click)="panelClose()"
+                            class="close-btn p-element p-button-rounded p-button-text p-button-plain p-button p-component p-button-icon-only">
+                            <span class="pi pi-times"></span>
+                        </button>
+                    </div>
+                </div>
+                <ul ngbNav #nav="ngbNav" class="nav-tabs mt-3 surface-border-buttom">
+                    <li [ngbNavItem]="1">
+                        <button ngbNavLink class="pt-0">Nodes</button>
+                        <ng-template ngbNavContent>
+                            <br>
+                            <div class="">
+                                <div class="row mx-2">
+                                    <div class="col-md-12">
+
+                                        <form [formGroup]="nodeDetilsForm">
+                                            <div class="d-flex align-items-center">
+                                                <label class="col-3 pl-0 label-margin">
+                                                    Label
+                                                </label>
+                                                <div class="col-9 px-0">
+                                                    <div class="p-inputgroup pt-1">
+                                                        <p-checkbox name="nodelabel" (onChange)="toggleLabel($event)"
+                                                            formControlName="label" [binary]="true" inputId="binary"
+                                                            class="w-100"></p-checkbox>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="flex justify-content-start"
+                                                *ngFor="let node of nodeKeysCount;let i = index">
+                                                <label class="col-3 mt-1 pl-0">
+                                                    <div class="node-circle " [ngStyle]="getNodeBGColor(node.key)"
+                                                        popoverClass="popover-right-panel popover-w-100"
+                                                        [adaptivePosition]="false" [ngbPopover]="popContent"
+                                                        [autoClose]="'outside'" placement="left-top" container="body"
+                                                        [popoverTitle]="popTitle" triggers="manual" #p="ngbPopover"
+                                                        (shown)="nodePopoverShown(node,i)"
+                                                        (hidden)="nodePopoverHidden(node,i)"
+                                                        (click)="onClickSelectNode(node.key,'color'); p.toggle();popContent($event)">
+                                                    </div>
+                                                    <!-- <p-button class="node-circle " [ngStyle]="getNodeBGColor(node.key)"
+                                                        popoverClass="popover-right-panel popover-w-100"
+                                                        [adaptivePosition]="false" [ngbPopover]="popContent"
+                                                        [autoClose]="'outside'" placement="left-top" container="body"
+                                                        [popoverTitle]="popTitle" triggers="manual" #p="ngbPopover"
+                                                        (shown)="nodePopoverShown(node,i)"
+                                                        (hidden)="nodePopoverHidden(node,i)"
+                                                        (click)="onClickSelectNode(node.key,'color'); op.toggle($event)"></p-button> -->
+                                                </label>
+                                                <div class="col-9 px-0">
+                                                    <span class="span-input-text"
+                                                        (click)="nodeToggle(node)">{{node.key}}
+                                                        ({{node.value}})</span>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </ng-template>
+                    </li>
+
+
+                    <li [ngbNavItem]="2">
+                        <button ngbNavLink class="pt-0">Edges</button>
+                        <ng-template ngbNavContent>
+                            <br>
+                            <div class="row mx-2 w-19rem">
+                                <ng-scrollbar class="edge-label">
+                                <div class="col-md-12 mt-3">
+                                    <form [formGroup]="edgesDetailsForm">
+                                        <div class="d-flex align-items-center mb-4">
+                                            <label class="w-2 mr-2 label-margin">
+                                                Label
+                                            </label>
+                                            <div class="w-10 ml-5">
+                                                <div class="p-inputgroup pt-1">
+                                                    <p-checkbox name="nodelabel" (onChange)="toggleEdgeLabel($event)"
+                                                        formControlName="label" [binary]="true" inputId="binary"
+                                                        class="w-100"></p-checkbox>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="flex align-items-center mt-1">
+                                            <label class="w-2 flex align-items-center justify-content-start">Length</label>
+                                            <div class="w-10 ml-5   ">
+                                                <p-inputNumber name="Length" [min]="100" [max]="600" [step]="50"
+                                                [formControl]="edgesDetailsForm.get('length')" styleClass="edge-length custom-inputnumber"
+                                                [showButtons]="true" (onChange)="onChangeEdgeLength()"
+                                                [style]="{'width':'auto'}"></p-inputNumber>
+                                            </div>
+                                        </div>
+                                        <div class="flex p-0  mt-4 mb-2 align-items-center" *ngFor="let edge of edgeKeysCount;let i=index">
+                                            <div class="w-3 mr-3">
+                                                <div class="edge-line" popoverClass="popover-right-panel popover-w-100"
+                                                [adaptivePosition]="false" [ngbPopover]="popContent"
+                                                [autoClose]="'outside'" placement="left-top" container="body"
+                                                [popoverTitle]="popTitle" [ngStyle]="getEdgeBGColor(edge.key)"
+                                                #p="ngbPopover" triggers="manual" (shown)="edgePopoverShown(edge,i)"
+                                                (hidden)="edgePopoverHidden(edge,i)"
+                                                (click)="onClickSelectEdge(edge.key,'color');p.open()">
+                                            </div>
+                                            </div>
+                                            <div class="w-9 mr-4">
+                                                <span class="span-input-text" (click)="edgeToggle(edge)">{{edge.key}}
+                                                    ({{edge.value}})</span>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </ng-scrollbar>
+                            </div>
+                        </ng-template>
+                    </li>
+
+
+                    <li [ngbNavItem]="3">
+                        <button ngbNavLink class="pt-0">Misc</button>
+                        <ng-template ngbNavContent>
+                            <div class="row mx-2">
+                                <div class="col-md-12">
+                                    <form [formGroup]="miscDetailsForm">
+                                        <div class="d-flex align-items-center mb-0">
+                                            <label class="col-5 pl-0 py-0">
+                                                Control Panel
+                                            </label>
+                                            <div class="col-7 px-0">
+                                                <div class="p-inputgroup pt-1">
+                                                    <p-checkbox name="nodelabel" formControlName="controlPanel"
+                                                        [binary]="true" inputId="binary" class="w-100"></p-checkbox>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="d-flex align-items-center  mb-0">
+                                            <label class="col-5  pl-0 pt-0">
+                                                Range
+                                            </label>
+                                            <div class="col-7 px-0 pt-0">
+                                                <div class="p-inputgroup pt-1">
+                                                    <p-checkbox name="Range" formControlName="range" [binary]="true"
+                                                        (click)="onChangeRange($event)" inputId="binary"
+                                                        class="w-100"></p-checkbox>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col grid mt-1 pt-0">
+                                            <label for="Smooth Type" class="w-100 my-1">Smooth Type</label>
+                                            <p-dropdown name="smooth" [options]="allSmooths" class="w-100 mt-2 mb-0"
+                                                (onChange)="onChangeEdgeSmooth()"
+                                                [style]="{'width':'100%'}"></p-dropdown>
+                                        </div>
+                                        <div class="col grid mt-1 pt-0">
+                                            <label for="Direction Type" class="w-100 my-1">Direction Type</label>
+                                            <p-dropdown name="smooth" [options]="allDirections" class="w-100 mt-2 mb-0"
+                                                (onChange)="onChangeEdgeSmooth()" [style]="{'width':'100%'}"
+                                                formControlName="direction"></p-dropdown>
+                                        </div>
+                                        <div class="col grid mt-1 pt-0">
+                                            <label for="roundness" class="w-100 my-1">Roundness</label>
+                                            <p-inputNumber name="roundness" [min]="0.1" [max]="1" [step]="0.1"
+                                                class="w-100 mt-2 mb-0" [formControl]="miscDetailsForm.get('roundness')"
+                                                [showButtons]="true" (onChange)="onChangeEdgeSmooth()" styleClass="custom-inputnumber"
+                                                [style]="{'width':'100%'}"></p-inputNumber>
+                                        </div>
+                                        <div class="col grid mt-1 pt-0">
+                                            <label class="w-100 my-1">Limit</label>
+                                            <p-inputNumber name="limit" [min]="1" [max]="5000" [step]="1"
+                                                [style]="{'width':'100%'}" [showButtons]="true" formControlName="limit" styleClass="custom-inputnumber"
+                                                (ngModelChange)="onLimitChange()" class="w-100 mt-2 mb-0">
+                                            </p-inputNumber>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </ng-template>
+                    </li>
+                </ul>
+
+                <div [ngbNavOutlet]="nav" class="m-3"></div>
+
+            </div>
+        </ng-sidebar-content>
+    </ng-sidebar>
+    <ng-sidebar-accordion-content class="page-wrapper-container">
+       
+        <div class="card card-height-85hv-80px border-radius-12 p-1">
+            <div class="flex justify-content-end mr-2" *ngIf="isMaximized">
+                <button pButton pTooltip="Minimize" tooltipPosition="top" positionStyle="fixed" 
+                class="p-element p-button-rounded p-button-text p-button-plain p-button p-component p-button-icon-only"
+                (click)="windowMinimize()">
+                <span class="fa-solid fa-down-left-and-up-right-to-center"></span>
+            </button>
+            </div>
+            <div class="col-12" *ngIf="!isMaximized">
+                    <p-panel header="{{panelTitle}}" [toggleable]="false" class="no-bottom-margin">
+                        <ng-template pTemplate="icons">
+                          
+                            <button pButton class="p-panel-header-icon p-link p-0" *ngIf="isMapView" (click)="networkView()"
+                            [disabled]="loading">
+                                <span class="fa-solid fa-share-nodes" pTooltip="Network View" tooltipPosition="top"
+                                    style="font-size: 16px;" positionStyle="fixed"></span>
+                            </button>
+                            
+                            <button pButton class="p-panel-header-icon p-link p-0" *ngIf="isNetworkView" (click)="mapView()"
+                            [disabled]="loading">
+                                <span class="fa-solid fa-location-dot" pTooltip="Map View" tooltipPosition="top"
+                                    style="font-size: 16px;" positionStyle="fixed"></span>
+                            </button>
+                            
+                            <button pButton class="p-panel-header-icon p-link p-0" (click)="panelToggle()"
+                                [disabled]="loading">
+                                <span class="fa-solid fa-wrench" pTooltip="Settings" tooltipPosition="top"
+                                    style="font-size: 16px;" positionStyle="fixed"></span>
+                            </button>
+                            <button pButton class="p-panel-header-icon p-link p-0" (click)="refreshAnalysis()"
+                                [disabled]="loading">
+                                <span class="fa fa-refresh" pTooltip="Refresh" tooltipPosition="top"
+                                    style="font-size: 16px;" positionStyle="fixed"></span>
+                            </button>
+                            <button pButton (click)="windowMaximize()" pTooltip="Maximize" tooltipPosition="top" positionStyle="fixed"
+                            class="p-panel-header-icon p-link p-0"  [disabled]="loading">
+                            <span class="fa-solid fa-up-right-and-down-left-from-center"></span>
+                        </button>
+                        </ng-template>
+                        <ng-template pTemplate="body">
+                                <div class="flex align-items-center">
+                                    <label class="md:col-1">
+                                        Name
+                                    </label>
+                                    <div class="md:col-3">
+                                            <p-dropdown [options]="allAnalysis" name="test" appendTo="body"
+                                                [(ngModel)]="selectedAnalysis" optionLabel="name" [filter]="true"
+                                                filterBy="name" [showClear]="false" placeholder="-Select-"
+                                                [style]="{'width':'100%'}" (onChange)="onSelectAnalysis()">
+
+                                                <ng-template pTemplate="selected">
+                                                    <div class="analysis-item analysis-item-value">
+                                                        <div>{{selectedAnalysis.name}}</div>
+                                                    </div>
+                                                </ng-template>
+                                                <ng-template let-analysis pTemplate="item">
+                                                    <div class="selected-item" title="{{analysis.name}}">
+                                                        <div>{{analysis.name}}</div>
+                                                    </div>
+                                                </ng-template>
+                                            </p-dropdown>
+                                    </div>
+                                </div>
+                        </ng-template>
+                    </p-panel>
+                    <br>
+            </div>
+            <div class="col-12 py-0">
+                <div class="col-sm-12 pl-0 pr-0 pt-0 border-top">
+                    <p-panel [showHeader]="false" [toggleable]="false" class="padding-top-0">
+                        <ng-template pTemplate="body">
+                            <div class="">
+                                <div class="col-12 p-0">
+                                    <div class="p-0 position-relative bg-image-canvas d-block overflow-hidden" [ngStyle]="{'height': isMaximized ? 'calc(100vh - 15rem)' : 'calc(100vh - 28rem)'}">
+                                        <ng-container [ngTemplateOutlet]="reloadTemplate"></ng-container>
+                                        <ng-template #lodingTemplate>
+                                            <ng-container
+                                                class="position-relative height-inherit">
+                                                <ngx-spinner name="graphanalysis" bdColor="rgba(0, 0, 0, 0)"
+                                                    size="default" color="black" type="line-spin-fade"
+                                                    [fullScreen]="false" class="embeded-spinner ">
+                                                    <p class="mt-0 mb-0 text-black">Loading</p>
+                                                </ngx-spinner>
+                                            </ng-container>
+                                        </ng-template>
+                                        <ng-container *ngIf="!isShowGraphAnalysis">
+                                            <div *ngIf="isGAnSelected else selectGATemplete">
+                                                <ng-container [ngTemplateOutlet]="lodingTemplate"></ng-container>
+                                            </div>
+                                            <ng-template #selectGATemplete>
+                                                <ng-container *ngIf="isLinkAnalysisError"
+                                                    [ngTemplateOutlet]="errorTemplate"
+                                                    [ngTemplateOutletContext]="{errorTitle:errorTitle,errorContent:errorContent}">
+                                                </ng-container>
+                                                <div class="d-flex justify-content-center align-items-center height-100vh-31rem p-0"
+                                                    *ngIf="!isLinkAnalysisError && miscDetailsForm.controls['limit'].value == null ">
+                                                    Select Analysis </div>
+                                            </ng-template>
+                                        </ng-container>
+                                        <div class="flex justify-content-center align-items-center height-inherit"
+                                            *ngIf="isShowGraphAnalysis && linkAnalysisResult.nodes == null && linkAnalysisResult.edges == null">
+                                            No Record Found
+                                        </div>
+                                        <ng-container
+                                            *ngIf="isShowGraphAnalysis && linkAnalysisResult.nodes != null && linkAnalysisResult.edges != null">
+                                            <ng-container *ngIf="isMapView">
+                                                <app-leaflet-map  #leafletMapRef  [graphpodMeta]="graphpodMeta" [graphResult]="linkAnalysisResult" ></app-leaflet-map>
+                                            </ng-container>
+                                            
+                                            <ng-container *ngIf="isNetworkView">
+                                                <app-vis-network #child [graphResult]="linkAnalysisResult"
+                                                [graphpodMeta]="graphpodMeta" (nodeDblClick)="onNodeDblClick($event)"
+                                                [theam]="themeConfig" [option]="vizOption"
+                                                [isHierarchical]="isIconIsHierarchical"
+                                                [controlPanel]="controlPanel"></app-vis-network>
+                                            </ng-container>
+                                                                            
+                                        </ng-container>
+                                    </div>
+                                </div>
+                                <div style="position: relative"
+                                    *ngIf="isShowRange && miscDetailsForm.get('range').value">
+                                    <p-slider [(ngModel)]="rangeValues" [range]="true" [min]="rangeStart"
+                                        [max]="rangeEnd" [step]="1" (onSlideEnd)="onSlide($event)"
+                                        (onChange)="slideChangeValues()" [disabled]="isDisableSlider"
+                                        (click)="HandleEvent()"></p-slider>
+                                    <div
+                                        style=" display: flex; justify-content: space-between; padding-top: 5px;width: 100%;">
+                                        <span *ngIf="isStartDateShow">{{ constantStartDate }}</span>
+                                        <span *ngIf="isEndDateShow">{{ constantEndDate}}</span>
+                                    </div>
+                                    <div style=" display: flex; justify-content: space-between; padding-top: 5px;">
+                                        <span [style.margin-left]=" rangeValues[0]>620 ?'-160px':'0'"
+                                            [style.left.%]="calculateLeftPosition(rangeValues[0])"
+                                            style="position: absolute; top: 10px; width: 100px;">{{ startDate}}</span>
+                                        <span [style.padding-left]="  rangeValues[1]<110 ?'150px':'0'"
+                                            [style.left.%]="calculateLeftPosition(rangeValues[1])"
+                                            style="position: absolute; top: 10px; left: 90%; margin-left: -75px;">{{
+                                            endDate}}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </ng-template>
+                    </p-panel>
+                </div>
+            </div>
+        </div>
+
+
+
+        <p-dialog header="New Analysis" [(visible)]="displayMaximizable" [modal]="false" [style]="{width: '50vw'}"
+            [maximizable]="false" [baseZIndex]="10000" [draggable]="false" [resizable]="false">
+
+            <ng-template pTemplate="header">
+                <p-button icon="pi pi-times" (click)="displayMaximizable=false" label="No"></p-button>
+            </ng-template>
+
+            <ng-template pTemplate="body">
+                <form [formGroup]="analysisCreateForm">
+                    <div class="form-group row">
+                        <label class="col-sm-2 col-form-label text-right required">
+                            Name
+                        </label>
+                        <div class="col-sm-8">
+                            <div class="p-inputgroup">
+                                <input type="text" formControlName="name" pInputText placeholder="">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-sm-2 col-form-label text-right">
+                            Desc
+                        </label>
+                        <div class="col-sm-8">
+                            <div class="p-inputgroup">
+                                <textarea rows="2" pInputTextarea autoResize="autoResize"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-sm-2 col-form-label text-right required">
+                            Graph
+                        </label>
+                        <div class="col-sm-8">
+                            <p-dropdown [options]="owner" optionLabel="name" [filter]="true" filterBy="name"
+                                [showClear]="true" placeholder="-Select-" formControlName="owner" class="w-100">
+                                <ng-template pTemplate="ownerSelected">
+                                    <div class="owner-item owner-item-value" *ngIf="ownerSelected">
+                                        <div>{{ownerSelected.name}}</div>
+                                    </div>
+                                </ng-template>
+                                <ng-template let-owner pTemplate="item">
+                                    <div class="owner-item">
+                                        <div>{{owner.name}}</div>
+                                    </div>
+                                </ng-template>
+                            </p-dropdown>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-sm-2 col-form-label text-right">
+                            Paramlist
+                        </label>
+                        <div class="col-sm-8">
+                            <p-dropdown [options]="owner" optionLabel="name" [filter]="true" filterBy="name"
+                                [showClear]="true" placeholder="-Select-" formControlName="owner" class="w-100">
+                                <ng-template pTemplate="ownerSelected">
+                                    <div class="owner-item owner-item-value" *ngIf="ownerSelected">
+                                        <div>{{ownerSelected.name}}</div>
+                                    </div>
+                                </ng-template>
+                                <ng-template let-owner pTemplate="item">
+                                    <div class="owner-item">
+                                        <div>{{owner.name}}</div>
+                                    </div>
+                                </ng-template>
+                            </p-dropdown>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-sm-2 col-form-label text-right required">
+                            Cypher
+                        </label>
+                        <div class="col-sm-8">
+                            <div class="p-inputgroup">
+                                <textarea rows="4" pInputTextarea autoResize="autoResize"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="buttons">
+                        <button type="submit" class="btn btn-primary" (click)="submit()">Submit</button>
+                    </div>
+                </form>
+            </ng-template>
+        </p-dialog>
+
+    </ng-sidebar-accordion-content>
+</ng-sidebar-accordion>
+
+<!------------------------------------------->
+
+<div class="page-wrapper-container" *ngIf="formVisible || paramListDialog">
+    <p-dialog [header]="editDialog == true ? 'Edit Analysis' : 'New Analysis'" [(visible)]="formVisible"
+        [breakpoints]="{'960px': '75vw', '640px': '100vw'}" [style]="{width: '65vw'}" [modal]="true"
+        (onHide)="hideDialog()" [maximizable]="false">
+        <form [formGroup]="formGroup">
+            <div class="form-group row">
+                <div class="col-md-3 form-label star">
+                    Name
+                </div>
+                <div class="col-md-6">
+                    <span class="p-float-label form-row">
+                        <input id="name" type="text" pInputText formControlName="name"
+                            [ngClass]="{'ng-dirty': formGroup.controls.name.invalid || createClicked || editClicked,'ng-invalid': formGroup.controls.name.invalid || createClicked || editClicked,'ng-valid': formGroup.controls.name.valid || !createClicked}">
+                        <small id="name" class="p-error block"
+                            *ngIf="formGroup.controls.name.invalid && createClicked">Name is
+                            Required</small>
+                    </span>
+                </div>
+            </div>
+            <div class="form-group row">
+                <div class="col-md-3 form-label">
+                    Desc
+                </div>
+                <div class="col-md-6">
+                    <span class="p-float-label form-row">
+                        <textarea id="desc" type="text" pInputTextarea formControlName="desc" [rows]="2"></textarea>
+                    </span>
+                </div>
+            </div>
+            <div class="form-group row">
+                <div class="col-md-3 form-label star">
+                    Graph
+                </div>
+                <div class="col-md-6">
+                    <span class="p-float-label form-row">
+                        <p-dropdown [options]="graphList" formControlName="graph" optionLabel="name" [filter]="true"
+                            filterBy="name" placeholder="Select a Graph" optionValue="uuid"
+                            [ngClass]="{'ng-dirty': formGroup.controls.graph.invalid || createClicked || editClicked,'ng-invalid': formGroup.controls.graph.invalid || createClicked || editClicked,'ng-valid': formGroup.controls.graph.valid || !createClicked}">
+                        </p-dropdown>
+                        <small id="" class="p-error block"
+                            *ngIf="formGroup.controls.graph.invalid && createClicked">Graph is
+                            Required</small>
+                    </span>
+                </div>
+            </div>
+            <div class="form-group row">
+                <div class="col-md-3 form-label">
+                    Parameter List
+                </div>
+                <div class="col-md-6">
+                    <span class="p-float-label form-row">
+                        <p-dropdown [options]="paramList" formControlName="param" optionLabel="name" [filter]="true"
+                            filterBy="name" [showClear]="true" placeholder="-Select-" optionValue="uuid">
+                        </p-dropdown>
+                    </span>
+                </div>
+            </div>
+            <div class="form-group row">
+                <div class="col-md-3 form-label star">
+                    Cypher
+                </div>
+                <div class="col-md-6">
+                    <span class="p-float-label form-row">
+                        <textarea id="cypher" type="text" pInputTextarea formControlName="cypher" [rows]="4"
+                            [ngClass]="{'ng-dirty': formGroup.controls.cypher.invalid || createClicked || editClicked,'ng-invalid': formGroup.controls.cypher.invalid || createClicked || editClicked,'ng-valid': formGroup.controls.cypher.valid || !createClicked}"></textarea>
+                        <small id="cypher" class="p-error block"
+                            *ngIf="formGroup.controls.cypher.invalid && createClicked">Cypher is
+                            Required</small>
+                    </span>
+                </div>
+
+            </div>
+            <div class="form-group row" *ngIf="isAnalysisSubmitError">
+                <div class="col-md-3 form-label">
+
+                </div>
+                <div class="col-md-6">
+                    <div class="w-100">
+                        <app-error-dialog [title]="errorTitle" [content]="errorContent" [messageHead]="errorTitle">
+                        </app-error-dialog>
+                    </div>
+                </div>
+
+            </div>
+
+        </form>
+        <ng-template pTemplate="footer">
+
+            <!-- <button type="button" class="btn btn-secondary">Cancel</button> -->
+            <button type="submit" class="btn btn-primary" (click)="createSubmit()" *ngIf="!editDialog">Submit</button>
+            <button type="submit" class="btn btn-primary" (click)="editSubmit()" *ngIf="editDialog">Update</button>
+        </ng-template>
+    </p-dialog>
+
+
+    <p-dialog header="Run Params" [(visible)]="paramListDialog" [breakpoints]="{'960px': '75vw', '640px': '100vw'}"
+        [style]="{width: '65vw'}" [modal]="true" (onHide)="paramListDialogClose()" [maximizable]="false">
+        <ng-template pTemplate="body">
+            <div class="form-group row">
+                <div class="col-md-3 form-label pt-2">
+                    Parameter List
+                </div>
+                <div class="col-md-6">
+                    <span class="p-float-label form-row">
+                        <p-dropdown [options]="paramList" [(ngModel)]="paramDialogControl" optionLabel="name"
+                            [filter]="true" filterBy="name" placeholder="Select Paramlist" optionValue="uuid"
+                            (onChange)="paramDialogChange()">
+                        </p-dropdown>
+                    </span>
+                </div>
+            </div>
+            <div class="container">
+                <p-table [value]="paramDialogList" responsiveLayout="scroll">
+                    <ng-template pTemplate="header">
+                        <tr>
+                            <th>ID</th>
+                            <th>Param Name</th>
+                            <th>Param Value</th>
+                            <th>Param Attributes</th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-item>
+                        <tr>
+                            <td>{{paramDialogList.indexOf(item)+1}}</td>
+                            <td>{{item.paramDispName}}</td>
+                            <td><input type="text" [(ngModel)]="item.paramValue.value"></td>
+                            <td *ngIf="item.attributeInfo">{{item.attributeInfo}}</td>
+                            <td *ngIf="!item.attributeInfo">NA</td>
+                        </tr>
+                    </ng-template>
+                </p-table>
+            </div>
+        </ng-template>
+        <ng-template pTemplate="footer">
+            <!-- <button type="button" class="btn btn-secondary">Cancel</button> -->
+            <button type="submit" class="btn btn-primary" (click)="paramDialogSubmit()">Submit</button>
+        </ng-template>
+    </p-dialog>
+</div>
+
+<ng-template #lodingTemplate>
+    <ngx-spinner name="graphanalysis" bdColor="rgba(0, 0, 0, 0)" size="default" color="black" type="line-spin-fade"
+        [fullScreen]="false">
+        <p class="mt-0 mb-0 text-black">Loading</p>
+    </ngx-spinner>
+</ng-template>
+
+<ng-template #reloadTemplate>
+    <ngx-spinner name="graphanalysisreload" bdColor="rgba(0, 0, 0, 0)" size="default" color="black"
+        type="line-spin-fade" [fullScreen]="false">
+        <p class="mt-0 mb-0 text-black">Loading</p>
+    </ngx-spinner>
+</ng-template>
+
+<p-toast></p-toast>
+<ng-template let-title="errorTitle" let-content="errorContent" #errorTemplate>
+    <div class="height-inherit flex justify-content-center align-items-center">
+        <app-error-dialog [title]="title" [content]="errorContent" [messageHead]="title">
+        </app-error-dialog>
+    </div>
+</ng-template>
+

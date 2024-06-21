@@ -1,0 +1,33 @@
+.login-border {
+    // border-radius: 56px;
+    padding: 0.3rem;
+    // background: linear-gradient(180deg, var(--primary-color) 10%, rgba(33, 150, 243, 0) 30%);
+}
+
+.Input-group {
+    position: relative;
+}
+
+.Input-group:nth-child(1) .userName {
+    position: absolute;
+    top: 77px;
+}
+
+.Input-group:nth-child(2) .password {
+    position: absolute;
+    top: 77px;
+}   
+.spinner {
+    border: 2px solid #f3f3f3;
+    border-top: 2px solid #3498db;
+    border-radius: 50%;
+    width: 12px;
+    height: 12px;
+    animation: spin 1s linear infinite;
+    margin-right: -10px;
+} 
+  
+  @keyframes spin {
+    0% { transform: rotate(0deg); } 
+    100% { transform: rotate(360deg); } 
+  }

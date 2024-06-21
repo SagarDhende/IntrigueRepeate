@@ -1,0 +1,48 @@
+
+.action-button {
+  width: auto;
+  padding: 4px;
+}
+
+.nameWidth {
+  width: 200px;
+}
+#customers {
+  font-family: Arial, Helvetica, sans-serif;
+  border-collapse: collapse;
+  width: 100%;
+  margin-top: 2rem;
+}
+
+#customers td,
+#customers th {
+  border: 1px solid #ddd;
+  padding: 8px;
+}
+
+#customers th {
+  padding-top: 12px;
+  padding-bottom: 12px;
+  text-align: left;
+  //background-color:  var(--primary-color) !important;
+  background-color: white !important;
+  color: black;
+}
+.log-scroll{
+  height: calc(100vh - 40rem) !important;
+  margin-right: 0.5rem;
+
+}
+.log-textarea{
+  white-space: pre-line;
+  background-color: #eef1f5;
+
+}
+.log-sec{
+  border: 1px solid #c2cfd6;
+  background-color: #eef1f5;
+}
+
+.ng-scroll-h-100vh-30rem{
+  min-height: calc(100vh - 40rem);
+}

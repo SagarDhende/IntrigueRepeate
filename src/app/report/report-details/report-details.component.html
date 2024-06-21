@@ -1,0 +1,236 @@
+<div class="card card-height-85hv-80px border-radius-12">
+    <div class="flex align-items-center justify-content-between header-margin">
+        <!-- <h5 class="mb-0">Results</h5> -->
+        <p-breadcrumb [model]="breadcrumbItems" [home]="breadcrumbHome"></p-breadcrumb>
+
+        <div>
+            <!-- <button pbutton="" type="button" icon="pi pi-ellipsis-v" (click)="downloadResult()"  pTooltip="Download" tooltipPosition="top"
+                class="p-element p-button-rounded p-button-text p-button-plain p-button p-component p-button-icon-only"><span
+                    class="p-button-icon pi pi-download" aria-hidden="true"></span></button> -->
+            <!-- <button pbutton="" type="button" icon="pi pi-ellipsis-v" (click)="isEditEnable ? menu.toggle($event) : openFilterDialog()"
+            pTooltip="Filter" tooltipPosition="top"
+            class="p-element p-button-rounded p-button-text p-button-plain p-button p-component p-button-icon-only"><span
+                class="p-button-icon pi pi-filter" aria-hidden="true"></span></button>
+           <p-menu #menu [popup]="true" [model]="items" appendTo="body"></p-menu> -->
+            <button pbutton="" type="button" icon="pi pi-ellipsis-v" (click)="onClickRefresh()" pTooltip="Refresh" tooltipPosition="top"
+                class="p-element p-button-rounded p-button-text p-button-plain p-button p-component p-button-icon-only"><span
+                    class="p-button-icon fa fa-refresh" aria-hidden="true"></span></button>
+            <button pbutton="" type="button" icon="pi pi-ellipsis-v" (click)="navigateToReportPage()" pTooltip="Close" tooltipPosition="top"
+                class="p-element p-button-rounded p-button-text p-button-plain p-button p-component p-button-icon-only"><span
+                    class="p-button-icon pi pi-times" aria-hidden="true"></span></button>
+
+        </div>
+    </div>
+    <hr>
+    <p-table #dt1 [value]="tableRows" dataKey="id" [rows]="10" [rowHover]="true" styleClass="p-datatable-gridlines"
+    responsiveLayout="scroll" [scrollHeight]="'556px'" scrollDirection="both" [scrollable]="true"
+    responsiveLayout="scroll" [columns]="tableCols">
+    <ng-template pTemplate="caption">
+        <div class="flex justify-content-between align-items-center sm:flex-row">
+            <span class="p-input-icon-left">
+                <i class="pi pi-search"></i>
+                <input pInputText type="text" #filter [(ngModel)]="value" (input)="searchTableRows(value)"
+                    placeholder="Search Keyword" class="w-full" />
+            </span>
+            <div class="flex align-items-center">
+                <p-multiSelect [options]="tableCols" [(ngModel)]="selectedOptions" placeholder="Choose Columns"
+                class="multiselect-custom" selectedItemsLabel="{0} columns selected"
+                (ngModelChange)="onColumnSelectChange()" [style]="{'width': '228px'}" optionLabel="header">
+            </p-multiSelect>
+            <button pbutton="" type="button" icon="pi pi-ellipsis-v" (click)="isEditEnable ? menu.toggle($event) : openFilterDialog()"
+            pTooltip="Filter" tooltipPosition="top"
+            class="p-element p-button-rounded p-button-text p-button-plain p-button p-component p-button-icon-only"><span
+                class="p-button-icon pi pi-filter" aria-hidden="true"></span></button>
+           <p-menu #menu [popup]="true" [model]="items" appendTo="body"></p-menu>
+            <button pbutton="" type="button" icon="pi pi-ellipsis-v" (click)="openDownloadModal()"
+                        pTooltip="Download" tooltipPosition="top"
+                        class="p-element p-button-rounded p-button-text p-button-plain p-button p-component p-button-icon-only" [disabled]="disableDownload">
+                        <span class="p-button-icon pi pi-download" aria-hidden="true"></span>
+            </button>
+            </div>
+        </div>
+    </ng-template>
+    <ng-template pTemplate="header" let-columns>
+        <tr>
+            <ng-container *ngFor="let col of columns">
+                <th *ngIf="col.visible" class="text-center text-nowrap" pSortableColumn="{{col.field}}">
+                    {{col.header}}
+                    <p-sortIcon field="{{col.field}}"></p-sortIcon>
+                </th>
+            </ng-container>
+        </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-rowData let-columns="columns">
+        <tr>
+            <ng-container *ngFor="let col of columns">
+                <td #td class="text-center td-max-width text-nowrap" *ngIf="col.visible" 
+                  pTooltip="{{tooltipObj[rowData[col.field]] ? rowData[col.field]: null}}"
+                   tooltipPosition="top" positionStyle="fixed" (mouseover)="showTooltip(td,span,rowData[col.field])">
+                   <span #span>{{rowData[col.field]==null? '-NA-': rowData[col.field]}}</span>
+                </td>
+            </ng-container>
+        </tr>
+    </ng-template>
+
+    <ng-template pTemplate="emptymessage">
+        <tr>
+            <td [attr.colspan]="tableCols?.length" class="text-center" *ngIf="tableRows == 0 && isReportNoRecord">No Records Found</td>
+            <div class="flex align-items-center justify-content-center spinner-height">
+                <td [attr.colspan]="tableCols?.length" class="text-center" *ngIf="isReportError">
+                    <ng-container [ngTemplateOutlet]="errorTemplate" [ngTemplateOutletContext]="{errorTitle:errorTitle,errorContent:errorContent}">
+                    </ng-container>
+                </td>
+            </div>
+
+            <td [attr.colspan]="tableCols?.length" *ngIf="isReportInProgress">
+                <div class="col-12 position-relative w-100 spinner-height">
+                    <ngx-spinner name="table-spinner" bdColor="rgba(0, 0, 0, 0)" size="default" color="black"
+                        type="line-spin-fade" [fullScreen]="false">
+                        <p class="mt-0 mb-0 text-black">Loading </p>
+                    </ngx-spinner>
+                </div>
+            </td>
+
+        </tr>
+    </ng-template>
+</p-table>
+<div class="flex align-items-center justify-content-between mt-1">
+    <div class="md:col-3">
+        {{length}} rows
+    </div>
+    <div class="md:col-9">
+        <div style="float:right; font-style: italic;">
+            Note : Displaying max 500 rows
+        </div>
+    </div>
+</div>
+<p-toast key="confirm"></p-toast>
+<p-dialog header="Configure Filter" [(visible)]="filterDialog" [breakpoints]="{'960px': '75vw', '640px': '100vw'}"
+[style]="{width: '85vw','height': '28vw','overflow-y': 'atuo'}" [modal]="true" [maximizable]="false" responsive="true"
+[draggable]="false">
+<ng-template pTemplate="body">
+    <div class="flex justify-content-between align-items-center">
+        <div class="md:col-6">
+            <h4>Filter</h4>
+        </div>
+        <div class="md:col-3">
+            <div class="flex justify-content-end">
+                <button pTooltip="Add" tooltipPosition="top" (click)="addFilterRow()" pButton pRipple
+                    type="button" icon="pi pi-plus" class="p-button-rounded p-button-secondary p-button-outlined ml-2"></button>
+                <button pTooltip="Delete" tooltipPosition="top" (click)="deleteFilterRow()" pButton pRipple
+                    type="button" icon="pi pi-minus" class="p-button-rounded p-button-secondary p-button-outlined ml-2"></button>
+            </div>
+        </div>
+    </div>
+    <form [formGroup]="filterForm">
+        <table id="customers">
+            <thead>
+                <tr>
+                    <th class="text-center"><p-checkbox (onChange)="onChangeSelectAllFilter($event)"
+                            [binary]="true" class="text-center"></p-checkbox></th>
+                    <th class="text-center">Logical Operator</th>
+                    <th class="text-center">LHS Type</th>
+                    <th class="text-center">LHS Attribute</th>
+                    <th class="text-center">Operator</th>
+                    <th class="text-center">RHS Type</th>
+                    <th class="text-center">RHS Attribute</th>
+                </tr>
+            </thead>
+            <tbody formArrayName="rows">
+                <tr *ngFor="let item of filterForm.controls.rows.controls;let i=index" [formGroupName]="i">
+                    <td class="text-center" style="width: 5%">
+                        <p-checkbox [binary]="true" formControlName="select"
+                            class="text-center mt-1"></p-checkbox>
+                    </td>
+                    <td>
+                        <p-dropdown [options]="logicalOperators" name="logicalOperator"
+                            formControlName="logicalOperator" optionLabel="caption" [filter]="true"
+                            filterBy="caption" [showClear]="false" placeholder="-Select-"
+                            [style]="{'width':'100%'}" appendTo="body">
+                        </p-dropdown>
+                    </td>
+                    <td>
+                        <p-dropdown [options]="lhsTypes" name="lhsType" formControlName="lhsType"
+                            optionLabel="caption" [filter]="true" filterBy="caption" [showClear]="false"
+                            placeholder="-Select-" [style]="{'width':'100%'}" appendTo="body">
+                        </p-dropdown>
+                    </td>
+                    <td>
+                        <ng-container [ngSwitch]="item.value.lhsType.text">
+                            <ng-container *ngSwitchCase="dataTypeEnum.STRING">
+                                <input [ngClass]="{ 'ng-dirty ng-invalid': filterForm.controls.rows.controls[i].controls.lhsValue.touched &&  
+                                filterForm.controls.rows.controls[i].controls.lhsValue.errors?.['required']}"
+                                    class="w-100" pInputText type="text" formControlName="lhsValue">
+                            </ng-container>
+                            <ng-container *ngSwitchCase="dataTypeEnum.INTEGER">
+                                <input [ngClass]="{ 'ng-dirty ng-invalid': filterForm.controls.rows.controls[i].controls.lhsValue.touched &&  
+                                filterForm.controls.rows.controls[i].controls.lhsValue.errors?.['required']}"
+                                    class="w-100" pInputText type="number" formControlName="lhsValue">
+                            </ng-container>
+                            <ng-container *ngSwitchDefault>
+                                <p-dropdown [options]="attributes" name="lhsAttr" appendTo="body" formControlName="lhsAttr"
+                                    [ngClass]="{ 'ng-dirty ng-invalid': filterForm.controls.rows.controls[i].controls.lhsAttr.touched &&  
+                                filterForm.controls.rows.controls[i].controls.lhsAttr.errors?.['required']}"
+                                    optionLabel="name" [filter]="true" filterBy="caption" [showClear]="false"
+                                    placeholder="-Select-" [style]="{'width':'100%'}" appendTo="body">
+                                </p-dropdown>
+                            </ng-container>
+                        </ng-container>
+                    </td>
+
+                    <td>
+                        <p-dropdown [options]="operators" name="operator" formControlName="operator"
+                            optionLabel="caption" [filter]="true" filterBy="caption" [showClear]="false"
+                            placeholder="-Select-" [style]="{'width':'100%'}" appendTo="body">
+                        </p-dropdown>
+                    </td>
+                    <td>
+                        <p-dropdown [options]="rhsTypes" name="rhsType" formControlName="rhsType"
+                            optionLabel="caption" [filter]="true" filterBy="caption" [showClear]="false"
+                            placeholder="-Select-" [style]="{'width':'100%'}" appendTo="body">
+                        </p-dropdown>
+                    </td>
+                    <td>
+                        <ng-container [ngSwitch]="item.value.rhsType.text">
+                            <ng-container *ngSwitchCase="dataTypeEnum.STRING">
+                                <input [ngClass]="{ 'ng-dirty ng-invalid': filterForm.controls.rows.controls[i].controls.rhsValue.touched &&  
+                                filterForm.controls.rows.controls[i].controls.rhsValue.errors?.['required']}"
+                                    class="w-100" pInputText type="text" formControlName="rhsValue">
+                            </ng-container>
+                            <ng-container *ngSwitchCase="dataTypeEnum.INTEGER">
+                                <input [ngClass]="{ 'ng-dirty ng-invalid': filterForm.controls.rows.controls[i].controls.rhsValue.touched &&  
+                                filterForm.controls.rows.controls[i].controls.rhsValue.errors?.['required']}"
+                                    class="w-100" pInputText type="number" formControlName="rhsValue">
+                            </ng-container>
+                            <ng-container *ngSwitchDefault>
+                                <p-dropdown [options]="attributes" name="rhsAttr"  appendTo="body"   formControlName="rhsAttr"
+                                    [ngClass]="{ 'ng-dirty ng-invalid': filterForm.controls.rows.controls[i].controls.rhsAttr.touched &&  
+                                filterForm.controls.rows.controls[i].controls.rhsAttr.errors?.['required']}"
+                                    optionLabel="name" [filter]="true" filterBy="caption" [showClear]="false"
+                                    placeholder="-Select-" [style]="{'width':'100%'}" appendTo="body">
+                                </p-dropdown>
+                            </ng-container>
+                        </ng-container>
+                    </td>
+                </tr>
+                <ng-container *ngIf="filterForm.get('rows').value.length == 0">
+                    <tr class="h-10hv">
+                        <td colspan="7" class="h-10hv text-center">No Record Found</td>
+                    </tr>
+                </ng-container>
+            </tbody>
+        </table>
+    </form>
+</ng-template>
+<ng-template pTemplate="footer">
+    <div class="mt-4 flex justify-content-end align-items-center">
+        <p-button label="Submit" [outlined]="true" severity="primary" (click)="filterSubmit()"></p-button>
+    </div>
+</ng-template>
+</p-dialog>
+</div>    
+<app-download [downloadOptions]="downloadOptions" (downloadDialog)="downloadModal=false" *ngIf="downloadModal"></app-download>
+<ng-template let-title="errorTitle" let-content="errorContent" let-position="errorPosition" #errorTemplate>
+    <app-error-dialog [title]="title" [content]="errorContent" [position]="errorPosition" [messageHead]="title">
+    </app-error-dialog>
+</ng-template>

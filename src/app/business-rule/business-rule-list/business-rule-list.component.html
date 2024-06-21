@@ -1,0 +1,123 @@
+<ng-sidebar-accordion #rightAccordion class="sidebar-accordion-main sidebar-accordion-height">
+    <!-- A sidebar -->
+    <ng-sidebar position="right" [opened]="false">
+        <ng-sidebar-content class="sidebar-content-design">
+            <app-search-list [metaType]="metaType" (searchParameterData)="getSearchCriteria($event)"
+                (panelclose)="panelClose()" (clearButtonClick)="panelClose()" [options]="options"
+                (setIsEditFlagEmitter)="onIsEditEnableChanged($event)"></app-search-list>
+        </ng-sidebar-content>
+    </ng-sidebar>
+    <ng-sidebar-accordion-content class="page-wrapper-container">
+
+
+        <div class="card card-height-85hv-80px border-radius-12">
+            <div class="flex align-items-center justify-content-between header-margin">
+                <!-- <h5 class="mb-0">Rules</h5> -->
+                <p-breadcrumb [model]="breadcrumbItems" [home]="breadcrumbHome"></p-breadcrumb>
+
+                <div><!-- <button pbutton="" type="button" icon="pi pi-ellipsis-v" (click)="addNewSimulation()"
+                        class="p-element p-button-rounded p-button-text p-button-plain p-button p-component p-button-icon-only"><span
+                            class="p-button-icon pi pi-plus" pTooltip="Add New" tooltipPosition="bottom"
+                            aria-hidden="true"></span></button> -->
+                    <button #body pbutton="" type="button" icon="pi pi-ellipsis-v"
+                        (click)="isEditEnable ? menu.toggle($event) : panelToggle()"
+                        class="p-element p-button-rounded p-button-text p-button-plain p-button p-component p-button-icon-only"><span
+                            class="p-button-icon pi pi-filter" pTooltip="Filter" tooltipPosition="top"
+                            aria-hidden="true"></span></button>
+                    <p-menu #menu [popup]="true" [model]="items" appendTo="body"></p-menu>
+                    <button pbutton="" type="button" icon="pi pi-ellipsis-v" (click)="refreshClick()"
+                        class="p-element p-button-rounded p-button-text p-button-plain p-button p-component p-button-icon-only"><span
+                            class="p-button-icon fa fa-refresh" aria-hidden="true" pTooltip="Refresh"
+                            tooltipPosition="top"></span></button>
+                    <button pbutton="" type="button" icon="pi pi-ellipsis-v" pTooltip="Action" tooltipPosition="top"
+                        (click)="openExecuteDialogBox()" [disabled]="selectedRows ==null || selectedRows.length ==0"
+                        class="p-element p-button-rounded p-button-text p-button-plain p-button p-component p-button-icon-only">
+                        <span class="p-button-icon fa fa-play" aria-hidden="true"></span>
+                    </button>
+                </div>
+            </div>
+            <hr>
+            <app-table-list [metaType]="metaType" [options]="options" (setLength)="getLength($event)"
+                (selection)="getselectedRows($event)"></app-table-list>
+            <div class="flex align-items-center justify-content-between mt-1">
+                <div class="md:col-3">
+                    {{length}} rows
+                </div>
+                <div class="md:col-9">
+                    <div style="float:right; font-style: italic;">
+                        Note : Displaying max 500 rows
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <p-dialog header="Confirm" [(visible)]="isExecutDialogOpen" [modal]="true" showEffect="fade"
+            [style]="{width: '20vw'}" [breakpoints]="{'960px': '75vw'}" responsive="false">
+            <p class="line-height-3 m-0">
+                Execute Rule(s) ?
+            </p>
+            <ng-template pTemplate="footer">
+                <p-button label="Cancel" severity="secondary" [outlined]="true"
+                    (click)="closeExecuteDialog()"></p-button>
+                <p-button label="Ok" [outlined]="true" (click)="onClickExecuteAction()"></p-button>
+            </ng-template>
+        </p-dialog>
+        <p-dialog header="Configure Params" [(visible)]="isExecDialogOpen" [modal]="true" showEffect="fade"
+            [draggable]="false" [style]="{'width': '52vw', 'height' : '55vh','overflow-y': 'atuo'}"
+            [breakpoints]="{'960px': '75vw'}" responsive="false">
+            <p-tabView orientation="left" styleClass="rules-tab-view" [scrollable]="true">
+                <ng-container *ngFor="let param of paramInfoResult?.data; let i = index">
+                    <p-tabPanel class="line-height-3 m-0" *ngIf="param.isVisible">
+                        <ng-template pTemplate="header">
+                            <div [pTooltip]="param.paramInfo[0].ref.name" tooltipPosition="top" class="param-header">
+                                {{param.paramInfo[0].ref.name}}</div>
+                        </ng-template>
+                        <table id="customers">
+                            <thead>
+                                <tr>
+                                    <th class="text-center">ID</th>
+                                    <th class="text-center">Param Name</th>
+                                    <th class="text-center">Param Type</th>
+                                    <th class="text-center">Param Value</th>
+                                    <th class="text-center">Param Attributes</th>
+                                </tr>
+                            </thead>
+                            <tbody *ngFor="let data of param.paramInfo; let j = index;">
+                                <tr>
+                                    <td class="text-center">
+                                        {{ data.paramId}}
+                                    </td>
+                                    <td class="text-center">
+                                        {{data.paramName}}
+                                    </td>
+                                    <td class="text-center">
+                                        {{ data.paramType}}
+                                    </td>
+                                    <td class="text-center">
+                                        <ng-container>
+                                            <input [(ngModel)]="data.paramValue.value" class="w-100" pInputText 
+                                                type="text" (input)="setParamValues(i,j,$event)">
+                                        </ng-container>
+                                    </td>
+                                    <td class="text-center">
+                                        -NA-
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </p-tabPanel>
+                </ng-container>
+
+            </p-tabView>
+            <ng-template pTemplate="footer">
+                <div class="mt-4">
+                    <p-button label="Close" severity="secondary" [outlined]="true"
+                    (click)="isExecDialogOpen = false"></p-button>
+                <p-button label="Submit" [outlined]="true" (click)="onClickExecute()" [loading]="actionButtonLoading"></p-button>
+                </div>
+            </ng-template>
+        </p-dialog>
+    </ng-sidebar-accordion-content>
+</ng-sidebar-accordion>
+<p-toast [showTransformOptions]="'translateY(100%)'" [showTransitionOptions]="'1000ms'" styleClass="gen-ai-toast"
+    [hideTransitionOptions]="'1000ms'" [showTransformOptions]="'translateX(100%)'" position="bottom-right"></p-toast>

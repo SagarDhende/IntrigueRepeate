@@ -1,0 +1,1047 @@
+<div class="" [ngClass]="{'within': details}">
+    <p-panel [header]="'Alert-'+alertId" [toggleable]="" styleClass="p-panel-custom" [showHeader]="true">
+        <ng-template pTemplate="icons">
+            <div class="flex">
+                <button pButton pTooltip="Minimize" tooltipPosition="top" positionStyle="fixed" *ngIf="isMaximized"
+                    class="p-element p-button-rounded p-button-text p-button-plain p-button p-component p-button-icon-only"
+                    (click)="toogleIsMaximized()">
+                    <span class="fa-solid fa-down-left-and-up-right-to-center"></span>
+                </button>
+                <button (click)="toogleIsMaximized()" pTooltip="Maximize" tooltipPosition="top" positionStyle="fixed"
+                    *ngIf="!isMaximized"
+                    class="p-element p-button-rounded p-button-text p-button-plain p-button p-component p-button-icon-only">
+                    <span class="fa-solid fa-up-right-and-down-left-from-center"></span>
+                </button>
+                <button pButton (click)="refreshTab()" pTooltip="Refresh" tooltipPosition="top" positionStyle="fixed"
+                    class="p-element p-button-rounded p-button-text p-button-plain p-button p-component p-button-icon-only">
+                    <span class="fa fa-refresh"></span>
+                </button>
+                <button pButton (click)="closeTab()" pTooltip="Close" tooltipPosition="top" positionStyle="fixed" *ngIf="!details"
+           class="p-element p-button-rounded p-button-text p-button-plain p-button p-component p-button-icon-only">
+           <span class="fa fa-close"></span>
+          </button>
+            </div>
+        </ng-template>
+        <ng-template pTemplate="body">
+            <p-tabView styleClass="test1" [(activeIndex)]="tabIndex" (onChange)="tabChange()"
+                (onClose)="handleTabClose($event)">
+                <p-tabPanel header="Summary">
+                    <div class="height-100vh-28rem">
+                        @if (isAlertSummaryNoRecords) {
+                        <div class="flex justify-content-center align-items-center height-inherit">
+                            No Records Found
+                        </div>
+                        }
+                        @else if(alrtSummaryError) {
+                        <ng-container [ngTemplateOutlet]="errorTemplate"
+                            [ngTemplateOutletContext]="{errorTitle:errorTitle,errorContent:errorContent}">
+                        </ng-container>
+                        }
+                        @else if(alrtSummaryInprogress) {
+                        <div class="position-relative height-inherit">
+                            <ngx-spinner name="alert-summary" class="embeded-spinner" bdColor="rgba(0, 0, 0, 0)"
+                                size="default" color="black" type="line-spin-fade" [fullScreen]="false">
+                                <p class="mt-0 mb-0 text-black">Loading </p>
+                            </ngx-spinner>
+                        </div>
+                        }
+                        @else if(!alrtSummaryError && !alrtSummaryInprogess && alertSummary) {
+                            <ng-scrollbar (clickOutside)="navMob()" [excludeBeforeClick]="true" id="" ngClass=""
+                            [usePSClass]="'next'" [disabled]="null" [exclude]="'#mobile-collapse'" id="nav-ps-next"
+                            class="ng-scroll-h-80hv ">
+                           
+                            
+                        <div class="grid mx-2">
+                            <div class="col-12 md:col-6 lg:col-6">
+                                <p-table [value]="alertSummaryLeft" [paginator]="false">
+                                    <ng-template pTemplate="body"  let-item>
+                                        <tr class="">
+                                            <td class="" *ngIf="item != 'rule_name' && item != 'rule_exec_time'">
+                                                {{convertName(item)}}</td>
+                                            <td class="" *ngIf="item == 'rule_name'">Alert Name</td>
+                                            <td class="" *ngIf="item == 'rule_exec_time'">Alert Date</td>
+                                            <td class="td-content"><strong>{{alertSummary[item]}}<ng-container
+                                                        *ngIf="alertSummary[item]==null">
+                                                        -NA-</ng-container>&nbsp;&nbsp;</strong></td>
+                                        </tr>
+                                    </ng-template>
+                                </p-table>
+                            </div>
+                            <div class="col-12 md:col-6 lg:col-6">
+                                <p-table [value]="alertSummaryRight" [paginator]="false">
+                                    <ng-template pTemplate="body" let-item>
+                                        <tr class="">
+                                            <td class="">{{convertName(item)}}</td>
+                                            @if(item == 'priority') {
+                                            <ng-container>
+                                                <!-- <td class="no-left-right">{{convertName(item)}}</td> -->
+                                                @if(!priorityDropdown) {
+                                                <td class="no-left-right">
+                                                    <div class="w-150 d-flex">
+                                                        @if (alertSummary[item]) {
+                                                        <div class="edit-field-data p-1 w-24 flex justify-content-center text-white"
+                                                            [tdColor]="'severity'" [tdValues]="alertSummary[item]">
+                                                            {{getSeveritryCaption (alertSummary[item]) }}
+                                                        </div>
+                                                        }
+                                                    </div>
+                                                    <div class="w-25p">
+                                                        @if(alertSummary[item]==null) {
+                                                        <ng-container>
+                                                            -NA-
+                                                        </ng-container>
+                                                        }
+                                                    </div>
+                                                </td>
+                                                }
+
+                                            </ng-container>
+                                            }
+                                            @if (item != 'entity_id' && item !='priority' ) {
+                                            <td class="">
+                                                <strong>
+                                                    <span class=" p-1 w-24 flex justify-content-center text-white"
+                                                        [ngStyle]="{'background-color':getSeverityBGColor(alertSummary[item])}"
+                                                        [bgColor]="'severity-'+alertSummary[item]"
+                                                        *ngIf="convertName(item) =='Severity';else col_not_severity">
+                                                        {{getSeveritryCaption(alertSummary[item])}}
+                                                    </span>
+                                                    <ng-template #col_not_severity><span>
+                                                            {{alertSummary[item]}}
+                                                        </span></ng-template>
+                                                    <ng-container *ngIf="alertSummary[item]==null">
+                                                        -NA-</ng-container>
+                                                </strong>
+                                            </td>
+                                            }
+                                            <!-- entity id -->
+                                            @if (item == 'entity_id') {
+                                            <td class="hover-pointer hyperlink" (click)="openEntity(item)">
+                                                <strong>
+                                                    <span [bgColor]="'severity-'+alertSummary[item]"
+                                                        *ngIf="convertName(item) =='Severity';else col_not_severity">
+                                                        {{getSeveritryCaption(alertSummary[item])}}
+                                                    </span>
+                                                    <ng-template #col_not_severity><span>
+                                                            {{alertSummary[item]}}
+                                                        </span>
+                                                    </ng-template>
+                                                    @if (alertSummary[item]==null) {
+                                                    <ng-container>
+                                                        -NA-
+                                                    </ng-container>
+                                                    }
+                                                </strong>
+                                            </td>
+                                            }
+                                        </tr>
+                                    </ng-template>
+                                </p-table>
+                            </div>
+                        </div>
+                        </ng-scrollbar>
+                        }
+                    </div>
+
+                </p-tabPanel>
+
+                <p-tabPanel header="Entity Details">
+                    <div class="height-100vh-28rem">
+                        @if (isEntityNoRecods) {
+                        <div class="flex justify-content-center align-items-center height-inherit ">
+                            No Records Found
+                        </div>
+                        }
+                        @else if(isEntityError) {
+                        <ng-container [ngTemplateOutlet]="errorTemplate"
+                            [ngTemplateOutletContext]="{errorTitle:errorTitle,errorContent:errorContent}">
+                        </ng-container>
+                        }
+                        @else if(isEntityInprogress){
+                        <div class="position-relative height-inherit">
+                            <ngx-spinner name="entityDetails" class="embeded-spinner" bdColor="rgba(0, 0, 0, 0)"
+                                size="default" color="black" type="line-spin-fade" [fullScreen]="false">
+                                <p class="mt-0 mb-0 text-black">Loading </p>
+                            </ngx-spinner>
+                        </div>
+                        }
+                        @else if (isEntityComplete && !isEntityNoRecods) {
+                        <ng-scrollbar (clickOutside)="navMob()" [excludeBeforeClick]="true" id="" ngClass=""
+                            [usePSClass]="'next'" [disabled]="null" [exclude]="'#mobile-collapse'" id="nav-ps-next"
+                            class="ng-scroll-h-80hv ">
+
+                            <div class="grid mx-2">
+                                <div class="col-12 md:col-6 lg:col-6">
+                                    <p-table [value]="entityDetailsLeft" [paginator]="false">
+                                        <ng-template pTemplate="body" let-item>
+                                            <tr>
+                                                <td>{{convertName(item)}}</td>
+                                                <td pTooltip="{{tooltipObj[entityDetails[item]]}}" tooltipPosition="top"
+                                                    positionStyle="fixed">
+                                                    <strong>{{shortenText(entityDetails[item])}}
+                                                        @if (entityDetails[item] == null) {
+                                                        -NA-
+                                                        }
+                                                    </strong>
+                                                </td>
+                                                
+                                                <!-- <td pTooltip="{{entityDetails[item]}}" tooltipPosition="top"
+                                                    positionStyle="fixed">
+                                                    <strong>{{shortenText(entityDetails[item])}}
+                                                        @if (entityDetails[item] == null) {
+                                                        -NA-
+                                                        }
+                                                    </strong>
+                                                </td> -->
+                                            </tr>
+                                        </ng-template>
+                                    </p-table>
+
+                                </div>
+                                <div class="col-12 md:col-6 lg:col-6">
+                                    <p-table scrollDirection="" [value]="entityDetailsRight"
+                                        class="table table-bordered " [paginator]="false">
+                                        <ng-template pTemplate="body" let-item>
+                                            <tr class="">
+                                                <td class="">{{convertName(item)}}</td>
+                                                <td class=" td-content">
+                                                    <strong>{{entityDetails[item]}}
+                                                        @if (entityDetails[item]==null) {
+                                                        <ng-container>
+                                                            -NA-
+                                                        </ng-container>
+                                                        }
+                                                    </strong>
+                                                </td>
+                                            </tr>
+                                        </ng-template>
+                                    </p-table>
+                                </div>
+                            </div>
+                        </ng-scrollbar>
+                        }
+                    </div>
+
+
+
+                </p-tabPanel>
+
+
+                <p-tabPanel header="Cases">
+                    <div class="height-100vh-28rem">
+                        @if(isCaseError) {
+                        <ng-container [ngTemplateOutlet]="errorTemplate"
+                            [ngTemplateOutletContext]="{errorTitle:errorTitle,errorContent:errorContent}">
+                        </ng-container>
+                        } 
+                        <p-table styleClass="custom-table" [resizableColumns]="true" [columns]="caseDetailsCols"
+                            [rowHover]="true" [value]="caseDetails" [scrollable]="true" scrollDirection="vertical"
+                            [scrollHeight]="" styleClass="p-datatable-gridlines p-datatable-custom">
+                            <ng-template pTemplate="header" let-columns>
+                                <tr>
+                                    <th class="bgcolor" [pSortableColumn]="col.field" *ngFor="let col of columns"
+                                        [style.text-align]="col.headAlign"
+                                        [ngStyle]="{'max-width': col.header == 'Score' ? '110px' : (col.header == 'Severity' ? '145px' : (col.header == 'Business Date' ? '135px' : 'auto')) }">
+                                        {{col.header}}
+                                        <p-sortIcon [field]="col.field"></p-sortIcon>
+                                    </th>
+                                </tr>
+                            </ng-template>
+                            <ng-template pTemplate="body" let-rowData let-columns="columns">
+                                <tr >
+                                    <td *ngFor="let col of columns" pTooltip=""
+                                        tooltipPosition="top" positionStyle="fixed"
+                                        class=" hover-pointer text-start text-center"
+                                        [style.text-align]="col.contentAlign"
+                                        [ngStyle]="{'max-width': col.header == 'Score' ? '110px' : (col.header == 'Severity' ? '145px' : (col.header == 'Business Date' ? '135px' : 'auto')) }">
+                                        <span
+                                            class="severity-td-text text-white flex justify-content-center align-items-center"
+                                            [tdColor]="'severity'" [tdValues]="rowData[col.field]"
+                                            *ngIf="col.field =='severity';else col_not_severity">
+                                            {{getSeveritryCaption(rowData[col.field])}}
+                                        </span>
+                                        <ng-template #col_not_severity>
+                                            <span *ngIf="col.field!='case_id'">
+                                                {{rowData[col.field]}}
+                                            </span>
+                                            <span *ngIf="col.field == 'case_id'" class="hyperlink"
+                                                (click)="openCase(rowData)">
+                                                {{rowData[col.field]}}
+                                            </span>
+                                        </ng-template>
+                                    </td>
+                                </tr>
+                            </ng-template>
+                            <ng-template pTemplate="emptymessage" let-columns>
+                                <tr>
+                                    <td *ngIf="isCaseNoRecords" class="td-colspan text-center"
+                                        [attr.colspan]="columns.length">
+                                        No Records Found
+                                    </td>
+                                    <td [attr.colspan]="columns.length" *ngIf="isCaseInProgress">
+                                        <div class="col-12 position-relative w-100 case-spinner-height">
+                                            <ngx-spinner name="caseDetails" bdColor="rgba(0, 0, 0, 0)" size="default"
+                                                color="black" type="line-spin-fade" [fullScreen]="false">
+                                                <p class="mt-0 mb-0 text-black">Loading </p>
+                                            </ngx-spinner>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </ng-template>
+                        </p-table>
+                    </div>
+                </p-tabPanel>
+
+                @if (createCase) {
+                <p-tabPanel header="Create New Case" [closable]="true">
+                    <app-case-create [params]="createCaseParams"></app-case-create>
+                </p-tabPanel>
+                }
+
+                <p-tabPanel header="Rule Details">
+                    <div class="height-100vh-28rem">
+                        @if(isRuleDetailsError) {
+                        <ng-container [ngTemplateOutlet]="errorTemplate"
+                            [ngTemplateOutletContext]="{errorTitle:errorTitle,errorContent:errorContent}">
+                        </ng-container>
+                        }
+                        @if(isRuleDetailsInProgress){
+                        <div class="position-relative height-inherit">
+                            <ngx-spinner name="ruleDetails" class="embeded-spinner" bdColor="rgba(0, 0, 0, 0)"
+                                size="default" color="black" type="line-spin-fade" [fullScreen]="false">
+                                <p class="mt-0 mb-0 text-black">Loading </p>
+                            </ngx-spinner>
+                        </div>
+                        }
+                        @if(isRuleDetailsComplete) {
+                            <p-table [value]="ruleDetails" [tableStyle]="{'min-width': '50rem'}"
+                            styleClass="p-datatable-gridlines" [columns]="ruleDetailsCols" dataKey="rule_id"
+                            [expandedRowKeys]="expandedRules" [resizableColumns]="true" [autoLayout]="true"
+                            [scrollable]="true" [scrollHeight]="'566px'" scrollWidth="100%">
+
+                            <ng-template pTemplate="header" let-columns>
+                                <tr>
+                                    <th class="justify-content-center"></th>
+                                    <th *ngFor="let col of columns" [style.text-align]="col.headAlign">
+                                        {{col.header}}
+                                    </th>
+                                </tr>
+                            </ng-template>
+                            <ng-template pTemplate="body" let-rowData let-columns="columns" let-expanded="expanded">
+                                <tr>
+                                    <td class="text-center cursor-pointer">
+                                        <i [pRowToggler]="rowData"
+                                            [ngClass]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"
+                                            (click)="getRowDetails(rowData)"></i>
+                                    </td>
+                                    @for(col of columns; track col){
+                                    @if(col.field =='severity'){
+                                    <td class="severity-max-width" pTooltip="{{null}}" tooltipPosition="top"
+                                        positionStyle="fixed" [style.text-align]="col.contentAlign">
+                                        <span class=" p-1 flex justify-content-center text-white" [tdColor]="'severity'"
+                                            [tdValues]="rowData[col.field]"
+                                            *ngIf="col.field =='severity';else col_not_severity">
+                                            {{getSeveritryCaption(rowData[col.field])}}
+                                        </span>
+                                    </td>
+                                    }
+                                    @else{
+                                    <td class="" pTooltip="{{null}}" tooltipPosition="top" positionStyle="fixed"
+                                        [style.text-align]="col.contentAlign">
+                                        <span>
+                                            {{rowData[col.field] == null ? '-NA-' : rowData[col.field]}}
+                                        </span>
+                                    </td>
+                                    }
+                                    }
+                                </tr>
+                            </ng-template>
+                            <ng-template pTemplate="rowexpansion" let-rowData>
+                                <tr class="p-0">
+                                    <td class="" colspan="5">
+                                        <p-table [columns]="ruleDetailsSummaryCols"
+                                            class="custom-table p-datatable-striped p-datatable-sm"
+                                            [value]="rowData.ruleDetailsSummary">
+                                            <ng-template pTemplate="header" let-columns>
+                                                <tr>
+                                                    <!-- <th class=" w-3rem"></th> -->
+                                                    <th class="" *ngFor="let col of columns" [style.text-align]="col.headAlign">
+                                                        {{col.header}}
+                                                    </th>
+                                                    <th class="text-center">View</th>
+                                                </tr>
+                                            </ng-template>
+                                            <ng-template pTemplate="body" let-rowData let-columns="columns">
+                                                <tr>
+                                                    <!-- <td class=" w-3rem"></td> -->
+                                                    <td class="" *ngFor="let col of columns" pTooltip="{{null}}" tooltipPosition="top"
+                                                        positionStyle="fixed" [style.text-align]="col.contentAlign">
+                                                        {{rowData[col.field] == null ? '-NA-' : rowData[col.field]}}
+
+                                                    </td>
+                                                    <td class="text-center">
+                                                        <button type="button" pButton icon="pi pi-eye" [link]="true"
+                                                            class="p-button-outlined p-button-plain view-button"
+                                                            (click)="ruleDetRowData = rowData;getCriteriaByBusinessRule(rowData)"
+                                                            tooltipPosition="top" positionStyle="fixed">
+                                                            &nbsp; View
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                            </ng-template>
+                                            <ng-template pTemplate="emptymessage">
+                                                <tr *ngIf="isRuleDetailsNoRecords">
+                                                    <td [attr.colspan]="columns?.length">No Records Found</td>
+                                                </tr>
+                                            </ng-template>
+                                        </p-table>
+                                    </td>
+                                </tr>
+                            </ng-template>
+                        </p-table>
+                        }
+                    </div>
+                </p-tabPanel>
+
+<p-tabPanel header="Criteria Details" [closable]="true" *ngIf="criteriaDetails">
+    <ng-container *ngIf="cirteriaError" [ngTemplateOutlet]="errorTemplate"
+        [ngTemplateOutletContext]="{errorTitle:errorTitle,errorContent:errorContent}">
+    </ng-container>
+    <div class="height-100vh-28rem">
+        @if (isCriteriaDetailsNoRecords) {
+        <div class="flex justify-content-center align-items-center height-inherit ">
+            No Records Found
+        </div>
+        }
+        @else if(isCriteriaDetailsError) {
+        <ng-container [ngTemplateOutlet]="errorTemplate"
+            [ngTemplateOutletContext]="{errorTitle:errorTitle,errorContent:errorContent}">
+        </ng-container>
+        }
+        @else if(isCriteriaDetailsInProgress){
+        <div class="position-relative height-inherit">
+            <ngx-spinner name="criteriaDetails" class="embeded-spinner" bdColor="rgba(0, 0, 0, 0)" size="default"
+                color="black" type="line-spin-fade" [fullScreen]="false">
+                <p class="mt-0 mb-0 text-black">Loading </p>
+            </ngx-spinner>
+        </div>
+        }
+        @else if (isCriteriaDetailsComplete && !isCriteriaDetailsNoRecords) {
+        <p-table styleClass="p-datatable-gridlines" [columns]="criteriaDetailsCols" [value]="criteriaDetailsList"
+            [scrollable]="true" scrollDirection="vertical" scrollHeight="556px" >
+            <ng-template pTemplate="header" let-columns>
+                <tr>
+                    <th class="text-center" *ngFor="let col of columns">
+                        {{col.header}}
+                    </th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-rowData let-columns="columns">
+                <tr>
+                    <td class="text-center text-nowrap" *ngFor="let col of columns" pTooltip="{{null}}"
+                        tooltipPosition="top" positionStyle="fixed">
+                        <ng-template [ngIf]="col.url !=null " [ngIfElse]="colWithUrl">
+                            <a [style.cursor]="pointer" (click)="openCriteriaLink(col.url,rowData[col.field])">
+                                {{rowData[col.field]}}</a>
+                        </ng-template>
+                        <ng-template #colWithUrl>
+                            {{rowData[col.field]}}
+                        </ng-template>
+                    </td>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="emptymessage">
+                <tr>
+                    <td class="text-center" colspan="6">No Records Found</td>
+                </tr>
+            </ng-template>
+        </p-table>
+        }
+    </div>
+</p-tabPanel>
+
+<p-tabPanel header="Link Analysis">
+    <div class="height-100vh-28rem position-relative bg-image-canvas d-block overflow-hidden">
+        @if(isLinkAnalysisNoRecords && !isAppendMode) {
+        <div class="flex justify-content-center align-items-center height-inherit">
+            No Records Found
+        </div>
+        }
+        @if(isLinkAnalysisError) {
+        <ng-container [ngTemplateOutlet]="errorTemplate"
+            [ngTemplateOutletContext]="{errorTitle:errorTitle,errorContent:errorContent}">
+        </ng-container>
+        }
+        @if(isLinkAnalysisInProgress) {
+        <div class="col-12">
+            <ngx-spinner name="alert-graph-analysis" class="embeded-spinner" bdColor="rgba(0, 0, 0, 0)" size="default"
+                color="#000" type="line-spin-fade" [fullScreen]="false">
+                <p class="mt-0 mb-0 text-black">Loading </p>
+            </ngx-spinner>
+        </div>
+        }
+        @if(isLinkAnalysisComplete) {
+        <ng-container>
+            <div class="linkanlysis-tab">
+                <app-vis-network [graphResult]="linkAnalysisResult" [graphpodMeta]="graphpodMeta"
+                    (nodeDblClick)="onNodeDblClick($event)" [theam]="themeConfig">
+                </app-vis-network>
+            </div>
+        </ng-container>
+        }
+        @if(isGraphpodMeta) {
+        <div class="flex justify-content-center align-items-center height-inherit">
+            No Graph Configured
+        </div>
+        }
+    </div>
+</p-tabPanel>
+
+<!-- required component sankey for showing direct flow of notes -->
+@if(isFlowFundsTabVisible) {
+<p-tabPanel header="Flow of Funds">
+    <p>Value: {{sankeyRange[0] + ' - ' + sankeyRange[1]}}</p>
+    <div class="m-auto w-97p">
+        <p-slider [(ngModel)]="sankeyRange" [range]="true" [min]="0" [max]="100000" (onChange)="sankeyRangeChange()">
+        </p-slider>
+    </div>
+    <div class="d-flex mt-3">
+        <span>0</span>
+        <span class="ml-auto">100000</span>
+    </div>
+    <hr>
+    <div class="height-100vh-34rem">
+        @if(isFlowOfFundsNoRecords) {
+        <div class="flex justify-content-center align-items-center height-inherit ">
+            No Records Found
+        </div>
+        }
+        @if(isFlowOfFundsError) {
+        <ng-container [ngTemplateOutlet]="errorTemplate"
+            [ngTemplateOutletContext]="{errorTitle:errorTitle,errorContent:errorContent}">
+        </ng-container>
+        }
+        @if(isFlowOfFundsInProgress){
+        <div class="position-relative height-inherit">
+            <ngx-spinner name="flowoffunds" class="embeded-spinner" bdColor="rgba(0, 0, 0, 0)" size="default"
+                color="black" type="line-spin-fade" [fullScreen]="false">
+                <p class="mt-0 mb-0 text-black">Loading </p>
+            </ngx-spinner>
+        </div>
+        }
+        @if(isFlowOfFundsComplete && !isFlowOfFundsNoRecords) {
+        <ng-container>
+            <app-d3-sankey [sankey]="sankey"></app-d3-sankey>
+        </ng-container>
+        }
+    </div>
+</p-tabPanel>
+}
+
+<p-tabPanel header="Notes">
+    <div class="height-100vh-28rem">
+        <span class="p-float">
+            <textarea [rows]="5" [cols]="30" class="w-100 mh-40px" pInputTextarea [(ngModel)]="newNote"
+                placeholder="Start typing note..."></textarea>
+        </span>
+        <div class="flex justify-content-end">
+            <p-button label="Clear" [outlined]="true" severity="secondary" class="m-2" (click)="noteClear()"></p-button>
+            <p-button label="Submit" [outlined]="true" severity="primary" class="m-2" (click)="noteSubmit()"
+                [disabled]="!newNote"></p-button>
+        </div>
+        <hr>
+        @if (isNotesError) {
+        <div class="height-100vh-40rem">
+            <ng-container [ngTemplateOutlet]="errorTemplate"
+                [ngTemplateOutletContext]="{errorTitle:errorTitle,errorContent:errorContent}">
+            </ng-container>
+        </div>
+        }
+        @if(isNotesInProgress){
+        <div class="height-100vh-40rem position-relative">
+            <ngx-spinner name="notes" class="embeded-spinner" bdColor="rgba(0, 0, 0, 0)" size="default" color="black"
+                type="line-spin-fade" [fullScreen]="false">
+                <p class="mt-0 mb-0 text-black">Loading </p>
+
+            </ngx-spinner>
+        </div>
+        }
+        @if(isNotesCompleted && !isNotesNoRecords){
+        <ng-scrollbar (clickOutside)="navMob()" [excludeBeforeClick]="true" id="" [usePSClass]="'next'"
+            [disabled]="null" [exclude]="'#mobile-collapse'" id="nav-ps-next" class="height-100vh-40rem">
+            <ng-container *ngFor="let item of notes;let i=index;">
+                <div class="mt-4 mr-4">
+                    <div class="note-buttons">
+                        <button pButton type="button" icon="pi pi-pencil"
+                            class=" p-button-rounded p-button-text p-button-plain p-button-outlined mr-2" tooltip="Edit"
+                            tooltipPosition="top" tooltipPositionStyle="fixed" (click)="notes[i].update = true">
+                        </button>
+
+                        <button pButton type="button" icon="pi pi-trash"
+                            class="p-button-rounded p-button-outlined p-button-text p-button-plain mr-2"
+                            tooltip="Delete" tooltipPosition="top" tooltipPositionStyle="fixed"
+                            (click)="noteDelete(item)">
+                        </button>
+                    </div>
+                    <p-fieldset>
+                        <ng-template pTemplate="header">{{item.createdBy.ref.name}} <span
+                                class="note-time">{{item.noteCreateTime}}</span></ng-template>
+                        <ng-container *ngIf="!item.update">{{item.noteText}}
+
+                        </ng-container>
+                        <ng-container *ngIf="item.update">
+                            <textarea [rows]="5" [cols]="30" class="w-100 mh-40px" pInputTextarea
+                                [(ngModel)]="notes[i].updateText"></textarea>
+                            <div class="flex justify-content-end">
+                                <p-button type="button" [outlined]="true" severity="secondary" class="m-2"
+                                    (click)="notes[i].updateText = notes[i].noteText; notes[i].update = false">
+                                    Cancel
+                                </p-button>
+                                <p-button type="button" [outlined]="true" severity="secondary" class="m-2"
+                                    (click)="notes[i].updateText = ''">
+                                    Clear
+                                </p-button>
+                                <p-button type="button" [outlined]="true" severity="primary" class="m-2"
+                                    [disabled]="!notes[i].updateText || notes[i].updateText == notes[i].noteText"
+                                    (click)="noteUpdate(item)">
+                                    Submit
+                                </p-button>
+                            </div>
+                            
+
+                        </ng-container>
+                    </p-fieldset>
+                </div>
+                <br>
+            </ng-container>
+        </ng-scrollbar>
+        }
+    </div>
+</p-tabPanel>
+
+<p-tabPanel header="Documents">
+    <div class="height-100vh-28rem">
+        @if (isDocumentsError) {
+        <ng-container [ngTemplateOutlet]="errorTemplate"
+            [ngTemplateOutletContext]="{errorTitle:errorTitle,errorContent:errorContent}">
+        </ng-container>
+        }
+            <div class="buttons d-flex justify-content-end align-items-center mb-3">
+                <button pButton pRipple type="button" pTooltip="Upload" tooltipPosition="top" positionStyle="fixed"
+                    icon="pi pi-upload" class="p-button-rounded p-button-outlined p-button-text p-button-plain"
+                    (click)="uploadModal=true">
+                </button>
+            </div>
+                <p-table [value]="documentDetails" [columns]="documentDetailsCols" [scrollable]="true"
+                    styleClass="p-datatable-gridlines p-datatable-document" scrollHeight="475px" >
+                    <ng-template pTemplate="header" let-columns>
+                        <tr>
+                            <th [pSortableColumn]="col.field" pResizableColumn *ngFor="let col of columns"
+                                [style.text-align]="col.headAlign"
+                                [ngStyle]="{'max-width': col.header == 'Size' ? '110px' : (col.header == 'Format' ? '145px' : (col.header == 'Created On' ? '135px' : 'auto')) }">
+                                {{col.header}}
+                                <p-sortIcon [field]="col.field"></p-sortIcon>
+                            </th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-rowData let-columns="columns">
+                        <tr>
+                            <ng-container *ngFor="let col of columns">
+                                <td *ngIf="col.header != 'Created By' && col.header != 'Action'"
+                                    pTooltip="{{null}}" tooltipPosition="top" positionStyle="fixed"
+                                    [style.text-align]="col.contentAlign" class="no-left-right "
+                                    [ngStyle]="{'max-width': col.header == 'Size' ? '110px' : (col.header == 'Format' ? '145px' : (col.header == 'Created On' ? '135px' : 'auto')) }">
+                                    {{rowData[col.field]}}
+                                </td>
+                                <td *ngIf="col.header == 'Created By'" pTooltip="{{null}}"
+                                    tooltipPosition="top" positionStyle="fixed" [style.text-align]="col.contentAlign"
+                                    class="no-left-right "
+                                    [ngStyle]="{'max-width': col.header == 'Size' ? '110px' : (col.header == 'Format' ? '145px' : (col.header == 'Created On' ? '135px' : 'auto')) }">
+                                    {{rowData[col.field].ref.name}}
+                                </td>
+                                <td *ngIf="col.header == 'Action'" [style.text-align]="col.contentAlign"
+                                    class="overflow-visible">
+                                    <p-menu #menu [popup]="true" [model]="items" appendTo="body"></p-menu>
+                                    <button type="button" pButton class="p-button-outlined p-2"
+                                        icon="p-button-icon p-button-icon-right pi pi-chevron-down" label="Action"
+                                        (click)="activeItem = rowData;menu.toggle($event)"></button>
+                                </td>
+                            </ng-container>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="emptymessage" let-columns>
+                        <tr>
+                            <td *ngIf="isDocumentsNoRecords" class="td-colspan text-center" [attr.colspan]="columns.length">
+                                No Records Found
+                            </td>
+                            <td [attr.colspan]="columns.length" *ngIf="isDocumentsInProgress">
+                                <div class="col-12 position-relative w-100 doc-spinner-height">
+                                    <ngx-spinner name="documents" bdColor="rgba(0, 0, 0, 0)" size="default" color="black"
+                                        type="line-spin-fade" [fullScreen]="false">
+                                        <p  class="mt-0 mb-0 text-black">Loading </p>
+                                    </ngx-spinner>
+                                </div>
+                            </td>
+                        </tr>
+                    </ng-template>
+                </p-table>
+                @if(isDocumentsDeleteError) {
+                    <div class="flex justify-content-end error-container nilesh">
+                    <ng-container [ngTemplateOutlet]="errorTemplate"
+                        [ngTemplateOutletContext]="{errorTitle:errorTitle,errorContent:errorContent}">
+                    </ng-container>
+                     </div>
+                  }
+    </div>
+</p-tabPanel>
+@if(isImageTabVisible) {
+<p-tabPanel header="Preview" [closable]="true">
+    <div class="height-100vh-28rem">
+
+        @if (isDocumentsViewError) {
+        <ng-container [ngTemplateOutlet]="errorTemplate"
+            [ngTemplateOutletContext]="{errorTitle:errorTitle,errorContent:errorContent}">
+        </ng-container>
+        }
+        @else if (isDocumentsViewInprogess) {
+            <div class="col-12">
+                <ngx-spinner name="document-view" class="embeded-spinner" bdColor="rgba(0, 0, 0, 0)" size="default"
+                    color="#000" type="line-spin-fade" [fullScreen]="false">
+                    <p class="mt-0 mb-0 text-black">Loading </p>
+                </ngx-spinner>
+            </div>
+            }
+        @else if(isDocumentsComplete && this.documentItem.file_format=="DCM"){
+        <div>
+            <ng-container *ngIf="viewerProvider">
+                <div class ="flex justify-content-center position-relative mb-3" *ngIf="viewerProvider.playClip">
+                    <p-button icon=" pi pi-play" class="mr-2" [rounded]="true" severity="secondary" (click)="viewerProvider.playClip.play(10)" [outlined]="true"></p-button>
+                    <p-button icon=" pi pi-stop" [rounded]="true" severity="secondary" (click)="viewerProvider.playClip.stop()" [outlined]="true"></p-button>
+                </div>
+                <div class ="flex justify-content-center position-relative mb-3" style="flex-wrap: wrap;">
+                    <p-button class ="mr-2" [label]="tool.name" [text]="true" [raised]="true" (click)="activateTool(tool.name)"
+                    severity="secondary" *ngFor="let tool of config.tools"></p-button>
+                </div>
+                <div class ="flex justify-content-center position-relative mb-3">
+                    <p-button class ="mr-2" label="Export to JSON" [text]="true" [raised]="true" (click)="exportStateToJson()" severity="secondary"></p-button>
+                    <p-button label="Save as PNG" [text]="true" [raised]="true"  (click)="saveAs()" severity="secondary"></p-button>
+                </div>
+            </ng-container>
+            <div  class ="flex justify-content-center position-relative">
+                <app-ngx-dicom [config]="config" (initialized)="viewerProvider = $event"></app-ngx-dicom>
+            </div>
+        </div>
+        }
+        @else {
+            <div class="flex justify-content-center align-items-center height-inherit">
+                Document Format Not Supported
+            </div>
+            
+        }
+    </div>
+</p-tabPanel>
+}
+
+<p-tabPanel header="Workflow">
+    <div class="height-100vh-28rem bg-image-canvas">
+        @if(isWorkflowError) {
+        <ng-container [ngTemplateOutlet]="errorTemplate"
+            [ngTemplateOutletContext]="{errorTitle:errorTitle,errorContent:errorContent}">
+        </ng-container>
+        }
+        @if(isWorkflowInProgress){
+        <div class="position-relative height-inherit">
+            <ngx-spinner name="workflow" class="embeded-spinner" bdColor="rgba(0, 0, 0, 0)" size="default" color="black"
+                type="line-spin-fade" [fullScreen]="false">
+                <p class="mt-0 mb-0 text-black">Loading </p>
+            </ngx-spinner>
+        </div>
+        }
+        @if(isWorkflowEmpty) {
+        <div class="flex height-inherit justify-content-center align-items-center ">
+            <span>Workflow not available.</span>
+        </div>
+        }
+        @if(isWorkflowComplete) {
+        <ng-scrollbar (clickOutside)="navMob()" [excludeBeforeClick]="true" id="" ngClass="" [usePSClass]="'next'"
+            [disabled]="null" [exclude]="'#mobile-collapse'" id="nav-ps-next" class="ng-scroll-h-80hv">
+            <div class="mb-5">
+                <form [formGroup]="" class="w-100">
+                    <div class="d-flex justify-content-end align-items-center mt-3 mr-4">
+                        
+                        <p-button [outlined]="true" severity="primary" label="Action" (click)="postAction()" [disabled]="isActionButtonDisable()"
+                            class=""  iconPos="left">
+                        </p-button>
+
+                    </div>
+                    <br>
+                </form>
+                @if(workflow) {
+                <app-bpmnjs [workflow]="workflow" [theme]="themeConfig"></app-bpmnjs>
+                }
+            </div>
+        </ng-scrollbar>
+        }
+    </div>
+
+</p-tabPanel>
+
+<p-tabPanel header="Audit">
+    <div class="height-100vh-28rem">
+        @if(isAuditError) {
+        <ng-container [ngTemplateOutlet]="errorTemplate"
+            [ngTemplateOutletContext]="{errorTitle:errorTitle,errorContent:errorContent}">
+        </ng-container>
+        }
+            <p-table [value]="history"
+            [resizableColumns]="true" [columns]="auditCols" [rowHover]="true" [scrollable]="true"
+             scrollHeight="542px" styleClass="p-datatable-gridlines p-datatable-custom">
+            <ng-template pTemplate="header" let-columns>
+                <tr>
+                    @for(col of columns; track col) {
+                    <th class=" no-left-right" [pSortableColumn]="col.field" pResizableColumn
+                        [ngStyle]="{'max-width': col.header == 'Size' ? '110px' : (col.header == 'Priority' ? '145px' : (col.header == 'Updated On' ? '135px' :  (col.header == 'Status' ? '135px' : 'auto'))) }">
+                        {{col.header}}
+                        <p-sortIcon [field]="col.field"></p-sortIcon>
+                    </th>
+                    }
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-rowData let-columns="columns">
+                <tr>
+                    @for(col of columns; track col) {
+                    <ng-container>
+                        <td #td pTooltip="{{null}}"
+                        tooltipPosition="top" (mouseover)="showTooltip(td,span,rowData[col.field])"
+                        pTooltip="{{tooltipObj[rowData[col.field]] ? rowData[col.field]: null}}"
+                        [ngStyle]="{'max-width': col.header == 'Size' ? '110px' : (col.header == 'Priority' ? '145px' : (col.header == 'Updated On' ? '135px' :  (col.header == 'Status' ? '135px' : 'auto'))),
+                        'overflow': 'hidden', 'text-overflow': 'ellipsis', 'white-space': 'nowrap'}">
+                            <span #span>
+                                {{rowData[col.field] == null ? '-NA-' : rowData[col.field]}}
+                            </span>
+                        </td>
+                    </ng-container>
+                    }
+                </tr>
+            </ng-template>
+                <ng-template pTemplate="emptymessage" let-columns>
+                    <tr> 
+                        @if(isAuditNoRecords){
+                        <td  [attr.colspan]="columns.length" class="text-center">
+                            <div>
+                                No Records Found
+                            </div>
+                        </td>
+                    }
+                        @if(isAuditInProgress){
+                        <td [attr.colspan]="columns.length" class="text-center">
+                                <div class="col-12 position-relative w-100 audit-spinner-height">
+                                    <ngx-spinner name="history" bdColor="rgba(0, 0, 0, 0)" size="default" color="black"
+                                        type="line-spin-fade" [fullScreen]="false">
+                                        <p class="mt-0 mb-0 text-black">Loading </p>
+                                    </ngx-spinner>
+                                </div>
+                        </td>
+                        }
+                    </tr>
+                </ng-template>
+        </p-table>
+    </div>
+</p-tabPanel>
+
+<p-tabPanel header="Notifications">
+    <div class="height-100vh-28rem">
+        @if (isNotificationsError) {
+        <ng-container [ngTemplateOutlet]="errorTemplate"
+            [ngTemplateOutletContext]="{errorTitle:errorTitle,errorContent:errorContent}">
+        </ng-container>
+        }
+        <p-table styleClass="p-datatable-gridlines p-datatable-custom" [resizableColumns]="true" [columns]="notificationCols"
+            [rowHover]="true" [value]="notifications" [scrollable]="false" scrollDirection="vertical" scrollHeight="">
+            <ng-template pTemplate="header" let-columns>
+                <tr>
+                    <th [pSortableColumn]="col.field" pResizableColumn *ngFor="let col of columns"
+                        [style.text-align]="col.headAlign"
+                        [ngStyle]="{'max-width': col.header == 'Size' ? '110px' : (col.header == 'Format' ? '145px' : (col.header == 'Created On' ? '135px' : 'auto')) }">
+                        {{col.header}}
+                        <p-sortIcon [field]="col.field"></p-sortIcon>
+                    </th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-rowData let-columns="columns">
+                <tr>
+                    <ng-container *ngFor="let col of columns">
+                        <td *ngIf="col.header != 'Created By' && col.header != 'Action'"
+                            pTooltip="{{null}}" tooltipPosition="top" positionStyle="fixed"
+                            [style.text-align]="col.contentAlign" class="no-left-right "
+                            [ngStyle]="{'max-width': col.header == 'Size' ? '110px' : (col.header == 'Format' ? '145px' : (col.header == 'Created On' ? '135px' : 'auto')) }">
+                            {{rowData[col.field]}}
+                        </td>
+                        <td *ngIf="col.header == 'Created By'" pTooltip="{{null}}"
+                            tooltipPosition="top" positionStyle="fixed" [style.text-align]="col.contentAlign"
+                            class="no-left-right "
+                            [ngStyle]="{'max-width': col.header == 'Size' ? '110px' : (col.header == 'Format' ? '145px' : (col.header == 'Created On' ? '135px' : 'auto')) }">
+                            {{rowData[col.field].ref.name}}
+                        </td>
+                        <td *ngIf="col.header == 'Action'" [style.text-align]="col.contentAlign"
+                            class="overflow-visible">
+                            <p-menu #menu [popup]="true" [model]="items" appendTo="body"></p-menu>
+                            <button type="button" pButton class="p-button-outlined p-2"
+                                icon="p-button-icon p-button-icon-right pi pi-chevron-down" label="Action"
+                                (click)="activeItem = rowData;menu.toggle($event)"></button>
+
+                                <!-- <p-button icon="pi pi-chevron-down" label="Action" [outlined]="true" severity="primary" class="p-2" iconPos="right"
+                                    (click)="activeItem = rowData; menu.toggle($event)">
+                                </p-button> -->
+                        </td>
+                    </ng-container>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="emptymessage" let-columns>
+                <tr>
+                    <td *ngIf="isNotificationsNoRecords" class="td-colspan text-center" [attr.colspan]="columns.length">
+                        No Records Found
+                    </td>
+                    <td [attr.colspan]="columns.length" *ngIf="isNotificationsInProgress">
+                        <div class="col-12 position-relative w-100 notificaton-spinner-height">
+                            <ngx-spinner name="notifications" bdColor="rgba(0, 0, 0, 0)" size="default" color="black"
+                                type="line-spin-fade" [fullScreen]="false">
+                                <p class="mt-0 mb-0 text-black">Loading </p>
+                            </ngx-spinner>
+                        </div>
+                    </td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </div>
+</p-tabPanel>
+
+</p-tabView>
+</ng-template>
+</p-panel>
+
+<p-toast></p-toast>
+
+<p-dialog header="Documents" [(visible)]="uploadModal" [modal]="true" [style]="{width: '34rem',height:'22rem'}" styleClass="p-dialog-document" [draggable]="false"
+    [resizable]="false">
+    <span class="p-float-label upload mt-1">
+        <input id="float-input" type="text" pInputText disabled="true"
+            [value]="'Selected ' + selectedDocuments.length + ' documents'"
+            placeholder="Selected {{selectedDocuments.length}} documents" class="mr-2" style="width: 20rem;">
+        <button pButton class="p-button-outlined btn btn-primary" (click)="fileSelectClick()"><i
+                class="pi pi-upload"></i><input #fileSelect type="file" multiple class="d-none"
+                [(ngModel)]="selectedFile" (change)="onFileChange($event)">
+        </button>
+    </span>
+    <!-- <ng-container *ngFor="let item of selectedDocuments; let i=index">
+        <div class="files flex">
+            <span pTooltip="{{item.name}}" tooltipPosition="top" class="mt-3"
+                positionStyle="fixed">{{shortenText(item.name)}}
+            </span>
+            <button pButton pRipple type="button" icon="pi pi-trash"
+                class="ml-2 mt-1 p-button-rounded p-button-secondary p-button-text" tooltip="Delete File"
+                tooltipPosition="top" tooltipPositionStyle="fixed" (click)="popFile(i)">
+            </button>
+        </div>
+    </ng-container> -->
+
+    <ng-container *ngIf="selectedDocuments.length > 0">
+        <ng-scrollbar style="height:3.3rem; border: 1px solid var(--surface-border); width: 64.5%; margin-top:0.8rem;"
+            class="md:col-9">
+            <div class="flex align-items-center custom-chips-documents m-1"
+                *ngFor="let item of selectedDocuments; let i=index">
+                <label style="text-overflow: ellipsis; overflow: hidden; text-wrap: nowrap;" class="text-sm"
+                    pTooltip="{{item.name}}" tooltipPosition="top" positionStyle="fixed">{{shortenText(item.name)}}
+                </label>
+                <button type="button" class="ml-1 mr-1 border-none bg-transparent" (click)="popFile(i)"
+                    title="Delete Document">
+                    <i class="pi pi-times icon"></i>
+                </button>
+            </div>
+        </ng-scrollbar>
+    </ng-container>
+    
+    <ng-template pTemplate="footer">
+        <div class="flex justify-content-end align-items-center">
+            @if (isDocumentsUploadError) {
+                    <ng-container [ngTemplateOutlet]="errorTemplate"
+                        [ngTemplateOutletContext]="{errorTitle:errorTitle,errorContent:errorContent}">
+                    </ng-container>
+                }
+            <div class="ml-7">
+                <p-button label="Close" [outlined]="true" severity="secondary" class="" (click)="uploadModal = false"></p-button>
+    
+                <p-button label="Submit" [outlined]="true" severity="primary" class="" (click)="uploadDocuments()" [loading]="actionButtonLoading" iconPos="right"></p-button>
+            </div>
+        </div>
+    </ng-template> 
+</p-dialog>
+
+
+<p-dialog header="Complete Task" [(visible)]="workFlowActionDialog" [breakpoints]="{'960px': '75vw', '640px': '100vw'}"
+    [style]="{width: '25vw'}" [modal]="true" [maximizable]="false" [contentStyle]="{'overflow':'visible'}">
+    <ng-template pTemplate="body">
+        <ngx-spinner name="form_render" class="embeded-spinner" bdColor="rgba(0, 0, 0, 0)" size="small" color="black"
+            type="line-spin-fade" [fullScreen]="false">
+            <p class="mt-0 mb-0 text-black"></p>
+        </ngx-spinner>
+        <div id="form_render_div"></div>
+        @if(workflowForm !=null && workflowForm.type =='deployed-form') {
+        <ng-container [formGroup]="actionForm">
+            @if(workflowForm.formMeta.components[0].type == 'select') {
+            <div class="grid mb-2 mx-2 mt-3">
+                <div class="col-12 lg:col-12 xl:col-12 md:col-12">
+                    <label for="{{workflowForm.formMeta.components[0].label}}"
+                        class="form-label">{{workflowForm.formMeta.components[0].label}}</label>
+                    <div class="input-group mt-2">
+                        <p-dropdown
+                        [ngClass]="{ 'ng-dirty ng-invalid': actionForm.controls.assignTo.touched &&  
+                                        actionForm.controls.assignTo.errors?.['required']}" [style]="{'width':'100%'}" 
+                                         formControlName="assignTo" name="assignTo" optionValue="value"
+                            [options]="workflowForm.formVariables[workflowForm.formMeta.components[0].valuesKey].value"
+                            optionLabel="label" [filter]="true" filterBy="value" [showClear]="false" dataKey="value">
+                        </p-dropdown>
+                    </div>
+                </div>
+            </div>
+
+            }
+            @if(workflowForm !=null && workflowForm.formMeta.components.length >1 &&
+            workflowForm.formMeta.components[1].type == 'select') {
+            <div class="grid mb-2 mx-2">
+                <div class="col-12 lg:col-12 xl:col-12 md:col-12">
+                    <label for="{{workflowForm.formMeta.components[1].label}}"
+                        class="form-label">{{workflowForm.formMeta.components[1].label}}</label>
+                    <div class="input-group mt-2">
+                        <p-dropdown
+                           [ngClass]="{ 'ng-dirty ng-invalid': actionForm.controls.dispositionCode.touched &&  
+                                          actionForm.controls.dispositionCode.errors?.['required']}" 
+                            [style]="{'width':'100%'}"  formControlName="dispositionCode" name="dispositionCode"
+                            [options]="workflowForm.formMeta.components[1].values" optionLabel="label" [filter]="true"
+                            filterBy="value" [showClear]="false" optionValue="value" dataKey="value"> 
+                        </p-dropdown>
+                    </div>
+                </div>
+            </div>
+            }
+        </ng-container>
+        }
+
+    </ng-template>
+    <ng-template pTemplate="footer">
+        <button pbutton="" pripple="" type="button" label="Submit" class="p-button-outlined p-element p-ripple p-button p-component mt-2"
+            (click)="WFActionSubmit()">
+            <span class="p-button-label">Submit</span>
+            <span class="p-ink" aria-hidden="true" role="presentation"></span>
+        </button>
+    </ng-template>
+</p-dialog>
+
+<p-confirmDialog header="Confirmation" icon="pi pi-exclamation-triangle"></p-confirmDialog>
+
+<ng-template let-title="errorTitle" let-content="errorContent" #errorTemplate>
+    <div class="height-inherit flex justify-content-center align-items-center">
+        <app-error-dialog [title]="title" [content]="errorContent" [messageHead]="title">
+        </app-error-dialog>
+    </div>
+</ng-template>

@@ -1,0 +1,10 @@
+<!-- <iframe #iframe id="iframe" width="100%" frameborder="0" scrolling="yes" height="480px"
+    src="http://172.31.4.9:8080/app/index.html#!/datavisualization/dashboard?id=5cea15da-5aa8-48c0-911f-2b004fdfd074"></iframe> -->
+
+    <div class="position-relative h-600" > 
+        <ngx-spinner *ngIf="spinnerActive != 'disabled'" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);" name="embedDashboard"
+            bdColor="rgba(0, 0, 0, 0)" size="default" color="#000" type="line-spin-fade" [fullScreen]="false">
+            <p class="mt-130 text-center">Loading</p>
+        </ngx-spinner>
+        <iframe *ngIf="isUrlReady" #iframe id="iframe" width="100%" frameborder="0" scrolling="yes" [src]="urlSafe" height="480px"></iframe>
+    </div>

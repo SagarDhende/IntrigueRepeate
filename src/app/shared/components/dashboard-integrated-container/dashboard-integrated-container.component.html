@@ -1,0 +1,631 @@
+<!-- <ngx-spinner name="dashboardSpinner" bdColor="rgba(0, 0, 0, 0)" size="medium" color="black" type="line-spin-fade"
+    [fullScreen]="false">
+    <p class="mt-5 mb-0 text-white"> </p>
+</ngx-spinner> -->
+<ng-sidebar-accordion #rightAccordion class="sidebar-accordion-height sidebar-accordion-main">
+    <!-- A sidebar -->
+    <ng-sidebar position="right" [opened]="panelOpen">
+        <ng-sidebar-content class="sidebar-content-design">
+            <div class="card card-height-85hv-80px border-radius-12 p-1">
+                <div class="flex align-items-center justify-content-between position-absolute end-0">
+                    <h5></h5>
+                    <div class="mr-2 mt-2">
+                        <button pButton (click)="panelClose()"
+                            class="close-btn p-element p-button-rounded p-button-text p-button-plain p-button p-component p-button-icon-only">
+                            <span class="pi pi-times"></span>
+                        </button>
+                    </div>
+                </div>
+            <!-- <ngb-tabset>
+                <ngb-tab> -->
+
+             <ul ngbNav #nav="ngbNav" [(activeId)]="activeTab" class="nav-tabs mt-3 surface-border-buttom">
+                <li [ngbNavItem]="1" class="">    
+                    <!-- <ng-template ngbNavContent>
+                        <span>Filter</span>
+                        &nbsp;
+                    </ng-template> -->
+                    <button ngbNavLink class="pt-0">Filter</button>
+
+                    <ng-template ngbNavContent>
+                        <hr>
+                        <!-- <perfect-scrollbar *ngIf="this.nextConfig['layout'] === 'vertical'" [excludeBeforeClick]="true"
+                            [exclude]="'#mobile-collapse'" id="nav-ps-next" ngClass="next-scroll mh-100-280px"
+                            [usePSClass]="'next'" [disabled]="null"> -->
+                            <ng-scrollbar (clickOutside)="navMob()" [excludeBeforeClick]="true" id="" ngClass=""
+                                [usePSClass]="'next'" [disabled]="null" [exclude]="'#mobile-collapse'" id="nav-ps-next"
+                                class="ng-scroll-h-80hv">
+                            <div class="">
+                                <div class="col-md-12">
+                                    <form class="pb-5 mb-5">
+                                        <ng-container *ngIf="!filters.length">
+                                            No Filters Configured
+                                        </ng-container>
+
+                                        <ng-container *ngFor="let filter of filters">
+                                            <div class="form-group">
+                                                <ng-container *ngIf="filter.filterType == 'SINGLE'">
+                                                    <label for="{{filter.attrDispName}}">{{filter.attrDispName}}</label>
+                                                    <p-dropdown [options]="filter.data" optionLabel="value"
+                                                        [filter]="true" filterBy="value" [showClear]="true"
+                                                        placeholder="-Select-" [style]="{'width':'100%'}"
+                                                        [name]="filter.attrDispName" [tabindex]=1
+                                                        [emptyFilterMessage]="filter.emptyFilterMessage"
+                                                        [(ngModel)]="filter.selected">
+                                                        <ng-template pTemplate="selected">
+                                                            <div class="selected-item item-value" *ngIf="value">
+                                                                <div>{{value.value}}</div>
+                                                            </div>
+                                                        </ng-template>
+                                                        <ng-template let-item pTemplate="item">
+                                                            <div class="selected-item">
+                                                                <div>{{item.value}}</div>
+                                                            </div>
+                                                        </ng-template>
+                                                    </p-dropdown>
+                                                </ng-container>
+                                                <ng-container
+                                                    *ngIf="filter.filterType == 'DATE' || filter.filterType == 'CALENDAR'">
+                                                    <label for="{{filter.attrDispName}}">{{filter.attrDispName}}</label>
+                                                    <div class="input-group">
+                                                        <input class="form-control date-input" placeholder="yyyy-mm-dd"
+                                                            name="dpBusiness" ngbDatepicker #oB="ngbDatepicker"
+                                                            [placement]="'left'" [positionTarget]="openButton"
+                                                            [(ngModel)]="filter.selected">
+                                                        <button #openButton
+                                                            class="btn btn-outline-primary pi pi-calendar"
+                                                            (click)="oB.toggle()" type="button"></button>
+                                                    </div>
+                                                </ng-container>
+                                                <ng-container
+                                                    *ngIf="filter.filterType == 'MULTISELECT' || filter.filterType == null">
+                                                    <label for="{{filter.attrDispName}}">{{filter.attrDispName}}</label>
+                                                    <p-multiSelect [options]="filter.data" optionLabel="value"
+                                                        inputId="value" [filter]="true" filterBy="value"
+                                                        [showClear]="true" placeholder="-Select-"
+                                                        [style]="{'width':'100%'}" [name]="filter.attrDispName"
+                                                        [tabindex]=0 [emptyFilterMessage]="filter.emptyFilterMessage"
+                                                        [autoWidth]="false" [(ngModel)]="filter.selected"
+                                                        maxSelectedLabels="2" selectedItemsLabel="{0} selected Items">
+                                                        <ng-template pTemplate="selected">
+                                                            <div class="selected-item item-value" *ngIf="value">
+                                                                <div>{{value.value}}</div>
+                                                            </div>
+                                                        </ng-template>
+                                                        <ng-template let-item pTemplate="item">
+                                                            <div class="selected-item" style="width:130px;">
+                                                                <div
+                                                                    style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
+                                                                    {{item.value}}</div>
+                                                            </div>
+                                                        </ng-template>
+                                                    </p-multiSelect>
+                                                </ng-container>
+                                            </div>
+                                        </ng-container>
+                                    </form>
+                                </div>
+                            </div>
+
+                        <!-- </perfect-scrollbar> -->
+                        </ng-scrollbar>
+                        <div class="row mx-2 bg">
+                            <div class="col-md-12" *ngIf="filters.length">
+                                <hr>
+                                <button type="submit" class="search-button btn btn-secondary">Clear</button>
+                                <button type="submit" class="search-button btn btn-primary"
+                                    (click)="applyFilter()">Search</button>
+                            </div>
+                        </div>
+                    </ng-template>
+
+                </li>
+            </ul>  
+            <!-- <div [ngbNavOutlet]="nav" class="mt-2"></div>       -->
+                <!-- </ngb-tab>
+            </ngb-tabset> -->
+
+            <hr>
+            </div>
+        </ng-sidebar-content>
+    </ng-sidebar>
+    <!-- Page content -->
+    <ng-sidebar-accordion-content class="page-wrapper-container">
+        <!-- <div class="w-100" style="min-height: 80vh;"> -->
+        <div class="card card-height-85hv-80px border-radius-12">    
+            <ng-container>
+                <div class="" *ngIf="dashboardMeta">
+                    <p-panel [showHeader]="true" [header]="dashboardMeta.name" [toggleable]="false" class=""
+                        id="dashboardContainer" [ngClass]="{'maximize': maximized}">
+                        <ng-template pTemplate="icons">
+                            <button pButton class="p-panel-header-icon p-link" pTooltip="Filter" tooltipPosition="top"
+                                icon="fa-solid fa-filter" positionStyle="fixed" (click)="panelToggle()">
+                            </button>
+                            <button pButton class="p-panel-header-icon p-link" pTooltip="Refresh" tooltipPosition="top"
+                                icon="fa-solid fa-rotate-right" positionStyle="fixed" (click)="refreshDashboard()">
+                            </button>
+
+                            <!-- <button pButton class="p-panel-header-icon p-link" pTooltip="Maximize"
+                                (click)="maximized = true;" tooltipPosition="top" icon="fa-solid fa-expand"
+                                positionStyle="fixed" *ngIf="!maximized">
+                            </button> -->
+                            <button pButton class="p-panel-header-icon p-link" pTooltip="Maximize"
+                                (click)=" maximized = false" tooltipPosition="top" icon="fa-solid fa-compress"
+                                positionStyle="fixed" *ngIf="maximized">
+                            </button>
+                            <button pButton class="p-panel-header-icon p-link" pTooltip="Download"
+                                data-toggle="dropdown" aria-haspopup="true" tooltipPosition="top"
+                                icon="fa-solid fa-download" positionStyle="fixed"
+                                (click)="dashboardMeta.downloadOptions =true;dashboardFileName=dashboardMeta.name">
+                            </button>
+                            <p-dialog header="Download Chart" [(visible)]="dashboardMeta.downloadOptions" [modal]="true"
+                                [style]="{ width: '30vw' }" [draggable]="false" [resizable]="false">
+                                <div class="m-0 mb-5 pb-5">
+
+                                    <div class="row">
+                                        <div class="col-4">Select Pages</div>
+                                        <div class="col-8">
+                                            <p-multiSelect [options]="pages2" [(ngModel)]="dashboardPages"
+                                                [style]="{ width: '100%' }" optionValue="pageTitle"
+                                                optionLabel="pageTitle"></p-multiSelect>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-4">File Name</div>
+                                        <div class="col-8"><input pInputText pKeyFilter="int" placeholder="File Name"
+                                                [style]="{ width: '100%' }" [(ngModel)]="dashboardFileName" /></div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-4">Orientation</div>
+                                        <div class="col-8">
+                                            <p-dropdown [options]="pageOrientationOptions | keyvalue"
+                                                [(ngModel)]="dashboardOrientation" [style]="{ width: '100%' }"
+                                                optionValue="value" optionLabel="value"></p-dropdown>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-4">Page Size</div>
+                                        <div class="col-8">
+                                            <p-dropdown [options]="pageSizeOptions" [virtualScroll]="true"
+                                                [virtualScrollItemSize]="8" [scrollHeight]="'100px'"
+                                                [(ngModel)]="dashboardPageSize" [style]="{ width: '100%' }"
+                                                optionValue="name" optionLabel="name"
+                                                (onChange)="dashboardWidth = getIsoSize(dashboardPageSize).WIDTH_IN; dashboardHeight = getIsoSize(dashboardPageSize).HEIGHT_IN">
+                                            </p-dropdown>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-4">Size (inch)</div>
+                                        <div class="col-4"><input pInputText pKeyFilter="int"
+                                                [(ngModel)]="dashboardWidth" [disabled]="dashboardPageSize!='CUSTOM'"
+                                                style="width: 60px" />(w)</div>
+                                        <div class="col-4"><input pInputText pKeyFilter="int"
+                                                [(ngModel)]="dashboardHeight" [disabled]="dashboardPageSize!='CUSTOM'"
+                                                style="width: 60px" />(h)</div>
+                                    </div>
+                                </div>
+                                <ng-template pTemplate="footer">
+                                    <p-button styleClass="p-button-sm p-button-secondary"
+                                        (click)="dashboardMeta.downloadOptions = false" label="Close"></p-button>
+                                    <p-button styleClass="p-button-sm p-button-primary" (click)="downloadDashboard()"
+                                        label="Submit"></p-button>
+                                </ng-template>
+                            </p-dialog>
+                        </ng-template>
+                        <ng-template pTemplate="body">
+                            <p-tabView #dashboardPages [controlClose]="true" (onChange)="pageChange($event)"
+                                [(activeIndex)]="selectedPageIndex">
+                                <p-tabPanel *ngFor="let page of pages2;index as pageIndex;" [closable]="false"
+                                    headerStyleClass="scenario" cdkDropListGroup>
+                                    <ng-template pTemplate="header">
+                                        <span>{{page.pageTitle}}</span>
+                                    </ng-template>
+                                    <ng-container
+                                        *ngIf="(filterRequired && !searchApplied) || (filterRequired && !pageFilterApplied)">
+                                        <div class="row">
+                                            <div class="m-auto py-5">
+                                                <h3>Please Select Filter</h3>
+                                            </div>
+                                        </div>
+                                    </ng-container>
+                                
+                                    <ng-scrollbar (clickOutside)="navMob()" [excludeBeforeClick]="true" id="" ngClass="" [usePSClass]="'next'"
+                                        [disabled]="null" [exclude]="'#mobile-collapse'" id="nav-ps-next" style="height: 40rem;" >
+                                        <ng-container *ngIf="!filterRequired || searchApplied">
+                                            <div class="grid flex mr-2" [ngClass]="isMaximized ? '': 'mt-3 mb-3'"
+                                                *ngFor="let row of page.rows; index as rowIndex;" cdkDropList [cdkDropListData]="row.cols"
+                                                (cdkDropListDropped)="drop($event, pageIndex);">
+                                                <ng-container *ngFor="let col of row.cols; index as colIndex;">
+                                                    <ng-container *ngIf="col.section.chartData">
+                                                        <div cdkDrag [cdkDragDisabled]="col.section.chartData.dragDisabled" class="hover-display"
+                                                            [ngClass]="row.colSize == 1 || isMaximized ? 'md:col-12' : row.colSize == 2 ? 'md:col-6': row.colSize == 3 ? 'md:col-4': row.colSize == 4 ? 'md:col-3':'md:col-2'">
+                                    
+                                                            <p-panel [showHeader]="true" [header]="col.section.name"
+                                                                [toggleable]="false" id="chart_panel_{{pageIndex}}_{{rowIndex}}_{{colIndex}}"
+                                                                [ngClass]="(!isMaximized && !col.section.isMaximized) || (isMaximized && col.section.isMaximized) ? 'd-block' : 'd-none'"
+                                                                class="">
+                                                                <ng-template pTemplate="icons">
+                                                                    <div class="hover-display-content">
+                                                                        <!-- <div class="card flex justify-content-center d-inline">
+                                                                                                        <p-dropdown *ngIf="col.section && !col.section.isGrid"
+                                                                                                            [options]="chartTypeInterchangeMapping[col.section.chartData.chartType] | arrayToKeyValue"
+                                                                                                            [(ngModel)]="col.section.chartData.chartType"
+                                                                                                            optionLabel="value" optionValue="value"
+                                                                                                            (onChange)="changeChartType(col.section)"></p-dropdown>
+                                                                                                        </div> -->
+                                                                        <button pButton class="p-panel-header-icon p-link" pTooltip="Move"
+                                                                            tooltipPosition="top"
+                                                                            (click)="col.section.chartData.dragDisabled = !col.section.chartData.dragDisabled"
+                                                                            icon="fa-solid fa-up-down-left-right" positionStyle="fixed">
+                                                                        </button>
+                                                                        <div class="dropdown d-inline" *ngIf="col.section.vizpodInfo.isDrilDown != 'Y'">
+                                                                            <button pButton class="p-panel-header-icon p-link"
+                                                                                *ngIf="chartTypeInterchangeMapping[col.section.chartData.chartType]"
+                                                                                pTooltip="Change Chart Type"
+                                                                                id="chartHeaderOptions_{{pageIndex}}_{{rowIndex}}_{{colIndex}}"
+                                                                                data-toggle="dropdown" aria-haspopup="true" tooltipPosition="top"
+                                                                                icon="fa-solid fa-chart-pie" positionStyle="fixed"
+                                                                                (click)="col.section.chartData.menuOptions = !col.section.chartData.menuOptions;">
+                                                                            </button>
+                                                                            <!-- <div class="dropdown-menu dropdown-menu-right"
+                                                                                                                [ngClass]="col.section.chartData.menuOptions ? 'show': ''"
+                                                                                                                aria-labelledby="chartHeaderOptions_{{pageIndex}}_{{rowIndex}}_{{colIndex}}">
+                                                                                                                <button class="dropdown-item" type="button"
+                                                                                                                    *ngFor="let item of chartTypeInterchangeMapping[col.section.chartData.chartType] | arrayToKeyValue"
+                                                                                                                    (click)="changeChartType(col.section, item)">{{item.value}}
+                                                                                                                </button>
+                                                                                                            </div> -->
+                                                                        </div>
+                                                                        <button pButton class="p-panel-header-icon p-link" pTooltip="Grid"
+                                                                            tooltipPosition="top" icon="fa-solid fa-table" positionStyle="fixed"
+                                                                            (click)="col.section.isGrid = !col.section.isGrid; downloadType = 2"
+                                                                            *ngIf="!col.section.isGrid && !col.section.isNetwork && !col.section.isScoreCard">
+                                                                        </button>
+                                                                        <button pButton class="p-panel-header-icon p-link" pTooltip="Chart"
+                                                                            tooltipPosition="top" icon="fa-solid fa-chart-line" positionStyle="fixed"
+                                                                            (click)="col.section.isGrid = !col.section.isGrid; downloadType = 1;refreshVizpod(pageIndex, col, rowIndex, colIndex, col.section)"
+                                                                            *ngIf="col.section.isGrid && !col.section.isGridChart">
+                                                                        </button>
+                                                                        <button pButton class="p-panel-header-icon p-link" pTooltip="Refresh"
+                                                                            tooltipPosition="top" icon="fa-solid fa-rotate-right" positionStyle="fixed"
+                                                                            (click)="refreshVizpod(pageIndex, col, rowIndex, colIndex, col.section)">
+                                                                        </button>
+                                    
+                                                                        <button pButton class="p-panel-header-icon p-link" pTooltip="Drill Up"
+                                                                            tooltipPosition="top" icon="fa-solid fa-angles-up" positionStyle="fixed"
+                                                                            *ngIf="col.section.chartData.level > 0" (click)="drillUp(col.section)">
+                                                                        </button>
+                                    
+                                                                        <div class="dropdown d-inline">
+                                                                            <!-- <button pButton class="p-panel-header-icon p-link" pTooltip="Download"
+                                                                                                                id="chartHeaderOptions_{{rowIndex}}_{{colIndex}}"
+                                                                                                                data-toggle="dropdown" aria-haspopup="true" tooltipPosition="top"
+                                                                                                                icon="fa-solid fa-download" positionStyle="fixed"
+                                                                                                                (click)="col.section.chartData.headerMenuOptions = !col.section.chartData.headerMenuOptions;">
+                                                                                                             </button> -->
+                                                                            <!-- <div class="dropdown-menu dropdown-menu-right"
+                                                                                                                [ngClass]="col.section.chartData.headerMenuOptions ? 'show': ''"
+                                                                                                                aria-labelledby="chartHeaderOptions_{{rowIndex}}_{{colIndex}}">
+                                                                                                                <button class="dropdown-item" type="button"
+                                                                                                                    (click)="col.section.chartData.headerMenuOptions = !col.section.chartData.headerMenuOptions;exportDivToPNG('chart_panel_'+rowIndex+'_'+colIndex, col.section.chartData.title);">Export
+                                                                                                                    Download PNG Image</button>
+                                                                                                                <button class="dropdown-item" type="button"
+                                                                                                                    (click)="downloadVizpod(pageIndex, col);col.section.chartData.headerMenuOptions = !col.section.chartData.headerMenuOptions;">Export
+                                                                                                                    Download Records</button>
+                                                                                                                </div> -->
+                                                                            <button pButton class="p-panel-header-icon p-link" pTooltip="Download"
+                                                                                id="chartHeaderOptions_{{pageIndex}}_{{rowIndex}}_{{colIndex}}"
+                                                                                data-toggle="dropdown" aria-haspopup="true" tooltipPosition="top"
+                                                                                icon="fa-solid fa-download" positionStyle="fixed"
+                                                                                (click)="col.section.chartData.headerMenuOptions = !col.section.chartData.headerMenuOptions;downloadPdfTitle=col.section.name">
+                                                                            </button>
+                                                                            <p-dialog header="Download Chart" *ngIf="col.section"
+                                                                                [(visible)]="col.section.chartData.headerMenuOptions" [modal]="true"
+                                                                                [style]="{ width: '30vw' }" [draggable]="false" [resizable]="false">
+                                                                                <div class="m-0 mb-5 pb-5">
+                                                                                    <div class="row">
+                                                                                        <div class="col-4">File Name</div>
+                                                                                        <div class="col-8"><input pInputText pKeyFilter="int"
+                                                                                                placeholder="File Name" [style]="{ width: '100%' }"
+                                                                                                [(ngModel)]="downloadPdfTitle" />
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    <div class="row">
+                                                                                        <div class="col-4">Download Type
+                                                                                        </div>
+                                                                                        <div class="col-8">
+                                                                                            <ng-container *ngIf="col.section.isGrid">
+                                                                                                <p-dropdown [options]="downloadTypeOptions2"
+                                                                                                    [virtualScroll]="true" [virtualScrollItemSize]="8"
+                                                                                                    [scrollHeight]="'100px'" [(ngModel)]="downloadType"
+                                                                                                    [style]="{ width: '100%' }" optionValue="id"
+                                                                                                    optionLabel="name">
+                                                                                                </p-dropdown>
+                                                                                            </ng-container>
+                                                                                            <ng-container *ngIf="!(col.section.isGrid)">
+                                                                                                <p-dropdown [options]="downloadTypeOptions"
+                                                                                                    [virtualScroll]="true" [virtualScrollItemSize]="8"
+                                                                                                    [scrollHeight]="'100px'" [(ngModel)]="downloadType"
+                                                                                                    [style]="{ width: '100%' }" optionValue="id"
+                                                                                                    optionLabel="name">
+                                                                                                </p-dropdown>
+                                                                                            </ng-container>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    <div class="row" *ngIf="downloadType == 3">
+                                                                                        <div class="col-4">Orientation</div>
+                                                                                        <div class="col-8">
+                                                                                            <p-dropdown [options]="pageOrientationOptions | keyvalue"
+                                                                                                [(ngModel)]="pageOrientation" [style]="{ width: '100%' }"
+                                                                                                optionValue="value" optionLabel="value">
+                                                                                            </p-dropdown>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    <div class="row" *ngIf="downloadType == 3">
+                                                                                        <div class="col-4">Page Size</div>
+                                                                                        <div class="col-8">
+                                                                                            <p-dropdown [options]="pageSizeOptions" [virtualScroll]="true"
+                                                                                                [virtualScrollItemSize]="8" [scrollHeight]="'100px'"
+                                                                                                [(ngModel)]="pageSize" [style]="{ width: '100%' }"
+                                                                                                optionValue="name" optionLabel="name"
+                                                                                                (onChange)="width = getIsoSize().WIDTH_IN; height = getIsoSize().HEIGHT_IN">
+                                                                                            </p-dropdown>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    <div class="row" *ngIf="downloadType == 3">
+                                                                                        <div class="col-4">Size (inch)</div>
+                                                                                        <div class="col-4"><input pInputText pKeyFilter="int"
+                                                                                                [(ngModel)]="width" [disabled]="pageSize!='CUSTOM'"
+                                                                                                style="width: 60px" />(w)
+                                                                                        </div>
+                                                                                        <div class="col-4"><input pInputText pKeyFilter="int"
+                                                                                                [(ngModel)]="height" [disabled]="pageSize!='CUSTOM'"
+                                                                                                style="width: 60px" />(h)
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <ng-template pTemplate="footer">
+                                                                                    <p-button styleClass="p-button-sm p-button-secondary"
+                                                                                        (click)="col.section.chartData.headerMenuOptions = false"
+                                                                                        label="Close"></p-button>
+                                                                                    <p-button styleClass="p-button-sm p-button-primary"
+                                                                                        (click)="downloadChartUsingOptions(pageIndex, rowIndex, colIndex)"
+                                                                                        label="Submit"></p-button>
+                                                                                </ng-template>
+                                                                            </p-dialog>
+                                                                        </div>
+                                                                        <button pButton class="p-panel-header-icon p-link" pTooltip="Maximize"
+                                                                            (click)="col.section.isMaximized = true; isMaximized = true;refreshVizpod(pageIndex, col,rowIndex,  colIndex, col.section)"
+                                                                            tooltipPosition="top" icon="fa-solid fa-expand" positionStyle="fixed"
+                                                                            *ngIf="!col.section.isMaximized">
+                                                                        </button>
+                                                                        <button pButton class="p-panel-header-icon p-link" pTooltip="Minimize"
+                                                                            (click)="col.section.isMaximized = false; isMaximized = false;refreshVizpod(pageIndex, col,rowIndex, colIndex, col.section)"
+                                                                            tooltipPosition="top" icon="fa-solid fa-compress" positionStyle="fixed"
+                                                                            *ngIf="col.section.isMaximized">
+                                                                        </button>
+                                                                    </div>
+                                                                </ng-template>
+                                                                <ng-template pTemplate="body">
+                                                                    <ngx-spinner [name]="'spinner_'+pageIndex +'_'+rowIndex+'_'+colIndex" class="embeded-spinner"
+                                                                    bdColor="rgba(0, 0, 0, 0)" size="default" color="black" type="line-spin-fade"
+                                                                    [fullScreen]="false">
+                                                                    <p class="mt-0 mb-0 text-black">Loading</p>
+                                                                </ngx-spinner>
+                                    
+                                                                    <app-echart [options]="col.section.chartData"
+                                                                        [chartId]="'_'+pageIndex+'_'+rowIndex+'_'+colIndex"
+                                                                        [refresh]="col.section.chartData.changes"
+                                                                        [ngClass]="!col.section.isGrid && !col.section.isNetwork && !col.section.isScoreCard && !col.section.isFormCard && !col.section.isImage && !col.section.isTimeLine && !col.section.isSankey && !col.section.chartData.chartMessage ? 'mt-1': 'd-none'">
+                                                                    </app-echart>
+                                    
+                                                                    <ng-container *ngIf="col.section.isGrid && !col.section.chartData.chartMessage">
+                                                                        <div #contextMenu class="echarts-context-menu" [style.top]="contextMenuPosition.y"
+                                                                            [style.left]="contextMenuPosition.x" (click)="onContextMenuClick($event)">
+                                                                            <ul>
+                                                                                <li>Drill-to-Detail</li>
+                                                                                <li>Drill-Down</li>
+                                                                            </ul>
+                                                                        </div>
+                                                                        <p-table styleClass="p-datatable-gridlines " id="chart_grid__{{rowIndex}}_{{colIndex}}" [resizableColumns]="true"
+                                                                          [rowHover]="true" [value]="col.section.chartData.data" [scrollable]="true"
+                                                                            scrollDirection="vertical" scrollWidth="100%">
+                                                                            <ng-template pTemplate="caption">
+                                                                                    <ng-container>
+                                                                                        <div class="flex justify-content-end">
+                                                                                            <p-multiSelect [options]="col.section.chartData.colNames" optionLabel="name"
+                                                                                                [(ngModel)]="col.section.chartData.chooseCols" selectedItemsLabel="{0} columns selected"
+                                                                                                [style]="{'max-width': '200px'}" placeholder="Choose Columns"
+                                                                                                (ngModelChange)="onChangeColumn(col.section)">
+                                                                                            </p-multiSelect>
+                                                                                        </div>
+                                                                                    </ng-container>
+                                                                            </ng-template>
+                                                                            <ng-template pTemplate="header">
+                                                                                <tr>
+                                                                                    <ng-container *ngFor="let item of col.section.chartData.colNamesFiltered;">
+                                                                        
+                                                                                        <th *ngIf="item.visible" class=""
+                                                                                            [width]="(getGridColumn(item,
+                                                                                            col.section) && getGridColumn(item,
+                                                                                            col.section).width == 'FIXEDCHAR') ? getGridColumn(item,col.section).length+'%': 100/col.section.chartData.colNamesFiltered.length + '%'"
+                                                                                            [ngClass]="(getGridColumn(item,
+                                                                                            col.section) && getGridColumn(item,
+                                                                                            col.section).alignment == 'RIGHT')? 'text-right': (getGridColumn(item,
+                                                                                            col.section) && getGridColumn(item,
+                                                                                            col.section).alignment == 'CENTER')? 'text-center': ''">
+                                                                                            {{item.name}}
+                                                                                        </th>
+                                                                                    </ng-container>
+                                                                                </tr>
+                                                                            </ng-template>
+                                                                            <ng-template pTemplate="body" let-dataItem>
+                                                                                <tr>
+                                                                                    <ng-container *ngFor="let item of col.section.chartData.colNamesFiltered;">
+                                                                                        <td *ngIf="item.visible"
+                                                                                            [width]="(getGridColumn(item,col.section) && getGridColumn(item,
+                                                                                            col.section).width == 'FIXEDCHAR') ? getGridColumn(item,col.section).length+'%': 100/col.section.chartData.colNamesFiltered.length + '%'"
+                                                                                            [ngClass]="(getGridColumn(item,
+                                                                                            col.section) && getGridColumn(item,
+                                                                                            col.section).alignment == 'RIGHT')? 'text-right': (getGridColumn(item,
+                                                                                            col.section) && getGridColumn(item,
+                                                                                            col.section).alignment == 'CENTER')? 'text-center': ''"
+                                                                                            (contextmenu)="onTdRightClick($event, col.section, {name: item.name, item: dataItem})">
+                                                                                            {{dataItem[item.name]}}</td>
+                                                                                    </ng-container>
+                                                                                </tr>
+                                                                        
+                                                                            </ng-template>
+                                                                        
+                                                                        </p-table>
+                                                                    </ng-container>
+                                    
+                                                                    <ng-container *ngIf="col.section.isNetwork && !col.section.chartData.chartMessage">
+                                                                        <div class="vis-network">
+                                                                            <app-vis-network [inheritHeight]="true" class="inherit-height"
+                                                                                [graphResult]="col.section.chartData.data"
+                                                                                [graphpodMeta]="col.section.graphpodMeta"
+                                                                                [theam]="themeConfig"></app-vis-network>
+                                                                        </div>
+                                                                    </ng-container>
+                                    
+                                                                    <ng-container *ngIf="col.section.isScoreCard && !col.section.chartData.chartMessage">
+                                                                        <div class="h-7rem d-flex w-100"
+                                                                            [ngStyle]="{'background-color': getScoreCardBgColor(col.section.vizpodInfo.colorPalette) }">
+                                                                            <div class="m-auto" *ngIf="col.section.vizpodInfo.values.length">
+                                                                                <div class="text-center text-white"
+                                                                                    [ngStyle]="{'font-size': '34px'}">
+                                                                                    {{((col.section.chartData.data[0][(col.section.vizpodInfo.values[0].function
+                                                                                    ?
+                                                                                    col.section.vizpodInfo.values[0].function
+                                                                                    +'_':
+                                                                                    '') +
+                                                                                    col.section.vizpodInfo.values[0].attributeName])
+                                                                                    !=
+                                                                                    '' ?
+                                                                                    (col.section.chartData.data[0][(col.section.vizpodInfo.values[0].function
+                                                                                    ?
+                                                                                    col.section.vizpodInfo.values[0].function
+                                                                                    +'_':
+                                                                                    '') +
+                                                                                    col.section.vizpodInfo.values[0].attributeName]):
+                                                                                    0)
+                                                                                    + "
+                                                                                    " +
+                                                                                    (col.section.vizpodInfo.values[0].attrDispUnitType
+                                                                                    ?
+                                                                                    col.section.vizpodInfo.values[0].attrDispUnitType
+                                                                                    :
+                                                                                    '')}}
+                                                                                </div>
+                                                                                <div class="text-center text-white" 
+                                                                                    [ngStyle]="{'font-size': '16px',}">
+                                                                                    {{col.section.vizpodInfo.values[0].attrDispName}}
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </ng-container>
+                                    
+                                                                    <ng-container *ngIf="col.section.isFormCard && !col.section.chartData.chartMessage">
+                                                                        <div class="d-flex w-100 form-card">
+                                                                            <div class="w-100" *ngIf="col.section.vizpodInfo.values.length">
+                                                                                <div class="d-flex w-100">
+                                                                                    <table class="w-100 overflow-auto">
+                                                                                        <ng-container *ngFor="let value of col.section.vizpodInfo.values">
+                                                                                            <tr class="border-top">
+                                                                                                <td class="form-card-entry">
+                                                                                                    <b>{{value.attrDispName}}</b>
+                                                                                                </td>
+                                                                                                <td class="form-card-entry">
+                                                                                                    {{col.section.chartData.data[0][value.attributeName]}}
+                                                                                                </td>
+                                                                                            </tr>
+                                                                                        </ng-container>
+                                                                                        <tr class="border-top"></tr>
+                                                                                    </table>
+                                    
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </ng-container>
+                                    
+                                                                    <ng-container *ngIf="col.section.isTimeLine && !col.section.chartData.chartMessage">
+                                                                        <div class="d-flex w-100 form-card">
+                                                                            <div class="w-100">
+                                                                                <div class="d-block w-100 overflow-auto h-100">
+                                                                                    <div
+                                                                                        class="vertical-timeline position-relative vertical-container dark-timeline">
+                                                                                        <div class="vertical-timeline-block ng-scope"
+                                                                                            *ngFor="let dataItem of col.section.chartData.data">
+                                                                                            <div class="vertical-timeline-icon gray-bg">
+                                                                                                <i class="fa fa-user"></i>
+                                                                                            </div>
+                                                                                            <div class="vertical-timeline-content">
+                                                                                                <div class="ng-scope">
+                                                                                                    <div class="ng-scope"
+                                                                                                        *ngFor="let key of col.section.vizpodInfo.keys; index as attributeIndex;">
+                                                                                                        <span
+                                                                                                            class="vertical-date small text-muted pr-2 ng-binding"
+                                                                                                            [ngClass]="attributeIndex == 0 ? 'bold': ''">{{key.attributeName}}</span>
+                                                                                                        <span
+                                                                                                            class="vertical-date small text-muted bold ng-binding ng-scope">{{dataItem[key.attributeName]}}</span>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                                <div class="ng-scope">
+                                                                                                    <div class="ng-scope"
+                                                                                                        *ngFor="let value of col.section.vizpodInfo.values;">
+                                                                                                        <span
+                                                                                                            class="vertical-date small text-muted pr-2 ng-binding">{{value.attributeName}}</span>
+                                                                                                        <span
+                                                                                                            class="vertical-date small text-muted bold ng-binding ng-scope">{{dataItem[value.attributeName]}}</span>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </ng-container>
+                                    
+                                                                    <ng-container *ngIf="col.section.isImage && !col.section.chartData.chartMessage">
+                                                                        <div class="d-flex w-100 form-card">
+                                                                            <div class="w-100">
+                                                                                <div class="d-flex w-100">
+                                                                                    <img [src]="col.section.chartData.imageSource" class="image-chart"
+                                                                                        [alt]="col.section.chartData.data[0][col.section.vizpodInfo.keys[0].attributeName]">
+                                    
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </ng-container>
+                                    
+                                                                    <ng-container *ngIf="col.section.isSankey && !col.section.chartData.chartMessage">
+                                                                        <div class="d-flex w-100">
+                                                                            <app-d3-sankey class="w-100" [sankey]="col.section.chartData.data">
+                                                                            </app-d3-sankey>
+                                                                        </div>
+                                                                    </ng-container>
+                                    
+                                                                    <div class="d-flex w-100 error-message" *ngIf="col.section.chartData.chartMessage">
+                                                                        <span class="m-auto text-center">
+                                                                            {{col.section.chartData.chartMessage}}
+                                                                        </span>
+                                                                    </div>
+                                                                </ng-template>
+                                                            </p-panel>
+                                                        </div>
+                                                    </ng-container>
+                                                </ng-container>
+                                            </div>
+                                        </ng-container>
+                                    </ng-scrollbar>
+                                </p-tabPanel>
+                            </p-tabView>
+                        </ng-template>
+                    </p-panel>
+                </div>
+            </ng-container>
+        </div>
+    </ng-sidebar-accordion-content>
+</ng-sidebar-accordion>

@@ -1,0 +1,60 @@
+/* You can add global styles to this file, and also import other style files */
+
+$gutter: 1rem; //for primeflex grid system
+@import "assets/layout/styles/layout/layout.scss";
+
+/* PrimeNG */
+@import "../node_modules/primeng/resources/primeng.min.css";
+@import "../node_modules/primeflex/primeflex.scss";
+@import "../node_modules/primeicons/primeicons.css";
+
+/* Demos */
+@import "assets/demo/styles/flags/flags.css";
+@import "assets/demo/styles/badges.scss";
+@import "assets/demo/styles/code.scss";
+
+/* Font Awesome */
+@import "../node_modules/@fortawesome/fontawesome-free/css/fontawesome.css";
+@import "@fortawesome/fontawesome-free/scss/fontawesome.scss";
+@import "@fortawesome/fontawesome-free/scss/solid.scss";
+@import "@fortawesome/fontawesome-free/scss/brands.scss";
+                                                                                                                                                             
+
+
+@import "../node_modules/bootstrap/scss/functions";
+@import "../node_modules/bootstrap/scss/variables";
+@import "../node_modules/bootstrap/scss/maps";
+@import "../node_modules/bootstrap/scss/mixins";
+@import "../node_modules/bootstrap/scss/utilities";
+@import"../node_modules/bootstrap/scss/nav";
+@import"../node_modules/bootstrap/scss/navbar";
+@import"../node_modules/bootstrap/scss/tables";
+@import"../node_modules/bootstrap/scss/bootstrap-utilities.scss";
+@import "scss/bootstrap/nav";
+
+//@import "../node_modules/bootstrap/scss/bootstrap.scss";
+
+
+
+
+
+@import "scss/themes/custom";
+@import "scss/themes/generic";
+
+/* Prime Ng */
+
+@import "scss/prime-ng/p-dropdown";
+@import "scss/prime-ng/p-multiselect";
+@import "scss/prime-ng/p-datepicker";
+@import "scss/prime-ng/p-breadcrumb";
+@import "scss/prime-ng/p-button";
+@import "scss/sidebar/_sidebar-accordion";
+@import "scss/prime-ng/p-table";
+@import "scss/prime-ng/p-panel";
+@import "scss/prime-ng/p-dialog";
+@import "scss/prime-ng/p-inputText";
+@import "scss/prime-ng/p-toast";
+
+
+@import "scss/leaflet/leaflet";
+@import '~leaflet/dist/leaflet.css';

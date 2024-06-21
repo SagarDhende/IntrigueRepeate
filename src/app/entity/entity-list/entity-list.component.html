@@ -1,0 +1,218 @@
+<ng-sidebar-accordion #rightAccordion [sidebarResizable]="true" class="sidebar-accordion-height sidebar-accordion-main">
+    <ng-sidebar position="right" [opened]="false">
+        <ng-sidebar-content class="sidebar-content-design">
+            <div class="card card-height-85hv-80px border-radius-12 p-1">
+                <div class="flex align-items-center justify-content-between position-absolute end-0">
+                    <h5></h5>
+                    <div class="mr-2 mt-2">
+                        <button pButton (click)="panelClose()"
+                            class="close-btn p-element p-button-rounded p-button-text p-button-plain p-button p-component p-button-icon-only">
+                            <span class="pi pi-times"></span>
+                        </button>
+                    </div>
+                </div>
+
+                <ul ngbNav #nav="ngbNav" [(activeId)]="active" class="nav-tabs mt-3 surface-border-buttom">
+                    <li [ngbNavItem]="1">
+                        <button ngbNavLink class="pt-0">Search Criteria</button>
+                        <ng-template ngbNavContent>
+                                <br>
+                                <ng-scrollbar (clickOutside)="navMob()" [exclude]="'#mobile-collapse'" id="nav-ps-next"
+                                    [usePSClass]="'next'" [disabled]="null"
+                                    class="scrollbar-height-85">
+                                    
+                                    <div>
+                                        <div class="col-md-12">
+                                            <form action="javascript:" class="pb-5 mb-5">
+                                                <ngx-spinner name="filter-data" class="embeded-spinner"
+                                                    bdColor="rgba(0, 0, 0, 0)" size="default" color="#fff"
+                                                    type="line-spin-fade" [fullScreen]="false">
+                                                    <p class="mt-0 mb-0 text-black">Loading </p>
+                                                </ngx-spinner>
+                                                @if(isFilterConfigerd){
+                                                <div class="flex align-items-center justify-content-center h-70hv pt-8">
+                                                    No Filter Configured
+                                                </div>
+                                                }
+
+                                                @for(item of columns; track item.name) {
+                                                <ng-container>
+                                                    <div class="form-group">
+                                                        <app-fields *ngIf="filterForm.controls[item.name]" [data]="item" [duuid]="duuid"
+                                                            [control]="filterForm.controls[item.name]">
+                                                        </app-fields>
+                                                    </div>
+                                                </ng-container>
+                                                }
+                                            </form>
+                                        </div>
+                                    </div>
+
+                                </ng-scrollbar>
+                                <hr>
+                            <div class=" mt-4">
+                                <p-button label="Clear" [outlined]="true"  severity="secondary" class="m-2" (click)="clearFilter()"
+                                [disabled]="isFilterConfigerd"></p-button>
+                            <p-button label="Search" [outlined]="true"  severity="primary" (click)="filterSubmit()"
+                                [disabled]="isFilterConfigerd"></p-button>
+                            </div>
+                                <!-- <div class="col-md-12">
+                                    <hr>
+                                    <p-button label="Clear" severity="secondary" class="m-2" (click)="clearFilter()"
+                                        [disabled]="isFilterConfigerd"></p-button>
+                                    <p-button label="Search" severity="primary" (click)="filterSubmit()"
+                                        [disabled]="isFilterConfigerd"></p-button>
+                                </div> -->
+
+                            
+                        </ng-template>
+                    </li>
+                </ul>
+                <div [ngbNavOutlet]="nav" class="mt-2"></div>
+            </div>
+        </ng-sidebar-content>
+    </ng-sidebar>
+
+    <!---------------------from this page-content------------------->
+    <ng-sidebar-accordion-content class="page-wrapper-container">
+        <div class="card card-height-85hv-80px border-radius-12 p-1" #cardElementRef>
+            @if(tabIndex < 1){ <div
+                class="flex align-items-center justify-content-between mb-0 position-absolute end-6 mt-1 z-index-10">
+                <p-menu #menu [model]="items" appendTo="body" [popup]="true"></p-menu>
+
+                <button pButton pTooltip="Filter" tooltipPosition="top"
+                    class="p-element p-button-rounded p-button-text p-button-plain p-button p-component p-button-icon-only"
+                    (click)="isEditEnable ?  menu.toggle($event) : panelToggle()">
+                    <span class="pi pi-filter"></span>
+                </button>
+                <button pbutton="" type="button" icon="pi pi-ellipsis-v" pTooltip="Refresh" tooltipPosition="top"
+                    (click)="refreshClick()"
+                    class="p-element p-button-rounded p-button-text p-button-plain p-button p-component p-button-icon-only">
+                    <span class="p-button-icon fa fa-refresh" aria-hidden="true"></span></button>
+        </div>
+        }
+        <p-tabView [(activeIndex)]="tabIndex" (onChange)="tabChange()" (onClose)="tabClosed($event)">
+            <p-tabPanel header="Details &nbsp;- &nbsp;{{this.type}}s">
+                <!-- <div class="flex justify-content-between sm:flex-row">
+                    <ng-container>
+                        <span class="p-input-icon-left mb-3">
+                        </span>
+                        @if(entitys != null){
+                        <span class="p-input-icon-left mb-3">
+                            <p-multiSelect [options]="entityCols" optionLabel="header" [(ngModel)]="selectedOptions"
+                                [style]="{'max-width': '200px'}" selectedItemsLabel="{0} columns selected"
+                                value="entitys" placeholder="Choose Columns" filterBy="header" [filter]="true"
+                                placeholder="Choose Columns" [panelStyle]="{'width':'190px'}"
+                                (ngModelChange)="onColumnSelectChange()"></p-multiSelect>
+                        </span>
+                        }
+                    </ng-container>
+                </div> -->
+                <!--------------------table data---------------------------------->
+                <p-table styleClass="p-datatable-gridlines" [resizableColumns]="true" [columns]="entityCols"
+                    [rowHover]="true" [value]="entitys" [scrollable]="false" scrollDirection="vertical"
+                    [scrollHeight]="'525px'" (onLazyLoad)="customSort($event)" [lazy]="true" [customSort]="true"
+                    scrollWidth="100%">
+                    <ng-template pTemplate="caption">
+                        <div class="flex justify-content-between sm:flex-row">
+                            <span class="p-input-icon-left search-keyword">
+                                <i class="pi pi-search"></i>
+                                <input pInputText type="text" #filter [(ngModel)]="value"
+                                    (input)="searchTableRows(value)" placeholder="Search Keyword" class="w-full" />
+                            </span>
+                            <p-multiSelect [options]="entityCols" [(ngModel)]="selectedOptions"
+                            placeholder="Choose Columns" class="multiselect-custom" [panelStyle]="{'width':'16rem'}"
+                                selectedItemsLabel="{0} columns selected" (ngModelChange)="onColumnSelectChange()"
+                                optionLabel="header" styleClass="multiselect">
+                            </p-multiSelect>
+                        </div>
+                    </ng-template>
+                    <ng-template pTemplate="header" let-columns>
+                        <tr>
+                            @for(col of columns; track col.field){
+                            <th *ngIf="col.visible" style="min-width: 12rem" pSortableColumn="{{col.field}}"
+                                pResizableColumn>
+                                <div class="flex justify-content-center align-items-center">
+                                    {{col.header}}
+                                    <p-sortIcon [field]="col.field"></p-sortIcon>
+                                </div>
+                            </th>
+                            }
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-rowData let-columns="columns">
+                        <tr class="cursor-pointer" [pReorderableRow]="index" (click)="openDetailsTab(rowData)">
+                            @for(col of columns; track col.field){
+                            <ng-container *ngIf="col.visible">
+                                <td #td class="text-center td-max-width text-nowrap" pTooltip="{{null}}"
+                                    tooltipPosition="top" (mouseover)="showTooltip(td,span,rowData[col.field])"
+                                    pTooltip="{{tooltipObj[rowData[col.field]] ? rowData[col.field]: null}}">
+                                    <span #span>
+                                    {{rowData[col.field] == null ? '-NA-' : rowData[col.field]}}
+                                    </span>
+                                </td>
+                            </ng-container>
+                            }
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="emptymessage" let-columns>
+                        <tr>
+                            <td [attr.colspan]="entityCols?.length" class="text-center"
+                                *ngIf="entitys == 0 && listFetched">No Records Found</td>
+                            <td [attr.colspan]="entityCols?.length" *ngIf="!listFetched">
+                                <div class="col-12 position-relative w-100 spinner-height">
+                                    <ngx-spinner name="entity-detail" bdColor="rgba(0, 0, 0, 0)" size="default"
+                                        color="black" type="line-spin-fade" [fullScreen]="false">
+                                        <p class="mt-0 mb-0 text-black">Loading </p>
+                                    </ngx-spinner>
+                                </div>
+                            </td>
+                        </tr>
+                    </ng-template>
+                </p-table>
+                <ng-template pTemplate="footer">
+                    @if(entitys){
+                    <ng-container>
+                        <div class="grid pr-0">
+                            <div class="col-4 lg:col-4 xl:col-4 md:col-4 mt-4">
+                                @if (pagination.totalRecords >0) {
+                                <div>
+                                    {{pagination.offset+1}}-{{pagination.offset+ pagination.rows}} of
+                                    {{pagination.totalRecords | number}} rows
+                                </div>}
+                                @if (pagination.totalRecords ==0) {
+                                <div>
+                                    0 - 0 of {{pagination.totalRecords | number}} rows
+                                </div>}
+                            </div>
+                            <div class="col-8 lg:col-8 xl:col-8 md:col-8 pr-0">
+                                @if (pagination.totalRecords >0) {
+                                <div class="mt-0">
+                                    <p-paginator class="p-paginator flex justify-content-end"
+                                        (onPageChange)="paginate($event)" [rows]="pagination.rows"
+                                        [totalRecords]="pagination.totalRecords">
+                                    </p-paginator>
+                                </div>}
+                            </div>
+                        </div>
+                    </ng-container>
+                    }
+                </ng-template>
+            </p-tabPanel>
+            @for(entity of tabs; track entity.id){
+            <p-tabPanel [header]="entity.shortName" [closable]="true">
+                <app-entity-detail [details]="entity"></app-entity-detail>
+            </p-tabPanel>
+            }
+        </p-tabView>
+        </div>
+    </ng-sidebar-accordion-content>
+</ng-sidebar-accordion>
+
+<ng-template let-title="errorTitle" let-content="errorContent" #errorTemplate>
+    <div class="center-element h-70hv flex justify-content-center align-items-center">
+        <app-error-dialog [title]="title" [content]="errorContent" [messageHead]="title">
+        </app-error-dialog>
+    </div>
+
+</ng-template>
